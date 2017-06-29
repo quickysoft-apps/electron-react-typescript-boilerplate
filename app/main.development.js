@@ -1,4 +1,7 @@
 const { app, BrowserWindow, Menu, shell } = require('electron');
+const autoUpdater = require('electron-updater').autoUpdater;
+const log = require('electron-log');
+const os = require('os');
 
 let menu;
 let template;
@@ -36,9 +39,61 @@ const installExtensions = () => {
   return Promise.resolve([]);
 };
 
+const checkUpdates = () => {
+  
+    if (process.env.NODE_ENV === 'development') {
+     // return
+    }
+
+    const platform = os.platform()
+    if (platform === "linux") {
+      return
+    }
+
+    log.transports.file.level = "info"
+    autoUpdater.logger = log
+
+    autoUpdater.addListener('error', (error) => {
+      log.error(error)
+    })
+    
+    autoUpdater.addListener('update-available', () => {
+      log.info('Update available !')
+    })
+
+    autoUpdater.addListener('update-not-available', () => {
+      log.info('No update available yet...')
+    })
+
+    autoUpdater.addListener('update-downloaded', versionInfo => {
+      log.info('New update downloaded : ', versionInfo)
+
+      const dialogOptions = {
+        type: "question",
+        defaultId: 0,
+        message: `The update is ready to install, Version ${versionInfo.version} has been downloaded and will be automatically installed when you click OK`
+      }
+
+      let focusedWindow = BrowserWindow.getFocusedWindow()
+
+      BrowserWindow.getAllWindows()
+      dialog.showMessageBox(focusedWindow, dialogOptions, function () {
+        setImmediate(() => {
+          app.removeAllListeners("window-all-closed")
+          if (focusedWindow != null) {
+            focusedWindow.close()
+          }
+          autoUpdater.quitAndInstall(false)
+        })
+      })
+    })
+
+    autoUpdater.checkForUpdates()
+}
+
 app.on('ready', () =>
   installExtensions()
-  .then(() => {
+  .then(() => {    
   mainWindow = new BrowserWindow({
     show: false,
     width: 1024,
@@ -50,6 +105,7 @@ app.on('ready', () =>
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.show();
     mainWindow.focus();
+    checkUpdates();
   });
 
   mainWindow.on('closed', () => {

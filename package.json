@@ -1,8 +1,8 @@
 {
-  "name": "electron-react-typescript-boilerplate",
-  "productName": "ElectronReactTypescript",
-  "version": "0.10.0",
-  "description": "Electron application boilerplate based on TypeScript, React, React Router, Webpack, React Hot Loader for rapid application development",
+  "name": "yakapa-supervisor",
+  "productName": "YakapaSupervisor",
+  "version": "0.1.0",
+  "description": "Electron application based on TypeScript, React, React Router, Webpack, React Hot Loader for rapid application development",
   "main": "main.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test node --trace-warnings ./test/runTests.js",
@@ -21,6 +21,7 @@
     "package-win": "npm run build && build --win --x64",
     "package-linux": "npm run build && build --linux",
     "package-all": "npm run build && build -mwl",
+    "publish": "npm run build && build --publish always",
     "cleanup": "mop -v"
   },
   "jest": {
@@ -162,6 +163,8 @@
   },
   "dependencies": {
     "electron-debug": "^1.1.0",
+    "electron-log": "^2.2.6",
+    "electron-updater": "^2.4.3",
     "font-awesome": "^4.7.0",
     "history": "^4.6.1",
     "react": "^15.4.1",
