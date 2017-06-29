@@ -40,9 +40,9 @@ const installExtensions = () => {
 };
 
 const checkUpdates = () => {
-  
+  npm 
     if (process.env.NODE_ENV === 'development') {
-     // return
+      return
     }
 
     const platform = os.platform()
