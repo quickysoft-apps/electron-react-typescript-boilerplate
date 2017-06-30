@@ -8,8 +8,8 @@ export default class Home extends React.Component {
     return (
       <div>
         <div className={styles.container} data-tid="container">
-          <h2>Home</h2>
-          <Link to="/counter">to Counter 0.3.0</Link>
+          <h2>Yakapa 0.4.0</h2>
+          <Link to="/counter">to Counter</Link>
         </div>
       </div>
     );
