@@ -30,7 +30,7 @@ export class YakapaClient {
     this._socket = SocketIo.connect(SOCKET_SERVER_URL, { reconnection: true });
     this._socket.on('connect', () => { this.connect() })
     this._socket.on(Events.AUTHENTICATED, (socketMessage: SocketMessage) => { this.authenticate(socketMessage) })
-    this._socket.on(Events.CHAT, (socketMessage: SocketMessage) => { this.understand(socketMessage) })
+    this._socket.on(Events.CHAT, async (socketMessage: SocketMessage) => { await this.understand(socketMessage) })
     this._socket.on(Events.EXECUTE_SCRIPT, (socketMessage: SocketMessage) => { this.executeScript(socketMessage) })
   }
 
@@ -84,13 +84,14 @@ export class YakapaClient {
     Log.info(socketMessage);
   }
 
-//TODO : Make it async  
-  private understand(socketMessage: SocketMessage): void {
-    if (this.check(socketMessage)) {
+  private async understand(socketMessage: SocketMessage): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      if (!this.check(socketMessage)) reject();  
       const decompressed = LZString.decompressFromUTF16(socketMessage.Message);
       Log.info(`Received chat message ${decompressed}`);
       this.emit(Events.CHAT, Faker.lorem.sentence(15));
-    }
+      resolve();
+    });
   }
 
   private executeScript(socketMessage: SocketMessage): void {
