@@ -37,7 +37,7 @@ const showMainWindow = () => {
 
 const ayIcon = () => {
   const path = require('path'); // eslint-disable-line
-  const iconPath = path.join(__dirname, '..', 'resources', 'icons', 'ykp-logo-inverse128.png');
+  const iconPath = path.join(__dirname, '..', 'resources', 'icons', 'ykp-simple-logo32.png');
 
   const template = [
     {

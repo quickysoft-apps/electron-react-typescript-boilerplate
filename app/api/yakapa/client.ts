@@ -12,15 +12,6 @@ interface SocketMessage {
   Message: string;
 }
 
-class MessageProcess {
-  private _emitter: string;
-  
-  constructor(emitter: string) {
-    this._emitter = emitter;
-  }
-
-}
-
 export class YakapaClient {
   private _socket: SocketIOClient.Socket;
   private _isAuthenticated: boolean = false;
@@ -31,7 +22,7 @@ export class YakapaClient {
     this._socket.on('connect', () => { this.connect() })
     this._socket.on(Events.AUTHENTICATED, (socketMessage: SocketMessage) => { this.authenticate(socketMessage) })
     this._socket.on(Events.CHAT, async (socketMessage: SocketMessage) => { await this.understand(socketMessage) })
-    this._socket.on(Events.EXECUTE_SCRIPT, (socketMessage: SocketMessage) => { this.executeScript(socketMessage) })
+    this._socket.on(Events.EXECUTE_SCRIPT, async (socketMessage: SocketMessage) => { await this.executeScript(socketMessage) })
   }
 
   getJson(json: any): any {
@@ -59,7 +50,7 @@ export class YakapaClient {
     return true
   }
 
-  private emit(event: string = Events.RESULT, payload?: string, to?: string): void {    
+  private emit(event: string = Events.RESULT, payload?: string, to?: string): void {
     const compressed = payload != null ? LZString.compressToUTF16(payload) : null
 
     const socketMessage = {
@@ -86,16 +77,19 @@ export class YakapaClient {
 
   private async understand(socketMessage: SocketMessage): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      if (!this.check(socketMessage)) reject();  
+      if (!this.check(socketMessage)) reject();
       const decompressed = LZString.decompressFromUTF16(socketMessage.Message);
       Log.info(`Received chat message ${decompressed}`);
-      this.emit(Events.CHAT, Faker.lorem.sentence(15));
+      const emitter = socketMessage.From;
+      this.emit(Events.CHAT, Faker.lorem.sentence(15), emitter);
       resolve();
     });
   }
 
-  private executeScript(socketMessage: SocketMessage): void {
-
+  private executeScript(socketMessage: SocketMessage): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      resolve();
+    });
   }
 
 }
