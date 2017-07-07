@@ -1,4 +1,4 @@
-import { YakapaMessage } from '../api/yakapa/yakapaClient'
+import { YakapaMessage } from '../api/yakapaClient';
 
 export class ChatHistory {
 
