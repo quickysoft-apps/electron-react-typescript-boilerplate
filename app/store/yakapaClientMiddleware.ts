@@ -1,25 +1,28 @@
+import { Store, Dispatch, Middleware, MiddlewareAPI, Action } from 'redux';
 import * as actions from '../actions/chat';
-import { YakapaClient } from '../api/yakapa/client';
- 
-let client: YakapaClient
+import { State } from '../model/state';
+import { IActionWithPayload } from '../actions/helpers';
+import { YakapaEvent, YakapaClient, YakapaMessage } from '../api/yakapa/yakapaClient';
 
-export function yakapaClientMiddleware(store: Store<any>) {
-  return next => action => {
-    const result = next(action);
- 
-    if (socket && action.type === actions.ADD_MESSAGE) {
-      let messages = store.getState().messages;
-      socket.emit('message', messages[messages.length -1]);
-    }
- 
-    return result;
-  };
+const client: YakapaClient = new YakapaClient();
+
+interface YakapaDispatch extends Dispatch<YakapaMessage> {
+  (action: IActionWithPayload<YakapaMessage>): IActionWithPayload<YakapaMessage>;
 }
- 
-export default function (store) {
-  socket = io.connect(`${location.protocol}//${location.host}`);
- 
-  socket.on('message', data => {
-    store.dispatch(actions.addResponse(data));
+
+export function yakapaClientMiddleware(): Middleware {
+  return (api: MiddlewareAPI<State>) => (next: Dispatch<State>) => (dispatch : YakapaDispatch) => (action: IActionWithPayload<YakapaMessage>) => {
+    const result = next(action);
+    if (action.type === actions.send) {
+      client.emit(YakapaEvent.CHAT, action.payload.message, action.payload.from);
+    }
+    return result;
+  }
+}
+
+export default function (store: any) {
+  client.onChatMessageReceived.subscribe((yakapaClient: YakapaClient, yakapaMessage: YakapaMessage) => {
+    store.dispatch(actions.receive(yakapaMessage));
   });
 }
+

@@ -1,11 +1,14 @@
-import { IActionWithPayload } from "../actions/helpers";
-import { receive, ChatPayload } from "../actions/chat";
+import { IActionWithPayload } from '../actions/helpers';
+import { receive } from '../actions/chat';
 
-export type ChatState = Map<string, string>;
-
-export default function chat(state: Map<string, string> = new Map<string, string>(), action: IActionWithPayload<ChatPayload>) {
-  if (receive.test(action)) {
-    return new Map(state).set(action.payload.from, action.payload.message);
+export default function chat(state: Model.ChatHistory = new Model.ChatHistory(), action: IActionWithPayload<Model.ChatMessage>) {
+  if (receive.test(action)) {    
+    const chatMessage: Model.ChatMessage = {
+      date: new Date(Date.now()),
+      from: action.payload.from,
+      message: action.payload.message
+    };
+    return new Model.ChatHistory(state, chatMessage);
   }
 
   return state;

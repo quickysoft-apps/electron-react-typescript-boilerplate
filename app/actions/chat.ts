@@ -1,8 +1,5 @@
-import { actionCreator } from "./helpers";
+import { actionCreator } from './helpers';
+import { YakapaMessage } from '../api/yakapa/yakapaClient';
 
-export interface ChatPayload {
-  from: string;
-  message: string;
-}
-
-export const receive = actionCreator<ChatPayload>("chat/RECEIVE");
+export const receive = actionCreator<YakapaMessage>('chat/RECEIVE');
+export const send = actionCreator<YakapaMessage>('chat/SEND');

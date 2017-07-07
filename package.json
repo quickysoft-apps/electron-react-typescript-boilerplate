@@ -182,6 +182,7 @@
     "redux-thunk": "^2.1.0",
     "socket.io-client": "^2.0.3",
     "source-map-support": "^0.4.6",
+    "strongly-typed-events": "^1.0.1",
     "typescript-collections": "^1.2.3"
   },
   "devEngines": {

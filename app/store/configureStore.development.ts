@@ -2,6 +2,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { createHashHistory } from 'history';
 import { routerMiddleware, push } from 'react-router-redux';
+import { yakapaClientMiddleware } from './yakapaClientMiddleware';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 
@@ -28,6 +29,7 @@ const logger = (<any>createLogger)({
 
 const history = createHashHistory();
 const router = routerMiddleware(history);
+const yakapaClient = yakapaClientMiddleware();
 
 // If Redux DevTools Extension is installed use it, otherwise use Redux compose
 /* eslint-disable no-underscore-dangle */
@@ -39,12 +41,13 @@ const composeEnhancers: typeof compose = window.__REDUX_DEVTOOLS_EXTENSION_COMPO
   compose;
 /* eslint-enable no-underscore-dangle */
 const enhancer = composeEnhancers(
-  applyMiddleware(thunk, router, logger)
+  applyMiddleware(thunk, router, logger, yakapaClient)  
 );
 
 export = {
   history,
   configureStore(initialState: Object | void) {
+    //const createStoreWithYakapaClientMiddleware = applyMiddleware(yakapaClientMiddleware)(createStore);
     const store = createStore(rootReducer, initialState, enhancer);
 
     if (module.hot) {
