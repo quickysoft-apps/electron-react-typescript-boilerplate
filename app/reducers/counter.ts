@@ -1,13 +1,12 @@
 import { IAction } from '../actions/helpers';
 import { increment, decrement } from '../actions/counter';
+import { State, getInitialState } from '../model/state';
 
-export type TState = number;
-
-export default function counter(state: number = 0, action: IAction) {
+export default function counter(state: State = getInitialState() , action: IAction) {
   if (increment.test(action)) {
-    return state + 1;
+    return state.counter + 1;
   } else if (decrement.test(action)) {
-    return state - 1;
+    return state.counter - 1;
   }
 
   return state;

@@ -3,12 +3,12 @@ import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
 import CounterPage from '../../app/containers/CounterPage';
-import { IState } from '../../app/reducers';
+import { State, getInitialState } from '../../app/model/state';
 
 const CounterPageAny = CounterPage as any;
 let { configureStore, history } = require('../../app/store/configureStore');
 
-function setup(initialState?: IState) {
+function setup(initialState?: State) {
   const store = configureStore(initialState);
   const app = mount(
     <Provider store={store}>
@@ -50,7 +50,9 @@ describe('containers', () => {
     });
 
     it('should change if odd and if odd button clicked', () => {
-      const { buttons, p } = setup({ counter: 1 });
+      const state = getInitialState();
+      state.counter = 1;
+      const { buttons, p } = setup(state);
       buttons.at(2).simulate('click');
       expect(p.text()).toMatch(/^2$/);
     });

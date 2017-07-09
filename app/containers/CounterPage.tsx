@@ -3,15 +3,15 @@ import { bindActionCreators } from 'redux';
 import { connect, Dispatch } from 'react-redux';
 import { Counter, IProps } from '../components/Counter';
 import * as CounterActions from '../actions/counter';
-import { IState } from '../reducers';
+import { State } from '../model/state';
 
-function mapStateToProps(state: IState): Partial<IProps> {
+function mapStateToProps(state: State): Partial<IProps> {
   return {
     counter: state.counter
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<IState>): Partial<IProps> {
+function mapDispatchToProps(dispatch: Dispatch<State>): Partial<IProps> {
   return bindActionCreators(CounterActions as any, dispatch);
 }
 

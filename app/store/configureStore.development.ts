@@ -1,10 +1,11 @@
-import { createStore, applyMiddleware, compose } from 'redux';
+import { Store, createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { createHashHistory } from 'history';
 import { routerMiddleware, push } from 'react-router-redux';
 import { yakapaClientMiddleware } from './yakapaClientMiddleware';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
+import { State } from '../model/state';
 
 import * as counterActions from '../actions/counter';
 
@@ -46,9 +47,9 @@ const enhancer = composeEnhancers(
 
 export = {
   history,
-  configureStore(initialState: Object | void) {
+  configureStore(initialState: State): Store<State> {
     //const createStoreWithYakapaClientMiddleware = applyMiddleware(yakapaClientMiddleware)(createStore);
-    const store = createStore(rootReducer, initialState, enhancer);
+    const store = createStore<State>(rootReducer, initialState, enhancer);
 
     if (module.hot) {
       module.hot.accept('../reducers', () =>
