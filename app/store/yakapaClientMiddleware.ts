@@ -29,7 +29,7 @@ export function yakapaClientMiddleware(): Redux.Middleware {
   }
 }; 
 
-export default function (store: any) {
+export function listenYakapaServer (store: any) {
   client.onChatMessageReceived.subscribe((yakapaClient: YakapaClient, yakapaMessage: YakapaMessage) => {
     store.dispatch(actions.receive(yakapaMessage));
   });

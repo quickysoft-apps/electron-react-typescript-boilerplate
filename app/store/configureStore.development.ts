@@ -2,7 +2,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { createHashHistory } from 'history';
 import { routerMiddleware, push } from 'react-router-redux';
-import { yakapaClientMiddleware } from './yakapaClientMiddleware';
+import { yakapaClientMiddleware, listenYakapaServer } from './yakapaClientMiddleware';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 
@@ -48,6 +48,8 @@ export = {
   history,
   configureStore(initialState: Object | void) {
     const store = createStore(rootReducer, initialState, enhancer);
+
+    listenYakapaServer(store);
 
     if (module.hot) {
       module.hot.accept('../reducers', () =>
