@@ -135,6 +135,8 @@ app.on('ready', () =>
         trayIcon = ayIcon();
       });
 
+      mainWindow.show();
+
       mainWindow.on('closed', () => {
         mainWindow = null;
       });
@@ -144,7 +146,7 @@ app.on('ready', () =>
           event.preventDefault();
           mainWindow.hide();
         } else {
-          mainWindow.quit();
+          app.quit();
         }
       })
 
@@ -154,7 +156,7 @@ app.on('ready', () =>
       })
 
       if (process.env.NODE_ENV === 'development') {
-        //mainWindow.openDevTools();
+        mainWindow.openDevTools();
         mainWindow.webContents.on('context-menu', (e, props) => {
           const { x, y } = props;
 

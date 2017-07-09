@@ -2,9 +2,9 @@ import { IActionWithPayload } from '../actions/helpers';
 import { ChatHistory } from '../model/chatHistory'
 import { YakapaMessage } from '../api/yakapaClient'
 import { receive } from '../actions/chat';
-import { State, getInitialState } from '../model/state';
+import { ChatState } from '../model/state';
 
-export default function chat(state: State = getInitialState(), action: IActionWithPayload<YakapaMessage>) {
+export default function chat(state: ChatState = { history: new ChatHistory() }, action: IActionWithPayload<YakapaMessage>) {
   if (receive.test(action)) {    
     const chatMessage: YakapaMessage = {
       date: new Date(Date.now()),
@@ -13,7 +13,7 @@ export default function chat(state: State = getInitialState(), action: IActionWi
       message: action.payload.message
     };
 
-    state.chat = new ChatHistory(state.chat, chatMessage);
+    state.history = new ChatHistory(state.history, chatMessage);
     return state;
   }
  

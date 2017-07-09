@@ -1,13 +1,13 @@
 import { ChatHistory } from './chatHistory'
 
-export interface State {
-  counter: number;
-  chat: ChatHistory;
+export interface ChatState {
+  history: ChatHistory;
 }
 
-export function getInitialState() {
-  return {
-    counter: 0,
-    chat: new ChatHistory()
-  }
-}
+export type CounterState = number;
+
+export interface State {
+  chat: ChatState,
+  counter: CounterState
+  
+} 

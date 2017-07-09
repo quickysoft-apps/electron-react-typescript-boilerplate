@@ -12,7 +12,7 @@ interface IActionCreator<T> extends Reducer<T> {
   test(action: IAction): action is IActionWithPayload<T>;
 }
 
-interface IActionCreatorVoid extends IActionCreator<void> {
+export interface IActionCreatorVoid extends IActionCreator<void> {
   (): IAction;
 }
 

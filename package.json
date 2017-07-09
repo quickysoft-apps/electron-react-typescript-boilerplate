@@ -165,6 +165,7 @@
     "webpack-merge": "^2.0.0"
   },
   "dependencies": {
+    "bufferutil": "^3.0.2",
     "electron-debug": "^1.1.0",
     "electron-log": "^2.2.6",
     "electron-updater": "^2.4.3",
@@ -183,7 +184,8 @@
     "socket.io-client": "^2.0.3",
     "source-map-support": "^0.4.6",
     "strongly-typed-events": "^1.0.1",
-    "typescript-collections": "^1.2.3"
+    "typescript-collections": "^1.2.3",
+    "utf-8-validate": "^3.0.3"
   },
   "devEngines": {
     "node": ">=6.x",
