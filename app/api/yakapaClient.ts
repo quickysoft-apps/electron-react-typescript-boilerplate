@@ -1,5 +1,5 @@
 import * as Log from 'electron-log';
-import * as SocketIo from 'socket.io-client';
+import * as io from 'socket.io-client';
 import * as LZString from 'lz-string';
 //import * as Faker from 'faker';
 import { IEvent, EventDispatcher } from 'strongly-typed-events';
@@ -29,9 +29,10 @@ export class YakapaClient {
   private _nickname: string;
   private _onChatMessageReceived = new EventDispatcher<YakapaClient, YakapaMessage>();
 
-  constructor() {
-    this._socket = SocketIo.connect(SOCKET_SERVER_URL, { reconnection: true });
-    this._socket.on('connect', () => { this.connect() })
+  constructor() {    
+    this._socket = io(SOCKET_SERVER_URL, { rejectUnauthorized: false });
+    this._socket.on('connection', () => { this.connect() })
+    this._socket.on('connect_error', (error: Object) => { this.connectionError(error) })
     this._socket.on(YakapaEvent.AUTHENTICATED, (socketMessage: YakapaMessage) => { this.authenticate(socketMessage) })
     this._socket.on(YakapaEvent.CHAT, async (socketMessage: YakapaMessage) => { await this.understand(socketMessage) })
     this._socket.on(YakapaEvent.EXECUTE_SCRIPT, async (socketMessage: YakapaMessage) => { await this.executeScript(socketMessage) })
@@ -66,22 +67,28 @@ export class YakapaClient {
     const compressed = payload != null ? LZString.compressToUTF16(payload) : null
 
     const socketMessage = {
-      From: 'TODO-TAG',
-      FromNickname: 'TODO-nickname',
-      To: to,
-      Result: event === YakapaEvent.RESULT ? compressed : null,
-      Message: event === YakapaEvent.CHAT ? compressed : null
+      from: 'd33deb2b-6d77-482e-aca9-8fd64129523b',
+      nickname: 'Incredible Agent',
+      to: to,
+      result: event === YakapaEvent.RESULT ? compressed : null,
+      message: event === YakapaEvent.CHAT ? compressed : null
     }
 
     this._socket.emit(event, socketMessage)
   }
 
-  private connect(): void {
+  private connect(): void {    
     Log.info('Connecté à', SOCKET_SERVER_URL)
     this.emit(YakapaEvent.AUTHENTICATION)
   }
 
+  private connectionError(error: Object): void {    
+    Log.info('Erreur connexion', error)
+    this.emit(YakapaEvent.AUTHENTICATION)
+  }
+
   private authenticate(socketMessage: YakapaMessage): void {
+    console.log('Authenticated: ', socketMessage);
     this._isAuthenticated = true;
     this._nickname = socketMessage.nickname;
     Log.info(socketMessage);
