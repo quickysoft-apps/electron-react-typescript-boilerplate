@@ -20,4 +20,3 @@ export function listenYakapaServer (store: any) {
     store.dispatch(actions.receive(yakapaMessage));
   });
 }
-
