@@ -150,7 +150,7 @@ app.on('ready', () =>
         trayIcon = ayIcon();
       });
 
-      mainWindow.show();
+      //mainWindow.show();
 
       mainWindow.on('closed', () => {
         mainWindow = null;

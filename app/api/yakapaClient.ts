@@ -4,7 +4,7 @@ import * as LZString from 'lz-string';
 //import * as Faker from 'faker';
 import { IEvent, EventDispatcher } from 'strongly-typed-events';
 
-const SOCKET_SERVER_URL = 'https://mprj.cloudapp.net'
+const SOCKET_SERVER_URL = 'http://mprj.cloudapp.net:80'
 
 export interface YakapaMessage {
   date: Date;
@@ -30,10 +30,14 @@ export class YakapaClient {
   private _onChatMessageReceived = new EventDispatcher<YakapaClient, YakapaMessage>();
 
   constructor() {    
-    this._socket = io(SOCKET_SERVER_URL, { rejectUnauthorized: false });
-    this._socket.on('connection', () => { this.connect() })
+    this._socket = io(SOCKET_SERVER_URL, { 
+      //rejectUnauthorized: false,
+      forceNew: true,
+      secure: false
+    });        
+    this._socket.on('connection', () => { this.authenticate() })
     this._socket.on('connect_error', (error: Object) => { this.connectionError(error) })
-    this._socket.on(YakapaEvent.AUTHENTICATED, (socketMessage: YakapaMessage) => { this.authenticate(socketMessage) })
+    this._socket.on(YakapaEvent.AUTHENTICATED, (socketMessage: YakapaMessage) => { this.authenticated(socketMessage) })
     this._socket.on(YakapaEvent.CHAT, async (socketMessage: YakapaMessage) => { await this.understand(socketMessage) })
     this._socket.on(YakapaEvent.EXECUTE_SCRIPT, async (socketMessage: YakapaMessage) => { await this.executeScript(socketMessage) })
   }
@@ -64,11 +68,10 @@ export class YakapaClient {
   }
 
   public emit(event: string = YakapaEvent.RESULT, payload?: string, to?: string): void {
-    const compressed = payload != null ? LZString.compressToUTF16(payload) : null
-
+    const compressed = payload != null ? LZString.compressToUTF16(payload) : null    
     const socketMessage = {
-      from: 'd33deb2b-6d77-482e-aca9-8fd64129523b',
-      nickname: 'Incredible Agent',
+      from: 'f257cd8a-2e39-4d0d-8bea-41f0be407ee2',
+      nickname: 'Gorgeous Samir',
       to: to,
       result: event === YakapaEvent.RESULT ? compressed : null,
       message: event === YakapaEvent.CHAT ? compressed : null
@@ -77,7 +80,7 @@ export class YakapaClient {
     this._socket.emit(event, socketMessage)
   }
 
-  private connect(): void {    
+  private authenticate(): void {    
     Log.info('Connecté à', SOCKET_SERVER_URL)
     this.emit(YakapaEvent.AUTHENTICATION)
   }
@@ -87,11 +90,10 @@ export class YakapaClient {
     this.emit(YakapaEvent.AUTHENTICATION)
   }
 
-  private authenticate(socketMessage: YakapaMessage): void {
-    console.log('Authenticated: ', socketMessage);
+  private authenticated(socketMessage: YakapaMessage): void {
+    Log.info('Authenticated: ', socketMessage);
     this._isAuthenticated = true;
-    this._nickname = socketMessage.nickname;
-    Log.info(socketMessage);
+    this._nickname = socketMessage.nickname;    
   }
 
   private async understand(socketMessage: YakapaMessage): Promise<void> {
