@@ -26,6 +26,21 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
+app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+  if (url === 'https://mprj.cloudapp.net') {
+    // Verification logic.
+    event.preventDefault()
+    callback(true)
+  } else {
+    callback(false)
+  }
+})
+
+app.on('select-client-certificate', (event, webContents, url, list, callback) => {
+  log.info('select-client-certificate', url, list)
+  event.preventDefault()
+  callback(list[0])
+})
 
 const showMainWindow = () => {
   if (mainWindow) {
