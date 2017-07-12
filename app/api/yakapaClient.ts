@@ -4,7 +4,7 @@ import * as LZString from 'lz-string';
 //import * as Faker from 'faker';
 import { IEvent, EventDispatcher } from 'strongly-typed-events';
 
-const SOCKET_SERVER_URL = 'http://mprj.cloudapp.net:80'
+const SOCKET_SERVER_URL = 'http://mprj.cloudapp.net'
 
 export interface YakapaMessage {
   date: Date;
@@ -32,10 +32,9 @@ export class YakapaClient {
   constructor() {    
     this._socket = io(SOCKET_SERVER_URL, { 
       //rejectUnauthorized: false,
-      forceNew: true,
-      secure: false
-    });        
-    this._socket.on('connection', () => { this.authenticate() })
+      forceNew: true
+    });         
+    this._socket.on('connect', () => { this.authenticate() })
     this._socket.on('connect_error', (error: Object) => { this.connectionError(error) })
     this._socket.on(YakapaEvent.AUTHENTICATED, (socketMessage: YakapaMessage) => { this.authenticated(socketMessage) })
     this._socket.on(YakapaEvent.CHAT, async (socketMessage: YakapaMessage) => { await this.understand(socketMessage) })

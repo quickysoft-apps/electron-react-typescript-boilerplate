@@ -36,12 +36,6 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
   }
 })
 
-app.on('select-client-certificate', (event, webContents, url, list, callback) => {
-  log.info('select-client-certificate', url, list)
-  event.preventDefault()
-  callback(list[0])
-})
-
 const showMainWindow = () => {
   if (mainWindow) {
     mainWindow.show();
