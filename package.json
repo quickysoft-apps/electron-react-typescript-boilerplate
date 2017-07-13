@@ -139,6 +139,7 @@
     "electron": "^1.7.4",
     "electron-builder": "^19.16.0",
     "electron-devtools-installer": "^2.0.1",
+    "electron-builder-http": "^19.15.0",
     "enzyme": "^2.7.0",
     "express": "^4.14.0",
     "extract-text-webpack-plugin": "^2.1.2",
