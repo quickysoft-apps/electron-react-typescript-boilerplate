@@ -4,7 +4,9 @@ import * as LZString from 'lz-string';
 //import * as Faker from 'faker';
 import { IEvent, EventDispatcher } from 'strongly-typed-events';
 
-const SOCKET_SERVER_URL = 'http://mprj.cloudapp.net'
+const SOCKET_SERVER_URL = 'https://mprj.cloudapp.net'
+const DEFAULT_TAG = 'f257cd8a-2e39-4d0d-8bea-41f0be407ee2'
+const DEFAULT_NICKNAME = 'Gorgeous Samir'
 
 export interface YakapaMessage {
   date: Date;
@@ -31,10 +33,11 @@ export class YakapaClient {
 
   constructor() {    
     this._socket = io(SOCKET_SERVER_URL, { 
-      //rejectUnauthorized: false,
-      forceNew: true
+      rejectUnauthorized: false,
+      //forceNew: true,
+      query: `tag=${DEFAULT_TAG}`
     });         
-    this._socket.on('connect', () => { this.authenticate() })
+    this._socket.on('connect', () => { this.connected() })
     this._socket.on('connect_error', (error: Object) => { this.connectionError(error) })
     this._socket.on(YakapaEvent.AUTHENTICATED, (socketMessage: YakapaMessage) => { this.authenticated(socketMessage) })
     this._socket.on(YakapaEvent.CHAT, async (socketMessage: YakapaMessage) => { await this.understand(socketMessage) })
@@ -69,8 +72,8 @@ export class YakapaClient {
   public emit(event: string = YakapaEvent.RESULT, payload?: string, to?: string): void {
     const compressed = payload != null ? LZString.compressToUTF16(payload) : null    
     const socketMessage = {
-      from: 'f257cd8a-2e39-4d0d-8bea-41f0be407ee2',
-      nickname: 'Gorgeous Samir',
+      from: DEFAULT_TAG,
+      nickname: DEFAULT_NICKNAME,
       to: to,
       result: event === YakapaEvent.RESULT ? compressed : null,
       message: event === YakapaEvent.CHAT ? compressed : null
@@ -79,9 +82,9 @@ export class YakapaClient {
     this._socket.emit(event, socketMessage)
   }
 
-  private authenticate(): void {    
+  private connected(): void {    
     Log.info('Connecté à', SOCKET_SERVER_URL)
-    this.emit(YakapaEvent.AUTHENTICATION)
+    //this.emit(YakapaEvent.AUTHENTICATION)
   }
 
   private connectionError(error: Object): void {    
@@ -90,7 +93,7 @@ export class YakapaClient {
   }
 
   private authenticated(socketMessage: YakapaMessage): void {
-    Log.info('Authenticated: ', socketMessage);
+    Log.info('Bienvenue', socketMessage.nickname);
     this._isAuthenticated = true;
     this._nickname = socketMessage.nickname;    
   }

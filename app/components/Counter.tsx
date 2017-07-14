@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
+import { FlatButton } from 'material-ui'
 
 //let styles = require('./Counter.scss');
 
@@ -17,11 +18,9 @@ export class Counter extends React.Component<IProps> {
     const { increment, incrementIfOdd, incrementAsync, decrement, counter } = this.props;
     return (
       <div>
-        <div data-tid="backButton">
-          <Link to="/">
-            <i className="fa fa-arrow-left fa-3x" />
-          </Link>
-        </div>
+        <FlatButton>
+          <Link to="/">Back</Link>          
+        </FlatButton>
         <div data-tid="counter">
           {counter}
         </div>

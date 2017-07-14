@@ -1,16 +1,12 @@
 :local {
-  .container {
-    position: absolute;
-    top: 30%;
-    left: 10px;
+
+  .container {    
     text-align: center;
   }
 
-  .container h2 {
-    font-size: 5rem;
+  .container svg {
+    width: 256px;
+    height: 256px;
   }
 
-  .container a {
-    font-size: 1.4rem;
-  }
 }
