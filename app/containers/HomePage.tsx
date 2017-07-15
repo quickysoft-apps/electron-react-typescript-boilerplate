@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import Home from '../components/Home';
+import { Home, HomeStatus } from '../components/Home';
 
 export class HomePage extends React.Component<RouteComponentProps<any>, void> {
   render() {
     return (
-      <Home />
+      <Home status={HomeStatus.Trusted} />
     );
   }
 }

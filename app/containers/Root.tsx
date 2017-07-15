@@ -6,8 +6,7 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
 import Routes from '../routes';
 
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
-import getMuiTheme from 'material-ui/styles/getMuiTheme'
+import { MuiThemeProvider } from 'material-ui/styles'
 import theme from '../theme'
 
 interface IRootType {
@@ -18,7 +17,7 @@ interface IRootType {
 export default function Root({ store, history }: IRootType) {
   return (
     <Provider store={store}>
-      <MuiThemeProvider muiTheme={getMuiTheme(theme)}>
+      <MuiThemeProvider muiTheme={theme}>
         <ConnectedRouter history={history}>
           <Routes />
         </ConnectedRouter>

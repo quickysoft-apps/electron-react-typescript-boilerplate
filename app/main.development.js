@@ -134,8 +134,9 @@ app.on('ready', () =>
     .then(() => {
       mainWindow = new BrowserWindow({
         show: false,
-        width: 1024,
-        height: 728
+        width: 500,
+        height: 568/*,
+        resizable: false*/
       });
 
       mainWindow.loadURL(`file://${__dirname}/app.html`);

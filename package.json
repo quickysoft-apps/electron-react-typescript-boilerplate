@@ -126,6 +126,7 @@
     "@types/react-router": "^4.0.14",
     "@types/react-router-dom": "^4.0.7",
     "@types/react-router-redux": "^5.0.2",
+    "@types/react-tap-event-plugin": "0.0.30",
     "@types/redux-logger": "^3.0.0",
     "@types/sinon": "^2.3.1",
     "@types/socket.io-client": "^1.4.29",
@@ -167,7 +168,6 @@
     "webpack-merge": "^2.0.0"
   },
   "dependencies": {
-    "@types/react-tap-event-plugin": "0.0.30",
     "bufferutil": "^3.0.2",
     "electron-debug": "^1.1.0",
     "electron-log": "^2.2.7",
@@ -187,9 +187,11 @@
     "react-tap-event-plugin": "^2.0.1",
     "redux": "^3.7.2",
     "redux-thunk": "^2.1.0",
+    "remove": "^0.1.5",
     "socket.io-client": "^2.0.3",
     "source-map-support": "^0.4.6",
     "strongly-typed-events": "^1.0.1",
+    "typeface-roboto": "0.0.31",
     "typescript-collections": "^1.2.3",
     "utf-8-validate": "^3.0.3"
   },

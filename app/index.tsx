@@ -2,8 +2,7 @@ import * as React from 'react';
 import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import Root from './containers/Root';
-import { grey900 } from 'material-ui/styles/colors'
-//import './app.global.scss';
+import { grey900  } from 'material-ui/styles/colors'
 
 const { configureStore, history } = require('./store/configureStore');
 const store = configureStore();
