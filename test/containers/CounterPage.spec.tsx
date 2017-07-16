@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
 import CounterPage from '../../app/containers/CounterPage';
-import { CounterState } from '../../app/model/state';
+import { CounterState } from '../../app/reducers/counter';
 
 const CounterPageAny = CounterPage as any;
 let { configureStore, history } = require('../../app/store/configureStore');

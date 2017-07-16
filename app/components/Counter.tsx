@@ -5,7 +5,7 @@ import { FlatButton } from 'material-ui'
 
 //let styles = require('./Counter.scss');
 
-export interface IProps extends RouteComponentProps<any> {
+export interface Props extends RouteComponentProps<any> {
   increment(): void,
   incrementIfOdd(): void,
   incrementAsync(): void,
@@ -13,7 +13,7 @@ export interface IProps extends RouteComponentProps<any> {
   counter: number
 }
 
-export class Counter extends React.Component<IProps> {
+export class Counter extends React.Component<Props> {
   render() {    
     const { increment, incrementIfOdd, incrementAsync, decrement, counter } = this.props;
     return (

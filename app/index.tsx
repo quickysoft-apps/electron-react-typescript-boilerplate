@@ -11,6 +11,7 @@ document.body.style.position = "relative";
 document.body.style.height = "100vh";
 document.body.style.overflowY = "hidden";
 document.body.style.backgroundColor = grey900;
+document.body.style.margin = "0px";
 
 render(  
   <AppContainer>

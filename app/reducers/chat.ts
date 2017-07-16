@@ -1,10 +1,27 @@
 import { IActionWithPayload } from '../actions/helpers';
-import { ChatHistory } from '../model/chatHistory'
 import { YakapaMessage } from '../api/yakapaClient'
 import { receive } from '../actions/chat';
-import { ChatState } from '../model/state';
 
-export default function chat(state: ChatState = { history: new ChatHistory() }, action: IActionWithPayload<YakapaMessage>) {
+export interface ChatState {
+  history: ChatHistory;
+}
+
+export class ChatHistory {
+
+  readonly history: Set<YakapaMessage> = new Set<YakapaMessage>();
+
+  constructor(chatHistory?: ChatHistory, chatMessage?: YakapaMessage) {
+    if (chatHistory !== undefined) {
+      this.history = new Set<YakapaMessage>(chatHistory.history);
+    }
+    if (chatMessage !== undefined) {
+      this.history.add(chatMessage);
+    }
+  }
+
+}
+
+export function chat(state: ChatState = { history: new ChatHistory() }, action: IActionWithPayload<YakapaMessage>) {
   if (receive.test(action)) {    
     const chatMessage: YakapaMessage = {
       date: new Date(Date.now()),
