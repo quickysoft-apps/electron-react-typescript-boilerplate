@@ -24,7 +24,10 @@ export class Home extends React.Component<Props> {
       <div style={Home.styles.container}>
 
         <Heart status={this.props.status} />
-        <FlatButton>Activer</FlatButton>
+        <FlatButton
+          label={this.props.status === AgentStatus.Asleep ? "Connexion en cours..." : "Activer"}  
+          primary={true}
+          disabled={this.props.status === AgentStatus.Asleep} />
 
       </div >
 

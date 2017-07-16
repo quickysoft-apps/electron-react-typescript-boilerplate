@@ -11,4 +11,4 @@ class App extends React.Component {
   }
 }
 
-export default withLayout('Yakapa', App);
+export default withLayout('', App);
