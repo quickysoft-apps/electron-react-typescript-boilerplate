@@ -135,14 +135,15 @@ app.on('ready', () =>
       mainWindow = new BrowserWindow({
         show: false,
         width: 500,
-        height: 568/*,
-        resizable: false*/
+        height: 568,
+        resizable: false,
+        frame: false
       });
 
       mainWindow.loadURL(`file://${__dirname}/app.html`);
 
       mainWindow.webContents.on('did-finish-load', () => {
-        trayIcon = ayIcon();
+        trayIcon = ayIcon();        
       });
 
       //mainWindow.show();
@@ -166,7 +167,7 @@ app.on('ready', () =>
       })
 
       if (process.env.NODE_ENV === 'development') {
-        mainWindow.openDevTools();
+        //mainWindow.openDevTools();
         mainWindow.webContents.on('context-menu', (e, props) => {
           const { x, y } = props;
 

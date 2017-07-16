@@ -1,0 +1,1 @@
+declare module 'react-electron-browser-window';
