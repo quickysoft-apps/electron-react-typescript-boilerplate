@@ -16,10 +16,18 @@ export function yakapaClientMiddleware(): Redux.Middleware {
 };
 
 export function listenYakapaServer(store: any) {
-
-  client.onChatMessageReceived.subscribe((yakapaClient: YakapaClient, yakapaMessage: YakapaMessage) => {
-    store.dispatch(Actions.Chat.receive(yakapaMessage));
+  
+  client.onConnectedMessageReceived.subscribe(() => {
+    store.dispatch(Actions.YakapaClient.connected());
   });
+
+  client.onConnectionErrorMessageReceived.subscribe((error: Object) => {
+    store.dispatch(Actions.YakapaClient.connectionError(error));
+  })
+
+  client.onSocketErrorMessageReceived.subscribe((error: Error) => {
+    store.dispatch(Actions.YakapaClient.socketError(error));
+  })
 
   client.onAuthenticatedMessageReceived.subscribe((yakapaClient: YakapaClient, yakapaMessage: YakapaMessage) => {
     store.dispatch(Actions.YakapaClient.authenticated(yakapaMessage));

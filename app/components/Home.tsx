@@ -7,7 +7,8 @@ import { AgentStatus } from '../reducers/home';
 import { Heart } from './Heart';
 
 export interface Props extends RouteComponentProps<any> {
-  status: AgentStatus
+  status: AgentStatus,
+  socketError: Error
 }
 
 export class Home extends React.Component<Props> {
@@ -17,17 +18,26 @@ export class Home extends React.Component<Props> {
       textAlign: "center"
     }
   };
-  
+
   public render() {
+
+    let label: React.ReactNode;
+    if (this.props.socketError) {
+      label = <span>Agent non reconnu :(</span>;
+    } else {
+      label = <span>{this.props.status === AgentStatus.Asleep ? "Connexion au serveur..." : "Activer"}</span>;
+    }
+
+    const disabled = (this.props.socketError !== undefined || this.props.status === AgentStatus.Asleep)
 
     return (
       <div style={Home.styles.container}>
 
         <Heart status={this.props.status} />
         <FlatButton
-          label={this.props.status === AgentStatus.Asleep ? "En attente du serveur..." : "Activer"}  
+          label={label}
           primary={true}
-          disabled={this.props.status === AgentStatus.Asleep} />
+          disabled={disabled} />
 
       </div >
 

@@ -5,7 +5,7 @@ import { chat, ChatState } from './chat';
 import { home, HomeState } from './home';
 import { yakapaClient, YakapaClientState } from './yakapaClient'
 
-const rootReducer = combineReducers({
+const rootReducer = combineReducers({  
   yakapaClient,
   chat,
   counter, 

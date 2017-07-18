@@ -14,16 +14,15 @@ function mapStateToProps(state: State): Partial<Props> {
     status = AgentStatus.Alive;
   }
 
-  if (state.yakapaClient.connectionError === true) {
-    status = AgentStatus.Alive;
-  }
-
-  if (state.yakapaClient.authenticated === true) {
+  if (state.yakapaClient.trusted === true) {
     status = AgentStatus.Trusted;
   }
 
-  return {
-    status
+    console.log(state.yakapaClient)
+
+  return { 
+    status,
+    socketError: state.yakapaClient.socketError
   };
 }
 

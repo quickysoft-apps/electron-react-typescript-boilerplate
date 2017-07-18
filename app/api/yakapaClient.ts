@@ -2,7 +2,7 @@ import * as Log from 'electron-log';
 import * as io from 'socket.io-client';
 import * as LZString from 'lz-string';
 //import * as Faker from 'faker';
-import { IEvent, ISignal, SignalDispatcher, EventDispatcher } from 'strongly-typed-events';
+import { IEvent, ISignal, ISimpleEvent, SignalDispatcher, EventDispatcher, SimpleEventDispatcher } from 'strongly-typed-events';
 
 const SOCKET_SERVER_URL = 'https://mprj.cloudapp.net'
 const DEFAULT_TAG = 'f257cd8a-2e39-4d0d-8bea-41f0be407ee2'
@@ -45,9 +45,14 @@ export class YakapaClient {
     return this._onConnectedMessageReceived.asEvent();
   }
 
-  private _onConnectionErrorMessageReceived = new SignalDispatcher();
-  public get onConnectionErrorMessageReceived(): ISignal {
+  private _onConnectionErrorMessageReceived = new SimpleEventDispatcher<Object>();
+  public get onConnectionErrorMessageReceived(): ISimpleEvent<Object> {
     return this._onConnectionErrorMessageReceived.asEvent();
+  }
+
+  private _onSocketErrorMessageReceived = new SimpleEventDispatcher<Error>();
+  public get onSocketErrorMessageReceived(): ISimpleEvent<Error> {
+    return this._onSocketErrorMessageReceived.asEvent();
   }
 
   constructor() {
@@ -55,8 +60,20 @@ export class YakapaClient {
       rejectUnauthorized: false,
       query: `tag=${DEFAULT_TAG}`
     });
+
+    this._socket.on('ping', () => { Log.debug('ping') })
+    this._socket.on('pong', (ms: number) => { Log.debug('pong', ms, 'ms') })
+    this._socket.on('connect_timeout', (attempt: number) => { Log.debug('connect_timeout') })
+    this._socket.on('reconnect_attempt', (attempt: number) => { Log.debug('reconnect_attempt') })
+    this._socket.on('reconnecting', (attempt: number) => { Log.debug('reconnecting n.', attempt) })
+    this._socket.on('reconnect_error', (error: Object) => { Log.debug('reconnect_error', error) })
+    this._socket.on('reconnect_failed', (attempt: number) => { Log.debug('reconnect_failed') })
     this._socket.on('connect', () => { this.connected() })
     this._socket.on('connect_error', (error: Object) => { this.connectionError(error) })
+    this._socket.on('error', (error: Error) => { this.socketError(error) })
+    this._socket.on('disconnect', (reason: string) => { Log.debug('disconnect:', reason) })
+    this._socket.on('reconnect', (attempt: number) => { Log.debug('reconnect') })
+
     this._socket.on(YakapaEvent.AUTHENTICATED, (socketMessage: YakapaMessage) => { this.authenticated(socketMessage) })
     this._socket.on(YakapaEvent.CHAT, async (socketMessage: YakapaMessage) => { await this.understand(socketMessage) })
     this._socket.on(YakapaEvent.EXECUTE_SCRIPT, async (socketMessage: YakapaMessage) => { await this.executeScript(socketMessage) })
@@ -106,10 +123,16 @@ export class YakapaClient {
     this._onConnectedMessageReceived.dispatch();
   }
 
+  private socketError(error: Error): void {
+    Log.info('error', error)
+    //this.emit(YakapaEvent.AUTHENTICATION)
+    this._onSocketErrorMessageReceived.dispatch(error);
+  }
+
   private connectionError(error: Object): void {
     Log.info('Erreur connexion', error)
     //this.emit(YakapaEvent.AUTHENTICATION)
-    this._onConnectionErrorMessageReceived.dispatch();
+    this._onConnectionErrorMessageReceived.dispatch(error);
   }
 
   private authenticated(socketMessage: YakapaMessage): void {
@@ -129,7 +152,7 @@ export class YakapaClient {
       this._onChatMessageReceived.dispatch(this, socketMessage);
       resolve();
     });
-  }
+  } 
 
   private executeScript(socketMessage: YakapaMessage): Promise<void> {
     return new Promise<void>((resolve, reject) => {
