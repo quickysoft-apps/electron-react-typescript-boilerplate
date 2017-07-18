@@ -12,7 +12,7 @@ export default function withLayout<P = {}>(title: string, Component: React.Compo
 
     public constructor(props: P) {
       super(props)
-      this.state = { visible: false }
+      this.state = { visible: true }
     }
 
     private hideWindow() {

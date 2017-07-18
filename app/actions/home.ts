@@ -1,3 +1,5 @@
 import { actionCreatorVoid } from './helpers';
 
-export const myAction = actionCreatorVoid('home/myAction');
+export class Home {
+  public static readonly myAction = actionCreatorVoid('home/myAction');
+}

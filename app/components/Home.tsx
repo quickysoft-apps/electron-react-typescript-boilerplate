@@ -17,7 +17,7 @@ export class Home extends React.Component<Props> {
       textAlign: "center"
     }
   };
-
+  
   public render() {
 
     return (

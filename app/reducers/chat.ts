@@ -1,6 +1,6 @@
 import { IActionWithPayload } from '../actions/helpers';
 import { YakapaMessage } from '../api/yakapaClient'
-import { receive } from '../actions/chat';
+import { Actions } from '../actions';
 
 export interface ChatState {
   history: ChatHistory;
@@ -22,8 +22,8 @@ export class ChatHistory {
 }
 
 export function chat(state: ChatState = { history: new ChatHistory() }, action: IActionWithPayload<YakapaMessage>) {
-  if (receive.test(action)) {    
-    const chatMessage: YakapaMessage = {
+  if (Actions.Chat.receive.test(action)) {    
+    const chatMessage: YakapaMessage = {      
       date: new Date(Date.now()),
       nickname: action.payload.nickname,
       from: action.payload.from,

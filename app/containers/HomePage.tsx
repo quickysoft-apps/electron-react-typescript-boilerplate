@@ -2,12 +2,28 @@ import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Home, Props } from '../components/Home';
+import { AgentStatus } from '../reducers/home';
 import { State } from '../reducers';
 import * as HomeActions from '../actions/home';
 
 function mapStateToProps(state: State): Partial<Props> {
+
+  let status = AgentStatus.Asleep;
+
+  if (state.yakapaClient.connected === true) {
+    status = AgentStatus.Alive;
+  }
+
+  if (state.yakapaClient.connectionError === true) {
+    status = AgentStatus.Alive;
+  }
+
+  if (state.yakapaClient.authenticated === true) {
+    status = AgentStatus.Trusted;
+  }
+
   return {
-    status: state.home.status
+    status
   };
 }
 
