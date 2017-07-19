@@ -5,6 +5,35 @@ import 'typeface-roboto';
 import { AgentStatus } from '../reducers/home'
 
 
+/*
+$ ->
+  mapsvg = Snap $("svg")[0]
+  setTimeout ( =>
+    path = mapsvg.select('#California')
+    smallScale = new Snap.Matrix()
+    smallScale.scale(0.8,0.8, path.getBBox().cx, path.getBBox().cy)
+    path.animate {transform: smallScale}, 1000, mina.elastic
+  ), 500
+  mapsvg.hover ((e)->
+    s = Snap e.target
+    p = s.select('path')
+    midScale = new Snap.Matrix()
+    midScale.scale(0.9, 0.9, p.getBBox().cx, p.getBBox().cy)
+    p.animate {
+      transform: midScale
+    }, 1000, mina.elastic
+  ), ((e)->
+    s = Snap e.target
+    p = s.select('path')
+    midScale = new Snap.Matrix()
+    midScale.scale(0.8, 0.8, p.getBBox().cx, p.getBBox().cy)
+    p.animate {
+      transform: midScale
+    }, 1000, mina.elastic
+  )
+*/
+
+
 interface Props {
   status: AgentStatus
 }
