@@ -5,7 +5,7 @@ import * as LZString from 'lz-string';
 import { IEvent, ISignal, ISimpleEvent, SignalDispatcher, EventDispatcher, SimpleEventDispatcher } from 'strongly-typed-events';
 
 const SOCKET_SERVER_URL = 'https://mprj.cloudapp.net'
-const DEFAULT_TAG = 'f257cd8a-2e39-4d0d-8bea-41f0be407ee2-'
+const DEFAULT_TAG = 'f257cd8a-2e39-4d0d-8bea-41f0be407ee2'
 const DEFAULT_NICKNAME = 'Gorgeous Samir'
 
 export class YakapaEvent {
@@ -46,12 +46,12 @@ export class YakapaClient {
   }
 
   private _onConnectionErrorMessageReceived = new SimpleEventDispatcher<Error>();
-  public get onConnectionErrorMessageReceived(): ISimpleEvent<Error> {
+  public get onConnectionErrorMessageReceived(): ISimpleEvent<Object> {
     return this._onConnectionErrorMessageReceived.asEvent();
   }
 
   private _onSocketErrorMessageReceived = new SimpleEventDispatcher<Error>();
-  public get onSocketErrorMessageReceived(): ISimpleEvent<Error> {
+  public get onSocketErrorMessageReceived(): ISimpleEvent<Object> {
     return this._onSocketErrorMessageReceived.asEvent();
   }
 

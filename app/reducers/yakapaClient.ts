@@ -1,10 +1,11 @@
 import { IAction } from '../actions/helpers';
 import { Actions } from '../actions';
+import { YakapaClientError } from '../actions/yakapaClient';
 
 interface State {
   connected: boolean;
-  connectionError: Error;
-  socketError: Error;
+  connectionError: YakapaClientError;
+  socketError: YakapaClientError;
   trusted: boolean;
 }
 
@@ -30,14 +31,14 @@ export function yakapaClient(state: YakapaClientState = { }, action: IAction) {
   if (Actions.YakapaClient.socketError.test(action)) {
     return { 
       ...state, 
-      connected: action.payload.message === 'xhr poll error' ? false: true,
+      connected: action.payload.type === 'AuthenticationError' || action.payload.type === 'TransportError' ? false: true,
       socketError: action.payload
     };
   }  
   if (Actions.YakapaClient.connectionError.test(action)) {
     return { 
       ...state, 
-      connected: action.payload.message === 'xhr poll error' ? false: true,
+      connected: action.payload.type === 'TransportError' ? false: true,
       connectionError: action.payload 
     };
   }  

@@ -21,11 +21,11 @@ export function listenYakapaServer(store: any) {
     store.dispatch(Actions.YakapaClient.connected());
   });
 
-  client.onConnectionErrorMessageReceived.subscribe((error: Error) => {
+  client.onConnectionErrorMessageReceived.subscribe((error: Object) => {
     store.dispatch(Actions.YakapaClient.connectionError(error));
   })
 
-  client.onSocketErrorMessageReceived.subscribe((error: Error) => {
+  client.onSocketErrorMessageReceived.subscribe((error: Object) => {
     store.dispatch(Actions.YakapaClient.socketError(error));
   })
 

@@ -18,7 +18,7 @@ function mapStateToProps(state: State): Partial<Props> {
   }
 
   return {
-    status,
+    status,    
     trusted: state.yakapaClient.trusted
   };
 }

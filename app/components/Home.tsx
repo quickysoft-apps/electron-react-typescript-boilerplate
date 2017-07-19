@@ -7,7 +7,7 @@ import { AgentStatus } from '../reducers/home';
 import { Heart } from './Heart';
 
 export interface Props extends RouteComponentProps<any> {
-  status: AgentStatus,
+  status: AgentStatus,  
   trusted: boolean
 }
 
