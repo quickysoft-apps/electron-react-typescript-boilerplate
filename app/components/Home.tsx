@@ -8,7 +8,7 @@ import { Heart } from './Heart';
 
 export interface Props extends RouteComponentProps<any> {
   status: AgentStatus,
-  socketError: Error
+  trusted: boolean
 }
 
 export class Home extends React.Component<Props> {
@@ -22,13 +22,13 @@ export class Home extends React.Component<Props> {
   public render() {
 
     let label: React.ReactNode;
-    if (this.props.socketError) {
+    if (this.props.trusted === false) {
       label = <span>Agent non reconnu :(</span>;
     } else {
       label = <span>{this.props.status === AgentStatus.Asleep ? "Connexion au serveur..." : "Activer"}</span>;
     }
 
-    const disabled = (this.props.socketError !== undefined || this.props.status === AgentStatus.Asleep)
+    const disabled = (this.props.trusted === false || this.props.status === AgentStatus.Asleep)
 
     return (
       <div style={Home.styles.container}>

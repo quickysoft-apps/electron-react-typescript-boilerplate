@@ -5,7 +5,7 @@ import * as LZString from 'lz-string';
 import { IEvent, ISignal, ISimpleEvent, SignalDispatcher, EventDispatcher, SimpleEventDispatcher } from 'strongly-typed-events';
 
 const SOCKET_SERVER_URL = 'https://mprj.cloudapp.net'
-const DEFAULT_TAG = 'f257cd8a-2e39-4d0d-8bea-41f0be407ee2'
+const DEFAULT_TAG = 'f257cd8a-2e39-4d0d-8bea-41f0be407ee2-'
 const DEFAULT_NICKNAME = 'Gorgeous Samir'
 
 export class YakapaEvent {
@@ -45,8 +45,8 @@ export class YakapaClient {
     return this._onConnectedMessageReceived.asEvent();
   }
 
-  private _onConnectionErrorMessageReceived = new SimpleEventDispatcher<Object>();
-  public get onConnectionErrorMessageReceived(): ISimpleEvent<Object> {
+  private _onConnectionErrorMessageReceived = new SimpleEventDispatcher<Error>();
+  public get onConnectionErrorMessageReceived(): ISimpleEvent<Error> {
     return this._onConnectionErrorMessageReceived.asEvent();
   }
 
@@ -69,7 +69,7 @@ export class YakapaClient {
     this._socket.on('reconnect_error', (error: Object) => { Log.debug('reconnect_error', error) })
     this._socket.on('reconnect_failed', (attempt: number) => { Log.debug('reconnect_failed') })
     this._socket.on('connect', () => { this.connected() })
-    this._socket.on('connect_error', (error: Object) => { this.connectionError(error) })
+    this._socket.on('connect_error', (error: Error) => { this.connectionError(error) })
     this._socket.on('error', (error: Error) => { this.socketError(error) })
     this._socket.on('disconnect', (reason: string) => { Log.debug('disconnect:', reason) })
     this._socket.on('reconnect', (attempt: number) => { Log.debug('reconnect') })
@@ -129,7 +129,7 @@ export class YakapaClient {
     this._onSocketErrorMessageReceived.dispatch(error);
   }
 
-  private connectionError(error: Object): void {
+  private connectionError(error: Error): void {
     Log.info('Erreur connexion', error)
     //this.emit(YakapaEvent.AUTHENTICATION)
     this._onConnectionErrorMessageReceived.dispatch(error);
@@ -152,7 +152,7 @@ export class YakapaClient {
       this._onChatMessageReceived.dispatch(this, socketMessage);
       resolve();
     });
-  } 
+  }
 
   private executeScript(socketMessage: YakapaMessage): Promise<void> {
     return new Promise<void>((resolve, reject) => {

@@ -21,7 +21,7 @@ export function listenYakapaServer(store: any) {
     store.dispatch(Actions.YakapaClient.connected());
   });
 
-  client.onConnectionErrorMessageReceived.subscribe((error: Object) => {
+  client.onConnectionErrorMessageReceived.subscribe((error: Error) => {
     store.dispatch(Actions.YakapaClient.connectionError(error));
   })
 
