@@ -1,5 +1,5 @@
 import { IActionWithPayload } from '../actions/helpers';
-import { YakapaMessage } from '../api/yakapaClient'
+import { AgentMessage } from '../api/agent'
 import { Actions } from '../actions';
 
 export interface ChatState {
@@ -8,11 +8,11 @@ export interface ChatState {
 
 export class ChatHistory {
 
-  readonly history: Set<YakapaMessage> = new Set<YakapaMessage>();
+  readonly history: Set<AgentMessage> = new Set<AgentMessage>();
 
-  constructor(chatHistory?: ChatHistory, chatMessage?: YakapaMessage) {
+  constructor(chatHistory?: ChatHistory, chatMessage?: AgentMessage) {
     if (chatHistory !== undefined) {
-      this.history = new Set<YakapaMessage>(chatHistory.history);
+      this.history = new Set<AgentMessage>(chatHistory.history);
     }
     if (chatMessage !== undefined) {
       this.history.add(chatMessage);
@@ -21,9 +21,9 @@ export class ChatHistory {
 
 }
 
-export function chat(state: ChatState = { history: new ChatHistory() }, action: IActionWithPayload<YakapaMessage>) {
+export function chat(state: ChatState = { history: new ChatHistory() }, action: IActionWithPayload<AgentMessage>) {
   if (Actions.Chat.receive.test(action)) {    
-    const chatMessage: YakapaMessage = {      
+    const chatMessage: AgentMessage = {      
       date: new Date(Date.now()),
       nickname: action.payload.nickname,
       from: action.payload.from,

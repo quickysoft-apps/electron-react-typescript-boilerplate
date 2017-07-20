@@ -1,10 +1,10 @@
-import { YakapaClient } from './yakapaClient';
+import { Agent } from './agent';
 import { Chat } from './chat';
 import { Counter } from './counter';
 import { Home } from './home';
 
 export const Actions = {
-  YakapaClient,
+  Agent,
   Chat,
   Counter,
   Home

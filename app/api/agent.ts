@@ -8,35 +8,35 @@ const SOCKET_SERVER_URL = 'https://mprj.cloudapp.net'
 const DEFAULT_TAG = 'f257cd8a-2e39-4d0d-8bea-41f0be407ee2'
 const DEFAULT_NICKNAME = 'Gorgeous Samir'
 
-export class YakapaEvent {
+export class AgentEvent {
   private static readonly PREFIX: string = 'yakapa';
-  public static readonly CHAT: string = `${YakapaEvent.PREFIX}/chat`;
-  public static readonly RESULT: string = `${YakapaEvent.PREFIX}/result`;
-  public static readonly EXECUTE_SCRIPT: string = `${YakapaEvent.PREFIX}/executescript`;
-  public static readonly AUTHENTICATION: string = `${YakapaEvent.PREFIX}/authentication`;
-  public static readonly AUTHENTICATED: string = `${YakapaEvent.PREFIX}/authenticated`;
+  public static readonly CHAT: string = `${AgentEvent.PREFIX}/chat`;
+  public static readonly RESULT: string = `${AgentEvent.PREFIX}/result`;
+  public static readonly EXECUTE_SCRIPT: string = `${AgentEvent.PREFIX}/executescript`;
+  public static readonly AUTHENTICATION: string = `${AgentEvent.PREFIX}/authentication`;
+  public static readonly AUTHENTICATED: string = `${AgentEvent.PREFIX}/authenticated`;
 }
 
-export interface YakapaMessage {
+export interface AgentMessage {
   date: Date;
   from: string;
   nickname: string;
   message: string;
 }
 
-export class YakapaClient {
+export class Agent {
 
   private _socket: SocketIOClient.Socket;
   private _isAuthenticated: boolean = false;
   private _nickname: string;
 
-  private _onChatMessageReceived = new EventDispatcher<YakapaClient, YakapaMessage>();
-  public get onChatMessageReceived(): IEvent<YakapaClient, YakapaMessage> {
+  private _onChatMessageReceived = new EventDispatcher<Agent, AgentMessage>();
+  public get onChatMessageReceived(): IEvent<Agent, AgentMessage> {
     return this._onChatMessageReceived.asEvent();
   }
 
-  private _onAuthenticatedMessageReceived = new EventDispatcher<YakapaClient, YakapaMessage>();
-  public get onAuthenticatedMessageReceived(): IEvent<YakapaClient, YakapaMessage> {
+  private _onAuthenticatedMessageReceived = new EventDispatcher<Agent, AgentMessage>();
+  public get onAuthenticatedMessageReceived(): IEvent<Agent, AgentMessage> {
     return this._onAuthenticatedMessageReceived.asEvent();
   }
 
@@ -74,16 +74,16 @@ export class YakapaClient {
     this._socket.on('disconnect', (reason: string) => { Log.debug('disconnect:', reason) })
     this._socket.on('reconnect', (attempt: number) => { Log.debug('reconnect') })
 
-    this._socket.on(YakapaEvent.AUTHENTICATED, (socketMessage: YakapaMessage) => { this.authenticated(socketMessage) })
-    this._socket.on(YakapaEvent.CHAT, async (socketMessage: YakapaMessage) => { await this.understand(socketMessage) })
-    this._socket.on(YakapaEvent.EXECUTE_SCRIPT, async (socketMessage: YakapaMessage) => { await this.executeScript(socketMessage) })
+    this._socket.on(AgentEvent.AUTHENTICATED, (socketMessage: AgentMessage) => { this.authenticated(socketMessage) })
+    this._socket.on(AgentEvent.CHAT, async (socketMessage: AgentMessage) => { await this.understand(socketMessage) })
+    this._socket.on(AgentEvent.EXECUTE_SCRIPT, async (socketMessage: AgentMessage) => { await this.executeScript(socketMessage) })
   }
 
   getJson(json: any): any {
     return typeof json === 'object' ? json : JSON.parse(json)
   }
 
-  private check(socketMessage: YakapaMessage): boolean {
+  private check(socketMessage: AgentMessage): boolean {
 
     if (this._isAuthenticated === false) {
       Log.warn(`Je ne peux rien faire car je ne suis pas authentifié !`)
@@ -104,14 +104,14 @@ export class YakapaClient {
     return true
   }
 
-  public emit(event: string = YakapaEvent.RESULT, payload?: string, to?: string): void {
+  public emit(event: string = AgentEvent.RESULT, payload?: string, to?: string): void {
     const compressed = payload != null ? LZString.compressToUTF16(payload) : null
     const socketMessage = {
       from: DEFAULT_TAG,
       nickname: DEFAULT_NICKNAME,
       to: to,
-      result: event === YakapaEvent.RESULT ? compressed : null,
-      message: event === YakapaEvent.CHAT ? compressed : null
+      result: event === AgentEvent.RESULT ? compressed : null,
+      message: event === AgentEvent.CHAT ? compressed : null
     }
 
     this._socket.emit(event, socketMessage)
@@ -135,14 +135,14 @@ export class YakapaClient {
     this._onConnectionErrorMessageReceived.dispatch(error);
   }
 
-  private authenticated(socketMessage: YakapaMessage): void {
+  private authenticated(socketMessage: AgentMessage): void {
     Log.info('Bienvenue', socketMessage.nickname);
     this._isAuthenticated = true;
     this._nickname = socketMessage.nickname;
     this._onAuthenticatedMessageReceived.dispatch(this, socketMessage);
   }
 
-  private async understand(socketMessage: YakapaMessage): Promise<void> {
+  private async understand(socketMessage: AgentMessage): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (!this.check(socketMessage)) reject();
       const decompressed = LZString.decompressFromUTF16(socketMessage.message);
@@ -154,7 +154,7 @@ export class YakapaClient {
     });
   }
 
-  private executeScript(socketMessage: YakapaMessage): Promise<void> {
+  private executeScript(socketMessage: AgentMessage): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       resolve();
     });

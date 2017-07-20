@@ -10,16 +10,16 @@ function mapStateToProps(state: State): Partial<Props> {
 
   let status = AgentStatus.Asleep;
 
-  if (state.yakapaClient.connected === true) {
+  if (state.agent.connected === true) {
     status = AgentStatus.Alive;
-    if (state.yakapaClient.trusted === true) {
+    if (state.agent.trusted === true) {
       status = AgentStatus.Trusted;
     }
   }
 
   return {
     status,    
-    trusted: state.yakapaClient.trusted
+    trusted: state.agent.trusted
   };
 }
 

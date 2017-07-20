@@ -3,10 +3,10 @@ import { routerReducer as routing } from 'react-router-redux';
 import { counter, CounterState } from './counter';
 import { chat, ChatState } from './chat';
 import { home, HomeState } from './home';
-import { yakapaClient, YakapaClientState } from './yakapaClient'
+import { agent, AgentState } from './agent'
 
 const rootReducer = combineReducers({  
-  yakapaClient,
+  agent,
   chat,
   counter, 
   home,
@@ -17,7 +17,7 @@ export interface State {
   home: HomeState
   chat: ChatState,
   counter: CounterState,
-  yakapaClient: YakapaClientState
+  agent: AgentState
 } 
 
 export default rootReducer;
