@@ -1,13 +1,9 @@
 import * as React from 'react';
 import { red500, red800, orange800, grey800 } from 'material-ui/styles/colors';
-import * as Snap from 'snapsvg';
+import * as Snap from 'snapsvg-cjs';
 import 'typeface-roboto';
 
 import { AgentStatus } from '../reducers/home'
-
-
-
-
 
 interface Props {
   status: AgentStatus
@@ -47,6 +43,8 @@ export class Heart extends React.Component<Props, State> {
 
   public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
    
+      console.log('componentDidUpdate');
+
     const svg = Snap('#svg');
     setTimeout(() => {
       const path = svg.select('path');
@@ -65,7 +63,7 @@ export class Heart extends React.Component<Props, State> {
           transform: midScale
         }, 1000, mina.elastic);
       },
-      function (e) {
+      function (e: MouseEvent) {
         const s = Snap(e.target as SVGElement);
         const p = s.select('path');
         const midScale = new Snap.Matrix();
