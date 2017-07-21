@@ -7,6 +7,7 @@ interface State {
   connectionError: AgentError;
   socketError: AgentError;
   trusted: boolean;
+  pongMs: number;
 }
 
 export interface AgentState extends Partial<State> {}
@@ -15,6 +16,14 @@ export function agent(state: AgentState = { }, action: IAction) {
 
   const actionWithError = action as IActionWithPayload<AgentError>;
 
+  if (Actions.Agent.pong.test(action)) {
+    return { 
+      ...state, 
+      pongMs: action.payload,
+      socketError: undefined,
+      connectionError: undefined
+    };
+  }  
   if (Actions.Agent.connected.test(action)) {
     return { 
       ...state, 

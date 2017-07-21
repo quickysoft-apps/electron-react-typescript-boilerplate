@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { Home, Props } from '../components/Home';
 import { AgentStatus } from '../reducers/home';
 import { State } from '../reducers';
-import * as HomeActions from '../actions/home';
+import * as agentActions from '../actions/agent';
 
 function mapStateToProps(state: State): Partial<Props> {
 
@@ -19,12 +19,13 @@ function mapStateToProps(state: State): Partial<Props> {
 
   return {
     status,    
-    trusted: state.agent.trusted
+    trusted: state.agent.trusted,
+    pongMs: state.agent.pongMs
   };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<State>): Partial<Props> {
-  return bindActionCreators(HomeActions as any, dispatch);
+  return bindActionCreators(agentActions as any, dispatch);
 }
 
 export default (connect(mapStateToProps, mapDispatchToProps)(Home) as any as React.StatelessComponent<Props>);

@@ -8,7 +8,8 @@ import { Heart } from './Heart';
 
 export interface Props extends RouteComponentProps<any> {
   status: AgentStatus,  
-  trusted: boolean
+  trusted: boolean,
+  pongMs: number
 }
 
 export class Home extends React.Component<Props> {
@@ -19,6 +20,13 @@ export class Home extends React.Component<Props> {
     }
   };
 
+  public componentDidMount() {
+    console.log('-------------------------Home componentDidMount');        
+  }
+
+  public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<any>) {
+    console.log('------------------------Home componentDidUpdate', this.props);
+  }
   public render() {
 
     let label: React.ReactNode;
@@ -33,7 +41,7 @@ export class Home extends React.Component<Props> {
     return (
       <div style={Home.styles.container}>
 
-        <Heart status={this.props.status} />
+        <Heart status={this.props.status} pongMS={this.props.pongMs} />
         <FlatButton
           label={label}
           primary={true}

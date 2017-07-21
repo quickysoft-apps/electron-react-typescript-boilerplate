@@ -6,7 +6,8 @@ import 'typeface-roboto';
 import { AgentStatus } from '../reducers/home'
 
 interface Props {
-  status: AgentStatus
+  status: AgentStatus,
+  pongMS: number
 }
 
 interface State {
@@ -41,38 +42,14 @@ export class Heart extends React.Component<Props, State> {
     this.state = { hover: false };
   }
 
+
+  public componentDidMount() {
+    console.log('-------------------------Heart componentDidMount');        
+  }
+
   public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
-   
-      console.log('componentDidUpdate');
-
-    const svg = Snap('#svg');
-    setTimeout(() => {
-      const path = svg.select('path');
-      const smallScale = new Snap.Matrix();
-      smallScale.scale(0.8, 0.8, path.getBBox().cx, path.getBBox().cy);
-      path.animate({ transform: smallScale }, 1000, mina.elastic);
-    }, 500);
-
-    svg.hover(
-      function (e: MouseEvent) {
-        const s = Snap(e.target as SVGElement);
-        const p = s.select('path');
-        const midScale = new Snap.Matrix();
-        midScale.scale(0.9, 0.9, p.getBBox().cx, p.getBBox().cy);
-        p.animate({
-          transform: midScale
-        }, 1000, mina.elastic);
-      },
-      function (e: MouseEvent) {
-        const s = Snap(e.target as SVGElement);
-        const p = s.select('path');
-        const midScale = new Snap.Matrix();
-        midScale.scale(0.8, 0.8, p.getBBox().cx, p.getBBox().cy);
-        p.animate({
-          transform: midScale
-        }, 1000, mina.elastic);
-      }
-    );
+    console.log('------------------------Heart componentDidUpdate', this.props, this.state);
+    this.beat();
   }
 
   public render() {
@@ -105,6 +82,42 @@ export class Heart extends React.Component<Props, State> {
 
   private toggleHover() {
     this.setState({ hover: !this.state.hover })
+  }
+
+  private beat() {
+    const svg = Snap('#svg');
+    /*setTimeout(() => {
+      const path = svg.select('path');
+      const smallScale = new Snap.Matrix();
+      smallScale.scale(0.8, 0.8, path.getBBox().cx, path.getBBox().cy);
+      path.animate({ transform: smallScale }, 1000, mina.elastic);
+    }, 500);*/
+
+    const path = svg.select('path');
+      const smallScale = new Snap.Matrix();
+      smallScale.scale(0.8, 0.8, path.getBBox().cx, path.getBBox().cy);
+      path.animate({ transform: smallScale }, 1000, mina.elastic);
+
+    /*svg.hover(
+      function (e: MouseEvent) {
+        const s = Snap(e.currentTarget as SVGElement);
+        const p = s.select('path');
+        const midScale = new Snap.Matrix();
+        midScale.scale(0.9, 0.9, p.getBBox().cx, p.getBBox().cy);
+        p.animate({
+          transform: midScale
+        }, 1000, mina.elastic);
+      },
+      function (e: MouseEvent) {
+        const s = Snap(e.currentTarget as SVGElement);
+        const p = s.select('path');
+        const midScale = new Snap.Matrix();
+        midScale.scale(0.8, 0.8, p.getBBox().cx, p.getBBox().cy);
+        p.animate({
+          transform: midScale
+        }, 1000, mina.elastic);
+      }
+    );*/
   }
 
 }

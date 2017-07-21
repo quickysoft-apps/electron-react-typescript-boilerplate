@@ -55,6 +55,11 @@ export class Agent {
     return this._onSocketErrorMessageReceived.asEvent();
   }
 
+  private _onPong = new SimpleEventDispatcher<number>();
+  public get onPong(): ISimpleEvent<number> {
+    return this._onPong.asEvent();
+  }
+
   constructor() {
     this._socket = io(SOCKET_SERVER_URL, {
       rejectUnauthorized: false,
@@ -62,7 +67,7 @@ export class Agent {
     });
 
     this._socket.on('ping', () => { Log.debug('ping') })
-    this._socket.on('pong', (ms: number) => { Log.debug('pong', ms, 'ms') })
+    this._socket.on('pong', (ms: number) => { this._onPong.dispatch(ms) })
     this._socket.on('connect_timeout', (attempt: number) => { Log.debug('connect_timeout') })
     this._socket.on('reconnect_attempt', (attempt: number) => { Log.debug('reconnect_attempt') })
     this._socket.on('reconnecting', (attempt: number) => { Log.debug('reconnecting n.', attempt) })

@@ -29,6 +29,10 @@ export function listenAgentServer(store: any) {
     store.dispatch(Actions.Agent.socketError(error));
   })
 
+  client.onPong.subscribe((ms: number) => {
+    store.dispatch(Actions.Agent.pong(ms));
+  })
+
   client.onAuthenticatedMessageReceived.subscribe((agent: Agent, message: AgentMessage) => {
     store.dispatch(Actions.Agent.authenticated(message));
   });
