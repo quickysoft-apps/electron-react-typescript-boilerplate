@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { FlatButton } from 'material-ui'
-import 'typeface-roboto';
 
 import { AgentStatus } from '../reducers/home';
 import { Heart } from './Heart';

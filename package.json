@@ -194,7 +194,6 @@
     "socket.io-client": "^2.0.3",
     "source-map-support": "^0.4.6",
     "strongly-typed-events": "^1.0.1",
-    "typeface-roboto": "0.0.31",
     "typescript-collections": "^1.2.3",
     "utf-8-validate": "^3.0.3"
   },

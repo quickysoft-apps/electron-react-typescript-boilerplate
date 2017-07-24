@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { red500, red800, orange800, grey800 } from 'material-ui/styles/colors';
 import * as Snap from 'snapsvg-cjs';
-import 'typeface-roboto';
 
 import { AgentStatus } from '../reducers/home'
 
@@ -42,13 +41,7 @@ export class Heart extends React.Component<Props, State> {
     this.state = { hover: false };
   }
 
-
-  public componentDidMount() {
-    console.log('-------------------------Heart componentDidMount');        
-  }
-
   public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
-    console.log('------------------------Heart componentDidUpdate', this.props, this.state);
     this.beat();
   }
 
@@ -86,38 +79,13 @@ export class Heart extends React.Component<Props, State> {
 
   private beat() {
     const svg = Snap('#svg');
-    /*setTimeout(() => {
-      const path = svg.select('path');
-      const smallScale = new Snap.Matrix();
-      smallScale.scale(0.8, 0.8, path.getBBox().cx, path.getBBox().cy);
-      path.animate({ transform: smallScale }, 1000, mina.elastic);
-    }, 500);*/
-
     const path = svg.select('path');
-      const smallScale = new Snap.Matrix();
-      smallScale.scale(0.8, 0.8, path.getBBox().cx, path.getBBox().cy);
-      path.animate({ transform: smallScale }, 1000, mina.elastic);
-
-    /*svg.hover(
-      function (e: MouseEvent) {
-        const s = Snap(e.currentTarget as SVGElement);
-        const p = s.select('path');
-        const midScale = new Snap.Matrix();
-        midScale.scale(0.9, 0.9, p.getBBox().cx, p.getBBox().cy);
-        p.animate({
-          transform: midScale
-        }, 1000, mina.elastic);
-      },
-      function (e: MouseEvent) {
-        const s = Snap(e.currentTarget as SVGElement);
-        const p = s.select('path');
-        const midScale = new Snap.Matrix();
-        midScale.scale(0.8, 0.8, p.getBBox().cx, p.getBBox().cy);
-        p.animate({
-          transform: midScale
-        }, 1000, mina.elastic);
-      }
-    );*/
+    const fullScale = new Snap.Matrix();
+    const midScale = new Snap.Matrix();
+    midScale.scale(0.9, 0.9, path.getBBox().cx, path.getBBox().cy);
+    fullScale.scale(1, 1, path.getBBox().cx, path.getBBox().cy);
+    path.animate({ transform: fullScale }, 1000, mina.elastic);
+    setTimeout(() => { path.animate({ transform: midScale }, 1000, mina.elastic); }, 100);
   }
 
 }
