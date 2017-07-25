@@ -2,8 +2,13 @@ import { actionCreator, actionCreatorVoid } from './helpers';
 import { AgentMessage } from '../api/agent';
 
 export interface AgentError extends Partial<Error> {
-  type?: string
- }
+  type?: string;
+}
+
+export interface AgentLink {
+  email: string;
+  
+}
 
 export class Agent {
   public static readonly connected = actionCreatorVoid('agent/CONNECTED');

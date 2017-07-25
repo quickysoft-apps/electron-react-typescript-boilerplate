@@ -47,7 +47,7 @@
   },
   "build": {
     "productName": "YakapaSupervisor",
-    "appId": "Quickysoft.YakapaSupervisor",
+    "appId": "Quickysoft.YakapaSupervisor",    
     "dmg": {
       "contents": [
         {
@@ -102,13 +102,7 @@
     "url": "https://github.com/quickysoft-apps/yakapa-supervisor/issues"
   },
   "keywords": [
-    "electron",
-    "boilerplate",
-    "react",
-    "react-router",
-    "flux",
-    "webpack",
-    "react-hot"
+    "supervisor"
   ],
   "homepage": "https://github.com/quickysoft-apps/yakapa-supervisor#readme",
   "devDependencies": {
