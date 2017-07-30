@@ -1,9 +1,9 @@
-import { Agent } from './agent';
-import { Chat } from './chat';
 import { Counter } from './counter';
+import { Agent } from './agent'
+import { Association } from './association'
 
 export const Actions = {
+  Counter,
   Agent,
-  Chat,
-  Counter
+  Association
 }

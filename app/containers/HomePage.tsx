@@ -1,10 +1,9 @@
-import * as React from 'react';
 import { connect, Dispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Home, Props } from '../components/Home';
 import { AgentStatus } from '../reducers/home';
 import { State } from '../reducers';
-import * as agentActions from '../actions/agent';
+import * as Actions from '../actions/agent';
 
 function mapStateToProps(state: State): Partial<Props> {
 
@@ -25,7 +24,7 @@ function mapStateToProps(state: State): Partial<Props> {
 }
 
 function mapDispatchToProps(dispatch: Dispatch<State>): Partial<Props> {
-  return bindActionCreators(agentActions as any, dispatch);
+  return bindActionCreators(Actions as any, dispatch);
 }
 
-export default (connect(mapStateToProps, mapDispatchToProps)(Home) as any as React.StatelessComponent<Props>);
+export default (connect(mapStateToProps, mapDispatchToProps)(Home) as any);

@@ -8,7 +8,7 @@ const client: Agent = new Agent();
 export function agentMiddleware(): Redux.Middleware {
   return (api: Redux.MiddlewareAPI<any>) => (next: Redux.Dispatch<any>) => <A extends IActionWithPayload<AgentMessage>>(action: A) => {
     const result = next(action);
-    if (action.type === Actions.Chat.send) {
+    if (action.type === Actions.Agent.chatSend) {
       client.emit(AgentEvent.CHAT, action.payload.message, action.payload.from);
     }
     return result;
@@ -17,11 +17,11 @@ export function agentMiddleware(): Redux.Middleware {
 
 export function listenAgentServer(store: any) {
   
-  client.onConnectedMessageReceived.subscribe(() => {
+  client.onConnected.subscribe(() => {
     store.dispatch(Actions.Agent.connected());
   });
 
-  client.onConnectionErrorMessageReceived.subscribe((error: Object) => {
+  client.onConnectionError.subscribe((error: Object) => {
     store.dispatch(Actions.Agent.connectionError(error));
   })
 

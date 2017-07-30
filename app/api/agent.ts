@@ -40,19 +40,19 @@ export class Agent {
     return this._onAuthenticatedMessageReceived.asEvent();
   }
 
-  private _onConnectedMessageReceived = new SignalDispatcher();
-  public get onConnectedMessageReceived(): ISignal {
-    return this._onConnectedMessageReceived.asEvent();
+  private _onConnected = new SignalDispatcher();
+  public get onConnected(): ISignal {
+    return this._onConnected.asEvent();
   }
 
-  private _onConnectionErrorMessageReceived = new SimpleEventDispatcher<Error>();
-  public get onConnectionErrorMessageReceived(): ISimpleEvent<Object> {
-    return this._onConnectionErrorMessageReceived.asEvent();
+  private _onConnectionError = new SimpleEventDispatcher<Error>();
+  public get onConnectionError(): ISimpleEvent<Object> {
+    return this._onConnectionError.asEvent();
   }
 
-  private _onSocketErrorMessageReceived = new SimpleEventDispatcher<Error>();
+  private _onSocketError = new SimpleEventDispatcher<Error>();
   public get onSocketErrorMessageReceived(): ISimpleEvent<Object> {
-    return this._onSocketErrorMessageReceived.asEvent();
+    return this._onSocketError.asEvent();
   }
 
   private _onPong = new SimpleEventDispatcher<number>();
@@ -136,19 +136,19 @@ export class Agent {
   private connected(): void {
     Log.info('Connecté à', SOCKET_SERVER_URL)
     //this.emit(YakapaEvent.AUTHENTICATION)
-    this._onConnectedMessageReceived.dispatch();
+    this._onConnected.dispatch();
   }
 
   private socketError(error: Error): void {
     Log.info('error', error)
     //this.emit(YakapaEvent.AUTHENTICATION)
-    this._onSocketErrorMessageReceived.dispatch(error);
+    this._onSocketError.dispatch(error);
   }
 
   private connectionError(error: Error): void {
     Log.info('Erreur connexion', error)
     //this.emit(YakapaEvent.AUTHENTICATION)
-    this._onConnectionErrorMessageReceived.dispatch(error);
+    this._onConnectionError.dispatch(error);
   }
 
   private authenticated(socketMessage: AgentMessage): void {
