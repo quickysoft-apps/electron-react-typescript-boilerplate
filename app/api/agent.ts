@@ -1,12 +1,11 @@
 import * as Log from 'electron-log';
 import * as io from 'socket.io-client';
 import * as LZString from 'lz-string';
-//import * as Faker from 'faker';
+import * as UUID from 'uuid';
+import settings = require('electron-settings');
 import { IEvent, ISignal, ISimpleEvent, SignalDispatcher, EventDispatcher, SimpleEventDispatcher } from 'strongly-typed-events';
 
-const SOCKET_SERVER_URL = 'https://mprj.cloudapp.net'
-const DEFAULT_TAG = 'f257cd8a-2e39-4d0d-8bea-41f0be407ee2'
-const DEFAULT_NICKNAME = 'Gorgeous Samir'
+const SOCKET_SERVER_URL = 'https://mprj.cloudapp.net';
 
 export class AgentEvent {
   private static readonly PREFIX: string = 'yakapa';
@@ -29,6 +28,7 @@ export class Agent {
   private _socket: SocketIOClient.Socket;
   private _isAuthenticated: boolean = false;
   private _nickname: string;
+  private _tag: string;
 
   private _onChatMessageReceived = new EventDispatcher<Agent, AgentMessage>();
   public get onChatMessageReceived(): IEvent<Agent, AgentMessage> {
@@ -61,9 +61,12 @@ export class Agent {
   }
 
   constructor() {
+
+    this.updateUserData();
+
     this._socket = io(SOCKET_SERVER_URL, {
       rejectUnauthorized: false,
-      query: `tag=${DEFAULT_TAG}`
+      query: `tag=${this._tag}`
     });
 
     this._socket.on('ping', () => { Log.debug('ping') })
@@ -84,8 +87,29 @@ export class Agent {
     this._socket.on(AgentEvent.EXECUTE_SCRIPT, async (socketMessage: AgentMessage) => { await this.executeScript(socketMessage) })
   }
 
-  getJson(json: any): any {
+  public emit(event: string = AgentEvent.RESULT, payload?: string, to?: string): void {
+
+    this.updateUserData();
+
+    const compressed = payload != null ? LZString.compressToUTF16(payload) : null
+    const socketMessage = {
+      from: this._tag,
+      nickname: this._nickname,
+      to: to,
+      result: event === AgentEvent.RESULT ? compressed : null,
+      message: event === AgentEvent.CHAT ? compressed : null
+    }
+
+    this._socket.emit(event, socketMessage)
+  }
+
+  /*private getJson(json: any): any {
     return typeof json === 'object' ? json : JSON.parse(json)
+  }*/
+
+  private updateUserData() {
+    this._tag = settings.get('tag', UUID.v4()) as string;
+    this._nickname = settings.get('nickname') as string;    
   }
 
   private check(socketMessage: AgentMessage): boolean {
@@ -107,19 +131,6 @@ export class Agent {
 
     Log.info(socketMessage);
     return true
-  }
-
-  public emit(event: string = AgentEvent.RESULT, payload?: string, to?: string): void {
-    const compressed = payload != null ? LZString.compressToUTF16(payload) : null
-    const socketMessage = {
-      from: DEFAULT_TAG,
-      nickname: DEFAULT_NICKNAME,
-      to: to,
-      result: event === AgentEvent.RESULT ? compressed : null,
-      message: event === AgentEvent.CHAT ? compressed : null
-    }
-
-    this._socket.emit(event, socketMessage)
   }
 
   private connected(): void {
