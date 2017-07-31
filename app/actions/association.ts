@@ -4,6 +4,4 @@ export interface AgentLink {
   email: string;  
 }
 
-export class Association {
-  public static readonly associate = actionCreator<AgentLink>('agent/ASSOCIATE');
-}
+export const associate = actionCreator<AgentLink>('agent/ASSOCIATE');

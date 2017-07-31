@@ -1,10 +1,9 @@
 import { actionCreatorVoid } from './helpers';
 
-export class Counter {
-  public static readonly increment = actionCreatorVoid('INCREMENT_COUNTER');
-  public static readonly decrement = actionCreatorVoid('DECREMENT_COUNTER');
+export const increment = actionCreatorVoid('INCREMENT_COUNTER');
+export const decrement = actionCreatorVoid('DECREMENT_COUNTER');
 
- public static incrementIfOdd = function() {
+ export const incrementIfOdd = function() {
   return (dispatch: Function, getState: Function) => {
     const { counter } = getState();
 
@@ -12,15 +11,14 @@ export class Counter {
       return;
     }
 
-    dispatch(Counter.increment());
+    dispatch(increment());
   };
 }
 
-public static incrementAsync = function(delay: number = 1000) {
+export const incrementAsync = function(delay: number = 1000) {
   return (dispatch: Function) => {
     setTimeout(() => {
-      dispatch(Counter.increment());
+      dispatch(increment());
     }, delay);
   };
-}
 }

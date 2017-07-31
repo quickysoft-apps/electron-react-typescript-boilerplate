@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux';
 import { Home, Props } from '../components/Home';
 import { AgentStatus } from '../reducers/home';
 import { State } from '../reducers';
-import * as Actions from '../actions/agent';
+import { Actions } from '../actions';
 
 function mapStateToProps(state: State): Partial<Props> {
 
@@ -24,7 +24,7 @@ function mapStateToProps(state: State): Partial<Props> {
 }
 
 function mapDispatchToProps(dispatch: Dispatch<State>): Partial<Props> {
-  return bindActionCreators(Actions as any, dispatch);
+  return bindActionCreators(Actions.Agent as any, dispatch);
 }
 
 export default (connect(mapStateToProps, mapDispatchToProps)(Home) as any);

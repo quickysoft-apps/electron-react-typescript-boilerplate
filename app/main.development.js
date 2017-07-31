@@ -137,7 +137,9 @@ app.on('ready', () =>
         width: 500,
         height: 568,
         resizable: false,
-        frame: false
+        frame: false,
+        fullscreenable: false,
+        alwaysOnTop: false
       });
 
       mainWindow.loadURL(`file://${__dirname}/app.html`);

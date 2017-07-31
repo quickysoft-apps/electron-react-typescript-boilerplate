@@ -5,12 +5,10 @@ export interface AgentError extends Partial<Error> {
   type?: string;
 }
 
-export class Agent {
-  public static readonly connected = actionCreatorVoid('agent/CONNECTED');
-  public static readonly connectionError = actionCreator<AgentError>('agent/CONNECTION_ERROR');
-  public static readonly socketError = actionCreator<AgentError>('agent/SOCKET_ERROR');
-  public static readonly authenticated = actionCreator<AgentMessage>('agent/AUTHENTICATED');  
-  public static readonly pong = actionCreator<number>('agent/PONG');  
-  public static readonly chatReceive = actionCreator<AgentMessage>('agent/CHAT_RECEIVE');
-  public static readonly chatSend = actionCreator<AgentMessage>('agent/CHAT_SEND');  
-}
+export const connected = actionCreatorVoid('agent/CONNECTED');
+export const connectionError = actionCreator<AgentError>('agent/CONNECTION_ERROR');
+export const socketError = actionCreator<AgentError>('agent/SOCKET_ERROR');
+export const authenticated = actionCreator<AgentMessage>('agent/AUTHENTICATED');
+export const pong = actionCreator<number>('agent/PONG');
+export const chatReceive = actionCreator<AgentMessage>('agent/CHAT_RECEIVE');
+export const chatSend = actionCreator<AgentMessage>('agent/CHAT_SEND');  
