@@ -5,6 +5,4 @@ export interface AssociationData {
   nickname: string;
 }
 
-export const setEmail = actionCreator<string>('association/SET_EMAIL');
-export const setNickname = actionCreator<string>('association/SET_NICKNAME');
 export const associate = actionCreator<AssociationData>('association/ASSOCIATE');

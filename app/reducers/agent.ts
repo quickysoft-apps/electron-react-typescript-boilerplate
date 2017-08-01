@@ -24,6 +24,7 @@ interface State {
   socketError: AgentError;
   trusted: boolean;
   pongMs: number;
+  nickname: string;
   chat: ChatHistory;
 }
 
@@ -54,7 +55,8 @@ export function agent(state: AgentState = {}, action: IAction) {
       ...state,
       trusted: true,
       socketError: undefined,
-      connectionError: undefined
+      connectionError: undefined,
+      nickname: action.payload.nickname
     };
   }
 

@@ -155,6 +155,7 @@ export class Agent {
     Log.info('Bienvenue', socketMessage.nickname);
     this._isAuthenticated = true;
     this._nickname = socketMessage.nickname;
+    settings.set('nickname', this._nickname);
     this._onAuthenticatedMessageReceived.dispatch(this, socketMessage);
   }
 
