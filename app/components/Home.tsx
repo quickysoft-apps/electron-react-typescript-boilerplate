@@ -2,7 +2,6 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom'
 import { FlatButton } from 'material-ui'
-//import { grey300, white } from 'material-ui/styles/colors';
 
 import { AgentStatus } from '../reducers/home';
 import { Heart } from './Heart';
@@ -18,13 +17,10 @@ export class Home extends React.Component<Props> {
   static styles = {
     container: {
       textAlign: "center",
-      //fontFamily: "Roboto, sans-serif",
-      //color: white
     },
     paragraph: {
       textAlign: "left",
       margin: 28,
-      //color: grey300
     }
   };
 

@@ -14,5 +14,4 @@ function mapDispatchToProps(dispatch: Dispatch<State>): Partial<Props> {
   return bindActionCreators(Actions.App as any, dispatch);
 }
 
-
 export default (connect(mapStateToProps, mapDispatchToProps)(App) as any);
