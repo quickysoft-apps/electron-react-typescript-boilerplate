@@ -28,7 +28,7 @@ export interface AgentMessage {
 export class Agent {
 
   private _socket: SocketIOClient.Socket;
-  private _isAuthenticated: boolean = false;  
+  private _isAuthenticated: boolean = false;
   private _tag: string;
 
   private _nickname: string;
@@ -146,11 +146,15 @@ export class Agent {
     this._onConnectionError.dispatch(error);
   }
 
-  private authenticated(socketMessage: AgentMessage): void {
-    Log.info('Bienvenue', socketMessage.nickname);
+  private authenticated(socketMessage: AgentMessage): void {    
     this._isAuthenticated = true;
-    this._nickname = socketMessage.nickname;
-    settings.set('nickname', this._nickname);
+    if (this._nickname) {
+      socketMessage.nickname = this._nickname;
+    } else {
+      this._nickname = socketMessage.nickname;
+      settings.set('nickname', this._nickname);
+    }    
+    Log.info('Bienvenue', this._nickname);
     this._onAuthenticated.dispatch(this, socketMessage);
   }
 

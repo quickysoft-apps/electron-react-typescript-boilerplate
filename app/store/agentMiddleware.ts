@@ -13,6 +13,7 @@ export function agentMiddleware(): Redux.Middleware {
 
     if (Actions.Agent.setProfile.test(action)) {
       client.nickname = action.payload.nickname;
+      settings.set('nickname', action.payload.nickname);
       settings.set('email', action.payload.email);
       const message = JSON.stringify({ email: action.payload.email });
       client.emit(AgentEvent.ASSOCIATING, message);
