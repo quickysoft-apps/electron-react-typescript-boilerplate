@@ -2,6 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { RaisedButton } from 'material-ui'
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
+import { AgentProfile } from '../actions/agent';
 
 interface State {
   email: string;
@@ -10,7 +11,8 @@ interface State {
 }
 
 export interface Props extends RouteComponentProps<any> {
-  associate: (associated: boolean) => void
+  associate: (associate: boolean) => void;
+  setProfile: (profile: AgentProfile) => void;
   email: string;
   nickname: string;
 }
@@ -33,17 +35,10 @@ export class Association extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      email: '',
-      nickname: '',
+      email: props.email,
+      nickname: props.nickname,
       initialNickName: props.nickname
     }
-  }
-
-  public componentWillReceiveProps(nextProps: Readonly<Props>, nextContext: any) {
-    this.setState({
-      email: nextProps.email,
-      nickname: nextProps.nickname
-    })
   }
 
   componentWillMount() {
@@ -51,28 +46,24 @@ export class Association extends React.Component<Props, State> {
       (value: string): boolean => value.length === 0 || !!value.match(/^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/));
   }
 
-  //const nickname: string = this.state.nickname.trim();
-  // this.props.associate({
-  //             email: this.state.email,
-  //             nickname: nickname.length === 0 ? this.state.initialNickName : nickname
-  //           });
-
   public render() {
-
-    
 
     return (
       <div style={Association.styles.container}>
         <h2>Associer votre agent</h2>
         <p style={Association.styles.paragraph}>Pour associer votre agent, il suffit d'indiquer
           votre email de contact qui servira de liaison avec un opérateur Yakapa.</p>
-        <p style={Association.styles.paragraph}>Vous pouvez aussi changer l'identification de cet agent 
+        <p style={Association.styles.paragraph}>Vous pouvez aussi changer l'identification de cet agent
           au sein de votre réseau en lui donnant le nom que vous voulez.</p>
         <ValidatorForm
-          ref="form"
-          onError={(errors: any) => console.error(errors)}
+          ref="form"          
           onSubmit={() => {
+            const nickname: string = this.state.nickname.trim();
             this.props.associate(true);
+            this.props.setProfile({
+              email: this.state.email,
+              nickname: nickname.length === 0 ? this.state.initialNickName : nickname
+            })
             this.props.history.push("/");
           }}>
           <TextValidator

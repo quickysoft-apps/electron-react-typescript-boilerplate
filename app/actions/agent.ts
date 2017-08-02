@@ -7,7 +7,7 @@ export interface AgentError extends Partial<Error> {
 
 export interface AgentProfile {
   email?: string;
-  nickname: string;
+  nickname?: string;
 }
 
 export const notifySuccessfulConnection = actionCreatorVoid('agent/NOTIFY_SUCCESSFUL_CONNECTION');

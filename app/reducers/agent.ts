@@ -1,20 +1,26 @@
 import { IAction } from '../actions/helpers';
+import settings = require('electron-settings');
 import { Actions } from '../actions';
-import { AgentError } from '../actions/agent';
+import { AgentError, AgentProfile } from '../actions/agent';
 
 interface State {
-  connected: boolean;
-  connectionError: AgentError;
-  socketError: AgentError;
-  trusted: boolean;
-  pongMs: number;
-  email: string;
-  nickname: string;
+  connected?: boolean;
+  connectionError?: AgentError;
+  socketError?: AgentError;
+  trusted?: boolean;
+  pongMs?: number;
+  profile: AgentProfile;
 }
 
-export interface AgentState extends Partial<State> { }
+export type AgentState = State;
 
-export function agent(state: AgentState = {}, action: IAction) {
+const initialState = { 
+  profile: { 
+    email: settings.get('email') as string
+  }
+} 
+
+export function agent(state: AgentState = initialState, action: IAction) {
 
   if (Actions.Agent.pong.test(action)) {
     return {
@@ -40,7 +46,10 @@ export function agent(state: AgentState = {}, action: IAction) {
       trusted: true,
       socketError: undefined,
       connectionError: undefined,
-      nickname: action.payload.nickname
+      profile: {
+        ...state.profile, 
+        nickname: action.payload.nickname
+      }
     };
   }
 
@@ -61,6 +70,16 @@ export function agent(state: AgentState = {}, action: IAction) {
       trusted: false,
       socketError: undefined,
       connectionError: action.payload
+    };
+  }
+
+  if (Actions.Agent.setProfile.test(action)) {
+    return {
+      ...state,
+      profile: {
+        email: action.payload.email,
+        nickname: action.payload.nickname
+      }
     };
   }
 

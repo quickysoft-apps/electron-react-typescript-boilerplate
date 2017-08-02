@@ -13,23 +13,31 @@ export class AgentEvent {
   public static readonly RESULT: string = `${AgentEvent.PREFIX}/result`;
   public static readonly EXECUTE: string = `${AgentEvent.PREFIX}/execute`;
   public static readonly AUTHENTICATED: string = `${AgentEvent.PREFIX}/authenticated`;
-  public static readonly LINKING: string = `${AgentEvent.PREFIX}/linking`;
-  public static readonly LINKED: string = `${AgentEvent.PREFIX}/linked`;
+  public static readonly ASSOCIATING: string = `${AgentEvent.PREFIX}/associating`;
+  public static readonly ASSOCIATED: string = `${AgentEvent.PREFIX}/associated`;
 }
 
 export interface AgentMessage {
   date: Date;
   from: string;
   nickname: string;
+  to: string;
   message: string;
 }
 
 export class Agent {
 
   private _socket: SocketIOClient.Socket;
-  private _isAuthenticated: boolean = false;
-  private _nickname: string;
+  private _isAuthenticated: boolean = false;  
   private _tag: string;
+
+  private _nickname: string;
+  public get nickname(): string {
+    return this._nickname;
+  }
+  public set nickname(value: string) {
+    this._nickname = value;
+  }
 
   private _onChat = new EventDispatcher<Agent, AgentMessage>();
   public get onChat(): IEvent<Agent, AgentMessage> {
@@ -75,7 +83,7 @@ export class Agent {
     this._socket.on('connect', () => { this.connected() })
     this._socket.on('connect_error', (error: Error) => { this.connectionError(error) })
     this._socket.on('error', (error: Error) => { this.socketError(error) })
-    
+
     this._socket.on(AgentEvent.AUTHENTICATED, (socketMessage: AgentMessage) => { this.authenticated(socketMessage) })
     this._socket.on(AgentEvent.CHAT, async (socketMessage: AgentMessage) => { await this.chat(socketMessage) })
     this._socket.on(AgentEvent.EXECUTE, async (socketMessage: AgentMessage) => { await this.execute(socketMessage) })
@@ -87,11 +95,11 @@ export class Agent {
 
     const compressed = payload != null ? LZString.compressToUTF16(payload) : null
     const socketMessage = {
+      date: new Date(Date.now()),
       from: this._tag,
       nickname: this._nickname,
       to: to,
-      result: event === AgentEvent.RESULT ? compressed : null,
-      message: event === AgentEvent.CHAT ? compressed : null
+      message: compressed
     }
 
     this._socket.emit(event, socketMessage)
@@ -99,7 +107,7 @@ export class Agent {
 
   private updateUserData() {
     this._tag = settings.get('tag', UUID.v4()) as string;
-    this._nickname = settings.get('nickname') as string;    
+    this._nickname = settings.get('nickname') as string;
   }
 
   private check(socketMessage: AgentMessage): boolean {
@@ -133,10 +141,10 @@ export class Agent {
     this._onSocketError.dispatch(error);
   }
 
-   private connectionError(error: Error): void {
-     Log.error('Erreur connexion :', error.message)
-     this._onConnectionError.dispatch(error);
-   }
+  private connectionError(error: Error): void {
+    Log.error('Erreur connexion :', error.message)
+    this._onConnectionError.dispatch(error);
+  }
 
   private authenticated(socketMessage: AgentMessage): void {
     Log.info('Bienvenue', socketMessage.nickname);

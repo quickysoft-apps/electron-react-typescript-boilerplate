@@ -30,6 +30,7 @@ export function chat(state: ChatState = {}, action: IAction) {
       date: new Date(Date.now()),
       nickname: action.payload.nickname,
       from: action.payload.from,
+      to: action.payload.to,
       message: action.payload.message
     };
 

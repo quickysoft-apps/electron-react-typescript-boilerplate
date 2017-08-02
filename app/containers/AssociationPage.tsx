@@ -6,8 +6,8 @@ import { Actions } from '../actions'
 
 function mapStateToProps(state: State): Partial<Props> {
   return {
-    email: state.agent.email,
-    nickname: state.agent.nickname
+    email: state.agent.profile ? state.agent.profile.email : undefined,
+    nickname: state.agent.profile ? state.agent.profile.nickname : undefined
   };
 }
 
