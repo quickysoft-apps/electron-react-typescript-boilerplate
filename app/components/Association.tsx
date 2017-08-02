@@ -3,8 +3,6 @@ import { RouteComponentProps } from 'react-router';
 import { RaisedButton } from 'material-ui'
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 
-import { AssociationData } from '../actions/association'
-
 interface State {
   email: string;
   nickname: string;
@@ -12,7 +10,7 @@ interface State {
 }
 
 export interface Props extends RouteComponentProps<any> {
-  associate: (associationData: AssociationData) => void
+  associate: (associated: boolean) => void
   email: string;
   nickname: string;
 }
@@ -53,25 +51,28 @@ export class Association extends React.Component<Props, State> {
       (value: string): boolean => value.length === 0 || !!value.match(/^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/));
   }
 
+  //const nickname: string = this.state.nickname.trim();
+  // this.props.associate({
+  //             email: this.state.email,
+  //             nickname: nickname.length === 0 ? this.state.initialNickName : nickname
+  //           });
+
   public render() {
 
-    const nickname: string = this.state.nickname.trim();
+    
 
     return (
       <div style={Association.styles.container}>
         <h2>Associer votre agent</h2>
         <p style={Association.styles.paragraph}>Pour associer votre agent, il suffit d'indiquer
-          l'email de contact qui servira de liaison avec votre opérateur Yakapa.</p>
-        <p style={Association.styles.paragraph}>Vous pouvez aussi changer l'identification cet agent 
+          votre email de contact qui servira de liaison avec un opérateur Yakapa.</p>
+        <p style={Association.styles.paragraph}>Vous pouvez aussi changer l'identification de cet agent 
           au sein de votre réseau en lui donnant le nom que vous voulez.</p>
         <ValidatorForm
           ref="form"
           onError={(errors: any) => console.error(errors)}
           onSubmit={() => {
-            this.props.associate({
-              email: this.state.email,
-              nickname: nickname.length === 0 ? this.state.initialNickName : nickname
-            });
+            this.props.associate(true);
             this.props.history.push("/");
           }}>
           <TextValidator
@@ -86,7 +87,7 @@ export class Association extends React.Component<Props, State> {
           <TextValidator
             name="nickname"
             hintText={this.state.initialNickName}
-            floatingLabelText="Identifiant"
+            floatingLabelText="Identification"
             floatingLabelFixed={true}
             value={this.state.nickname}
             validators={['isValidNickname']}

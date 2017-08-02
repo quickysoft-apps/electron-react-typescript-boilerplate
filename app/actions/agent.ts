@@ -5,10 +5,16 @@ export interface AgentError extends Partial<Error> {
   type?: string;
 }
 
-export const connected = actionCreatorVoid('agent/CONNECTED');
-export const connectionError = actionCreator<AgentError>('agent/CONNECTION_ERROR');
-export const socketError = actionCreator<AgentError>('agent/SOCKET_ERROR');
-export const authenticated = actionCreator<AgentMessage>('agent/AUTHENTICATED');
+export interface AgentProfile {
+  email?: string;
+  nickname: string;
+}
+
+export const notifySuccessfulConnection = actionCreatorVoid('agent/NOTIFY_SUCCESSFUL_CONNECTION');
+export const notifyConnectionError = actionCreator<AgentError>('agent/NOTIFY_CONNECTION_ERROR');
+export const notifySocketError = actionCreator<AgentError>('agent/NOTIFY_SOCKET_ERROR');
+export const notifySuccessfulAuthentication = actionCreator<AgentMessage>('agent/NOTIFY_SUCCESSFUL_AUTHENTICATION');
 export const pong = actionCreator<number>('agent/PONG');
-export const chatReceive = actionCreator<AgentMessage>('agent/CHAT_RECEIVE');
-export const chatSend = actionCreator<AgentMessage>('agent/CHAT_SEND');  
+
+
+export const setProfile = actionCreator<AgentProfile>('agent/SET_PROFILE');

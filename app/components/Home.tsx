@@ -1,18 +1,25 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { Link } from 'react-router-dom'
-import { FlatButton } from 'material-ui'
+import { Link } from 'react-router-dom';
+import { FlatButton } from 'material-ui';
+import * as Colors from 'material-ui/styles/colors';
 
 import { AgentStatus } from '../reducers/home';
 import { Heart } from './Heart';
 
 export interface Props extends RouteComponentProps<any> {
   status: AgentStatus,
-  trusted: boolean,
+  isTrusted: boolean,
+  isConnected: boolean,
   pongMs: number
 }
 
 export class Home extends React.Component<Props> {
+
+  static statusStyle: React.CSSProperties = {
+    textTransform: "uppercase",
+    color: Colors.grey600
+  }
 
   static styles = {
     container: {
@@ -26,32 +33,33 @@ export class Home extends React.Component<Props> {
 
   public render() {
 
-    let label: React.ReactNode;
-    if (this.props.trusted === false) {
-      label = <span>Erreur d'identification :(</span>;
-    } else {
-      label = <span>{this.props.status === AgentStatus.Asleep ? "Connexion au serveur..." : "Associer"}</span>;
+    let actionNode: React.ReactNode;
+    if (!this.props.isTrusted) {
+      actionNode = <p style={Home.statusStyle}>Erreur d'identification :(</p>;
     }
 
-    const disabled = (this.props.trusted === false || this.props.status === AgentStatus.Asleep)
+    if (!this.props.isConnected) {
+      actionNode = <p style={Home.statusStyle}>Connexion au serveur...</p>;
+    }
 
-    const instructions = this.props.status === AgentStatus.Trusted ? <p style={Home.styles.paragraph}>
-      Pour que cet agent soit pleinement opérationnel, il est nécessaire de l'associer avec votre 
-      opérateur Yakapa en lui fournissant votre email de contact.
-    </p> : <p/>
+    if (this.props.isConnected === true && this.props.isTrusted === true) {
+      actionNode = <Link to="/association">
+        <FlatButton
+          label="Associer"
+          primary={true} />
+      </Link>
+    }
+
+    const instructions = this.props.isTrusted ? <p style={Home.styles.paragraph}>
+      Pour que cet agent soit pleinement opérationnel, il est nécessaire de l'associer avec votre
+      opérateur Yakapa en lui fournissant votre email de contact.</p> : <p />
 
     return (
       <div style={Home.styles.container}>
 
         <Heart status={this.props.status} pongMS={this.props.pongMs} />
         {instructions}
-        <Link to="/association" >
-          <FlatButton
-            label={label}
-            primary={true}
-            disabled={disabled} />
-        </Link>
-
+        {actionNode}
       </div >
 
     );

@@ -7,18 +7,20 @@ import { Actions } from '../actions';
 
 function mapStateToProps(state: State): Partial<Props> {
 
-  let status = AgentStatus.Asleep;
+  let status = AgentStatus.Dead;
 
-  if (state.agent.connected === true) {
+  if (state.agent.connected === true && state.agent.trusted === false) {
+    status = AgentStatus.Sick;
+  }
+
+  if (state.agent.connected === true && state.agent.trusted === true) {
     status = AgentStatus.Alive;
-    if (state.agent.trusted === true) {
-      status = AgentStatus.Trusted;
-    }
   }
 
   return {
-    status,    
-    trusted: state.agent.trusted,
+    status,
+    isTrusted: state.agent.trusted,
+    isConnected: state.agent.connected,
     pongMs: state.agent.pongMs
   };
 }

@@ -1,22 +1,6 @@
 import { IAction } from '../actions/helpers';
 import { Actions } from '../actions';
 import { AgentError } from '../actions/agent';
-import { AgentMessage } from '../api/agent'
-
-export class ChatHistory {
-
-  readonly history: Set<AgentMessage> = new Set<AgentMessage>();
-
-  constructor(chatHistory?: ChatHistory, chatMessage?: AgentMessage) {
-    if (chatHistory !== undefined) {
-      this.history = new Set<AgentMessage>(chatHistory.history);
-    }
-    if (chatMessage !== undefined) {
-      this.history.add(chatMessage);
-    }
-  }
-
-}
 
 interface State {
   connected: boolean;
@@ -24,8 +8,8 @@ interface State {
   socketError: AgentError;
   trusted: boolean;
   pongMs: number;
+  email: string;
   nickname: string;
-  chat: ChatHistory;
 }
 
 export interface AgentState extends Partial<State> { }
@@ -41,7 +25,7 @@ export function agent(state: AgentState = {}, action: IAction) {
     };
   }
 
-  if (Actions.Agent.connected.test(action)) {
+  if (Actions.Agent.notifySuccessfulConnection.test(action)) {
     return {
       ...state,
       connected: true,
@@ -50,7 +34,7 @@ export function agent(state: AgentState = {}, action: IAction) {
     };
   }
 
-  if (Actions.Agent.authenticated.test(action)) {
+  if (Actions.Agent.notifySuccessfulAuthentication.test(action)) {
     return {
       ...state,
       trusted: true,
@@ -60,32 +44,24 @@ export function agent(state: AgentState = {}, action: IAction) {
     };
   }
 
-  if (Actions.Agent.socketError.test(action)) {
+  if (Actions.Agent.notifySocketError.test(action)) {
     return {
       ...state,
-      connected: action.payload.type === 'AuthenticationError' || action.payload.type === 'TransportError' ? false : true,
-      socketError: action.payload
+      connected: action.payload.type === 'DiscoverError' ? false : true,
+      trusted: false,
+      socketError: action.payload,
+      connectionError: undefined,
     };
   }
 
-  if (Actions.Agent.connectionError.test(action)) {
+  if (Actions.Agent.notifyConnectionError.test(action)) {
     return {
       ...state,
       connected: action.payload.type === 'TransportError' ? false : true,
+      trusted: false,
+      socketError: undefined,
       connectionError: action.payload
     };
-  }
-
-  if (Actions.Agent.chatReceive.test(action)) {    
-    const chatMessage: AgentMessage = {      
-      date: new Date(Date.now()),
-      nickname: action.payload.nickname,
-      from: action.payload.from,
-      message: action.payload.message
-    };
-
-    state.chat = new ChatHistory(state.chat, chatMessage);
-    return state;
   }
 
   return state;

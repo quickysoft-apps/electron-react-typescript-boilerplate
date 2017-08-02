@@ -11,9 +11,10 @@ export class AgentEvent {
   private static readonly PREFIX: string = 'yakapa';
   public static readonly CHAT: string = `${AgentEvent.PREFIX}/chat`;
   public static readonly RESULT: string = `${AgentEvent.PREFIX}/result`;
-  public static readonly EXECUTE_SCRIPT: string = `${AgentEvent.PREFIX}/executescript`;
-  public static readonly AUTHENTICATION: string = `${AgentEvent.PREFIX}/authentication`;
+  public static readonly EXECUTE: string = `${AgentEvent.PREFIX}/execute`;
   public static readonly AUTHENTICATED: string = `${AgentEvent.PREFIX}/authenticated`;
+  public static readonly LINKING: string = `${AgentEvent.PREFIX}/linking`;
+  public static readonly LINKED: string = `${AgentEvent.PREFIX}/linked`;
 }
 
 export interface AgentMessage {
@@ -30,14 +31,14 @@ export class Agent {
   private _nickname: string;
   private _tag: string;
 
-  private _onChatMessageReceived = new EventDispatcher<Agent, AgentMessage>();
-  public get onChatMessageReceived(): IEvent<Agent, AgentMessage> {
-    return this._onChatMessageReceived.asEvent();
+  private _onChat = new EventDispatcher<Agent, AgentMessage>();
+  public get onChat(): IEvent<Agent, AgentMessage> {
+    return this._onChat.asEvent();
   }
 
-  private _onAuthenticatedMessageReceived = new EventDispatcher<Agent, AgentMessage>();
-  public get onAuthenticatedMessageReceived(): IEvent<Agent, AgentMessage> {
-    return this._onAuthenticatedMessageReceived.asEvent();
+  private _onAuthenticated = new EventDispatcher<Agent, AgentMessage>();
+  public get onAuthenticated(): IEvent<Agent, AgentMessage> {
+    return this._onAuthenticated.asEvent();
   }
 
   private _onConnected = new SignalDispatcher();
@@ -51,7 +52,7 @@ export class Agent {
   }
 
   private _onSocketError = new SimpleEventDispatcher<Error>();
-  public get onSocketErrorMessageReceived(): ISimpleEvent<Object> {
+  public get onSocketError(): ISimpleEvent<Object> {
     return this._onSocketError.asEvent();
   }
 
@@ -71,20 +72,13 @@ export class Agent {
 
     this._socket.on('ping', () => { Log.debug('ping') })
     this._socket.on('pong', (ms: number) => { this._onPong.dispatch(ms) })
-    this._socket.on('connect_timeout', (attempt: number) => { Log.debug('connect_timeout') })
-    this._socket.on('reconnect_attempt', (attempt: number) => { Log.debug('reconnect_attempt') })
-    this._socket.on('reconnecting', (attempt: number) => { Log.debug('reconnecting n.', attempt) })
-    this._socket.on('reconnect_error', (error: Object) => { Log.debug('reconnect_error', error) })
-    this._socket.on('reconnect_failed', (attempt: number) => { Log.debug('reconnect_failed') })
     this._socket.on('connect', () => { this.connected() })
     this._socket.on('connect_error', (error: Error) => { this.connectionError(error) })
     this._socket.on('error', (error: Error) => { this.socketError(error) })
-    this._socket.on('disconnect', (reason: string) => { Log.debug('disconnect:', reason) })
-    this._socket.on('reconnect', (attempt: number) => { Log.debug('reconnect') })
-
+    
     this._socket.on(AgentEvent.AUTHENTICATED, (socketMessage: AgentMessage) => { this.authenticated(socketMessage) })
-    this._socket.on(AgentEvent.CHAT, async (socketMessage: AgentMessage) => { await this.understand(socketMessage) })
-    this._socket.on(AgentEvent.EXECUTE_SCRIPT, async (socketMessage: AgentMessage) => { await this.executeScript(socketMessage) })
+    this._socket.on(AgentEvent.CHAT, async (socketMessage: AgentMessage) => { await this.chat(socketMessage) })
+    this._socket.on(AgentEvent.EXECUTE, async (socketMessage: AgentMessage) => { await this.execute(socketMessage) })
   }
 
   public emit(event: string = AgentEvent.RESULT, payload?: string, to?: string): void {
@@ -102,10 +96,6 @@ export class Agent {
 
     this._socket.emit(event, socketMessage)
   }
-
-  /*private getJson(json: any): any {
-    return typeof json === 'object' ? json : JSON.parse(json)
-  }*/
 
   private updateUserData() {
     this._tag = settings.get('tag', UUID.v4()) as string;
@@ -135,43 +125,40 @@ export class Agent {
 
   private connected(): void {
     Log.info('Connecté à', SOCKET_SERVER_URL)
-    //this.emit(YakapaEvent.AUTHENTICATION)
     this._onConnected.dispatch();
   }
 
   private socketError(error: Error): void {
-    Log.info('error', error)
-    //this.emit(YakapaEvent.AUTHENTICATION)
+    Log.error('Erreur socket :', error)
     this._onSocketError.dispatch(error);
   }
 
-  private connectionError(error: Error): void {
-    Log.info('Erreur connexion', error)
-    //this.emit(YakapaEvent.AUTHENTICATION)
-    this._onConnectionError.dispatch(error);
-  }
+   private connectionError(error: Error): void {
+     Log.error('Erreur connexion :', error.message)
+     this._onConnectionError.dispatch(error);
+   }
 
   private authenticated(socketMessage: AgentMessage): void {
     Log.info('Bienvenue', socketMessage.nickname);
     this._isAuthenticated = true;
     this._nickname = socketMessage.nickname;
     settings.set('nickname', this._nickname);
-    this._onAuthenticatedMessageReceived.dispatch(this, socketMessage);
+    this._onAuthenticated.dispatch(this, socketMessage);
   }
 
-  private async understand(socketMessage: AgentMessage): Promise<void> {
+  private async chat(socketMessage: AgentMessage): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       if (!this.check(socketMessage)) reject();
       const decompressed = LZString.decompressFromUTF16(socketMessage.message);
       Log.info(`Received chat message ${decompressed}`);
       //const emitter = socketMessage.From;
       //this.emit(SocketEvent.CHAT_MESSAGE, Faker.lorem.sentence(15), emitter);
-      this._onChatMessageReceived.dispatch(this, socketMessage);
+      this._onChat.dispatch(this, socketMessage);
       resolve();
     });
   }
 
-  private executeScript(socketMessage: AgentMessage): Promise<void> {
+  private execute(socketMessage: AgentMessage): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       resolve();
     });

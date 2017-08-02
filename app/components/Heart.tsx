@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { red500, red800, orange800, grey800 } from 'material-ui/styles/colors';
+import * as Colors from 'material-ui/styles/colors';
 import * as Snap from 'snapsvg-cjs';
 
 import { AgentStatus } from '../reducers/home'
@@ -17,16 +17,16 @@ export class Heart extends React.Component<Props, State> {
 
   static styles = {
     alive: {
-      fill: orange800
+      fill: Colors.green400
     },
     trusted: {
-      fill: red800
+      fill: Colors.red800
     },
     hover: {
-      fill: red500
+      fill: Colors.red500
     },
     asleep: {
-      fill: grey800
+      fill: Colors.grey800
     },
     icon: {
       width: 256,
@@ -50,10 +50,10 @@ export class Heart extends React.Component<Props, State> {
     let statusStyle = {};
 
     switch (this.props.status) {
-      case AgentStatus.Alive:
+      case AgentStatus.Sick:
         statusStyle = Heart.styles.alive;
         break;
-      case AgentStatus.Trusted:
+      case AgentStatus.Alive:
         statusStyle = this.state.hover ? Heart.styles.hover : Heart.styles.trusted;
         break;
       default:
