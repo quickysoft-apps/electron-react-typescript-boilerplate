@@ -1,6 +1,5 @@
 import * as Redux from 'redux';
 import { IActionWithPayload } from '../actions/helpers';
-import settings = require('electron-settings');
 import { Agent, AgentMessage, AgentEvent } from '../api/agent';
 import { Actions } from '../actions'
 
@@ -12,11 +11,9 @@ export function agentMiddleware(): Redux.Middleware {
     const result = next(action);
 
     if (Actions.Agent.setProfile.test(action)) {
-      client.nickname = action.payload.nickname;
-      settings.set('nickname', action.payload.nickname);
-      settings.set('email', action.payload.email);
-      const message = JSON.stringify({ email: action.payload.email });
-      client.emit(AgentEvent.ASSOCIATING, message);
+      client.configuration.nickname = action.payload.nickname;
+      client.configuration.email = action.payload.email;      
+      client.emit(AgentEvent.ASSOCIATING);
     }
 
     if (Actions.Chat.send.test(action)) {

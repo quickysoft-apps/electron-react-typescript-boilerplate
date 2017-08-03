@@ -35,7 +35,7 @@ export class Home extends React.Component<Props> {
 
     let actionNode: React.ReactNode;
     if (!this.props.isTrusted) {
-      actionNode = <p style={Home.statusStyle}>Erreur d'identification :(</p>;
+      actionNode = <p style={Home.statusStyle}>Identification de l'agent...</p>;
     }
 
     if (!this.props.isConnected) {

@@ -25,18 +25,41 @@ export interface AgentMessage {
   message: string;
 }
 
+export class AgentConfiguration {
+
+  public get tag(): string {
+    const value = settings.get('tag', UUID.v4());
+    return value as string;
+  }
+
+  public get nickname(): string | null {
+    const value = settings.get('nickname');
+    return value ? value as string : null;
+  }
+
+  public set nickname(value: string | null) {
+    settings.set('nickname', value);
+  }
+
+  public get email(): string | null {
+    const value = settings.get('email');
+    return value ? value as string : null;
+  }
+
+  public set email(value: string | null) {
+    settings.set('email', value);
+  }
+
+}
+
 export class Agent {
 
   private _socket: SocketIOClient.Socket;
   private _isAuthenticated: boolean = false;
-  private _tag: string;
-
-  private _nickname: string;
-  public get nickname(): string {
-    return this._nickname;
-  }
-  public set nickname(value: string) {
-    this._nickname = value;
+  
+  private _configuration: AgentConfiguration = new AgentConfiguration();
+  public get configuration() : AgentConfiguration {
+    return this._configuration;
   }
 
   private _onChat = new EventDispatcher<Agent, AgentMessage>();
@@ -71,14 +94,11 @@ export class Agent {
 
   constructor() {
 
-    this.updateUserData();
-
     this._socket = io(SOCKET_SERVER_URL, {
       rejectUnauthorized: false,
-      query: `tag=${this._tag}`
+      query: `tag=${this._configuration.tag}`
     });
 
-    this._socket.on('ping', () => { Log.debug('ping') })
     this._socket.on('pong', (ms: number) => { this._onPong.dispatch(ms) })
     this._socket.on('connect', () => { this.connected() })
     this._socket.on('connect_error', (error: Error) => { this.connectionError(error) })
@@ -91,23 +111,17 @@ export class Agent {
 
   public emit(event: string = AgentEvent.RESULT, payload?: string, to?: string): void {
 
-    this.updateUserData();
-
     const compressed = payload != null ? LZString.compressToUTF16(payload) : null
     const socketMessage = {
       date: new Date(Date.now()),
-      from: this._tag,
-      nickname: this._nickname,
+      from: this._configuration.tag,
+      nickname: this._configuration.nickname,
+      email: this._configuration.email,
       to: to,
       message: compressed
     }
 
     this._socket.emit(event, socketMessage)
-  }
-
-  private updateUserData() {
-    this._tag = settings.get('tag', UUID.v4()) as string;
-    this._nickname = settings.get('nickname') as string;
   }
 
   private check(socketMessage: AgentMessage): boolean {
@@ -146,15 +160,14 @@ export class Agent {
     this._onConnectionError.dispatch(error);
   }
 
-  private authenticated(socketMessage: AgentMessage): void {    
+  private authenticated(socketMessage: AgentMessage): void {
     this._isAuthenticated = true;
-    if (this._nickname) {
-      socketMessage.nickname = this._nickname;
+    if (this._configuration.nickname) {
+      socketMessage.nickname = this._configuration.nickname;
     } else {
-      this._nickname = socketMessage.nickname;
-      settings.set('nickname', this._nickname);
-    }    
-    Log.info('Bienvenue', this._nickname);
+      this._configuration.nickname = socketMessage.nickname;
+    }
+    Log.info('Bienvenue', this._configuration.nickname);
     this._onAuthenticated.dispatch(this, socketMessage);
   }
 

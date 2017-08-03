@@ -16,17 +16,20 @@ interface State {
 export class Heart extends React.Component<Props, State> {
 
   static styles = {
-    alive: {
+    connecting: {
+      fill: Colors.grey800
+    },
+    authenticated: {
       fill: Colors.green400
     },
     trusted: {
+      fill: Colors.orange700
+    },
+    associated: {
       fill: Colors.red800
     },
     hover: {
       fill: Colors.red500
-    },
-    asleep: {
-      fill: Colors.grey800
     },
     icon: {
       width: 256,
@@ -50,14 +53,17 @@ export class Heart extends React.Component<Props, State> {
     let statusStyle = {};
 
     switch (this.props.status) {
-      case AgentStatus.Sick:
-        statusStyle = Heart.styles.alive;
+      case AgentStatus.Authenticated:
+        statusStyle = Heart.styles.authenticated;
         break;
-      case AgentStatus.Alive:
-        statusStyle = this.state.hover ? Heart.styles.hover : Heart.styles.trusted;
+      case AgentStatus.Trusted:
+        statusStyle = Heart.styles.trusted;
+        break;
+      case AgentStatus.Associated:
+        statusStyle = this.state.hover ? Heart.styles.hover : Heart.styles.associated;
         break;
       default:
-        statusStyle = Heart.styles.asleep;
+        statusStyle = Heart.styles.connecting;
         break;
     }
 
@@ -74,7 +80,9 @@ export class Heart extends React.Component<Props, State> {
   }
 
   private toggleHover() {
-    this.setState({ hover: !this.state.hover })
+    if (this.props.status === AgentStatus.Associated) {
+      this.setState({ hover: !this.state.hover })
+    }
   }
 
   private beat() {

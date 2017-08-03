@@ -51,10 +51,9 @@ export class Association extends React.Component<Props, State> {
     return (
       <div style={Association.styles.container}>
         <h2>Associer votre agent</h2>
-        <p style={Association.styles.paragraph}>Pour associer votre agent, il suffit d'indiquer
-          votre email de contact qui servira de liaison avec un opérateur Yakapa.</p>
-        <p style={Association.styles.paragraph}>Vous pouvez aussi changer l'identification de cet agent
-          au sein de votre réseau en lui donnant le nom que vous voulez.</p>
+        <p style={Association.styles.paragraph}>Pour associer votre agent, il est nécessaire d'indiquer
+          votre email de contact ainsi qu'une chaîne de caractère qui permet d'identifier votre agent. 
+          Ces deux éléments serviront de liaison avec un opérateur Yakapa.</p>        
         <ValidatorForm
           ref="form"          
           onSubmit={() => {
@@ -87,7 +86,7 @@ export class Association extends React.Component<Props, State> {
           />
           <br />
           <br />
-          <RaisedButton style={Association.styles.button} onClick={() => this.props.history.push("/")}>Plus tard</RaisedButton>
+          <RaisedButton style={Association.styles.button} onClick={() => this.props.history.push("/")}>Annuler</RaisedButton>
           <RaisedButton primary={true} style={Association.styles.button} type="submit">Associer</RaisedButton>
         </ValidatorForm>
       </div >
