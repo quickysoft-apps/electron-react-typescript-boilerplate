@@ -9,6 +9,7 @@ import { Heart } from './Heart';
 
 export interface Props extends RouteComponentProps<any> {
   status: AgentStatus,
+  visible: boolean,
   isTrusted: boolean,
   isConnected: boolean,
   pongMs: number
@@ -43,21 +44,21 @@ export class Home extends React.Component<Props> {
     }
 
     if (this.props.isConnected === true && this.props.isTrusted === true) {
-      actionNode = <Link to="/association">
+      actionNode = <Link to="/configuration">
         <FlatButton
-          label="Associer"
+          label="Configurer"
           primary={true} />
       </Link>
     }
 
     const instructions = this.props.isTrusted ? <p style={Home.styles.paragraph}>
-      Pour que cet agent soit pleinement opérationnel, il est nécessaire de l'associer avec votre
-      opérateur Yakapa en lui fournissant votre email de contact.</p> : <p />
+      Pour que cet agent soit pleinement opérationnel, il est nécessaire de le configurer avec
+      à minima votre email de contact.</p> : <p />
 
     return (
       <div style={Home.styles.container}>
 
-        <Heart status={this.props.status} pongMS={this.props.pongMs} />
+        {this.props.visible === true ? <Heart status={this.props.status} pongMS={this.props.pongMs} /> : <div />}
         {instructions}
         {actionNode}
       </div >

@@ -145,7 +145,9 @@ app.on('ready', () =>
       mainWindow.loadURL(`file://${__dirname}/app.html`);
 
       mainWindow.webContents.on('did-finish-load', () => {
-        trayIcon = ayIcon();        
+        if (!trayIcon) {
+          trayIcon = ayIcon();
+        }
       });
 
       //mainWindow.show();

@@ -25,7 +25,7 @@ export class Heart extends React.Component<Props, State> {
     trusted: {
       fill: Colors.orange700
     },
-    associated: {
+    configured: {
       fill: Colors.red800
     },
     hover: {
@@ -53,14 +53,14 @@ export class Heart extends React.Component<Props, State> {
     let statusStyle = {};
 
     switch (this.props.status) {
-      case AgentStatus.Authenticated:
+      case AgentStatus.Connected:
         statusStyle = Heart.styles.authenticated;
         break;
       case AgentStatus.Trusted:
         statusStyle = Heart.styles.trusted;
         break;
-      case AgentStatus.Associated:
-        statusStyle = this.state.hover ? Heart.styles.hover : Heart.styles.associated;
+      case AgentStatus.Configured:
+        statusStyle = this.state.hover ? Heart.styles.hover : Heart.styles.configured;
         break;
       default:
         statusStyle = Heart.styles.connecting;
@@ -80,7 +80,7 @@ export class Heart extends React.Component<Props, State> {
   }
 
   private toggleHover() {
-    if (this.props.status === AgentStatus.Associated) {
+    if (this.props.status === AgentStatus.Configured) {
       this.setState({ hover: !this.state.hover })
     }
   }

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { RaisedButton } from 'material-ui'
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
-import { AgentProfile } from '../actions/agent';
+import { AgentConfiguration } from '../actions/configuration';
 
 interface State {
   email: string;
@@ -10,14 +10,13 @@ interface State {
   initialNickName: string;
 }
 
-export interface Props extends RouteComponentProps<any> {
-  associate: (associate: boolean) => void;
-  setProfile: (profile: AgentProfile) => void;
+export interface Props extends RouteComponentProps<any> {  
+  save: (configuration: AgentConfiguration) => void;
   email: string;
   nickname: string;
 }
 
-export class Association extends React.Component<Props, State> {
+export class Configuration extends React.Component<Props, State> {
 
   static styles = {
     container: {
@@ -49,17 +48,18 @@ export class Association extends React.Component<Props, State> {
   public render() {
 
     return (
-      <div style={Association.styles.container}>
-        <h2>Associer votre agent</h2>
-        <p style={Association.styles.paragraph}>Pour associer votre agent, il est nécessaire d'indiquer
-          votre email de contact ainsi qu'une chaîne de caractère qui permet d'identifier votre agent. 
-          Ces deux éléments serviront de liaison avec un opérateur Yakapa.</p>        
+      <div style={Configuration.styles.container}>
+        <h2>Configurer votre agent</h2>
+        <p style={Configuration.styles.paragraph}>Il est nécessaire d'indiquer à minima
+          votre email de contact afin de permettre avec votre autorisation à un opérateur 
+          Yakapa d'interagir avec votre agent.</p>
+        <p style={Configuration.styles.paragraph}>Si vous le souhaitez, vous pouvez identifier
+          cet agent des autres agents qur vous possédez déjà.</p>
         <ValidatorForm
           ref="form"          
           onSubmit={() => {
             const nickname: string = this.state.nickname.trim();
-            this.props.associate(true);
-            this.props.setProfile({
+            this.props.save({
               email: this.state.email,
               nickname: nickname.length === 0 ? this.state.initialNickName : nickname
             })
@@ -86,8 +86,8 @@ export class Association extends React.Component<Props, State> {
           />
           <br />
           <br />
-          <RaisedButton style={Association.styles.button} onClick={() => this.props.history.push("/")}>Annuler</RaisedButton>
-          <RaisedButton primary={true} style={Association.styles.button} type="submit">Associer</RaisedButton>
+          <RaisedButton style={Configuration.styles.button} onClick={() => this.props.history.push("/")}>Annuler</RaisedButton>
+          <RaisedButton primary={true} style={Configuration.styles.button} type="submit">Valider</RaisedButton>
         </ValidatorForm>
       </div >
 

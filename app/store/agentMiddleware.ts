@@ -10,10 +10,10 @@ export function agentMiddleware(): Redux.Middleware {
 
     const result = next(action);
 
-    if (Actions.Agent.setProfile.test(action)) {
+    if (Actions.Configuration.save.test(action)) {
       client.configuration.nickname = action.payload.nickname;
       client.configuration.email = action.payload.email;      
-      client.emit(AgentEvent.ASSOCIATING);
+      client.emit(AgentEvent.CONFIGURED);
     }
 
     if (Actions.Chat.send.test(action)) {
@@ -44,6 +44,10 @@ export function listenAgentServer(store: any) {
 
   client.onAuthenticated.subscribe((agent: Agent, message: AgentMessage) => {
     store.dispatch(Actions.Agent.notifySuccessfulAuthentication(message));
+    store.dispatch(Actions.Configuration.save({
+      ...store.getState().configuration,
+      nickname: message.nickname
+    }))
   });
 
 }

@@ -4,13 +4,13 @@ import { counter, CounterState } from './counter';
 import { app, AppState } from './app'
 import { agent, AgentState } from './agent'
 import { chat, ChatState } from './chat'
-import { association, AssociationState } from './association'
+import { configuration, ConfigurationState } from './configuration'
 
 const rootReducer = combineReducers({  
   app,
   agent,  
   chat,
-  association,
+  configuration,
   counter, 
   routing: routing as Reducer<any>
 });
@@ -20,7 +20,7 @@ export interface State {
   app: AppState,
   agent: AgentState,
   chat: ChatState,
-  association: AssociationState
+  configuration: ConfigurationState
 } 
 
 export default rootReducer;

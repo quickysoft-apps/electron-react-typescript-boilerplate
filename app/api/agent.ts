@@ -13,8 +13,7 @@ export class AgentEvent {
   public static readonly RESULT: string = `${AgentEvent.PREFIX}/result`;
   public static readonly EXECUTE: string = `${AgentEvent.PREFIX}/execute`;
   public static readonly AUTHENTICATED: string = `${AgentEvent.PREFIX}/authenticated`;
-  public static readonly ASSOCIATING: string = `${AgentEvent.PREFIX}/associating`;
-  public static readonly ASSOCIATED: string = `${AgentEvent.PREFIX}/associated`;
+  public static readonly CONFIGURED: string = `${AgentEvent.PREFIX}/configured`;
 }
 
 export interface AgentMessage {

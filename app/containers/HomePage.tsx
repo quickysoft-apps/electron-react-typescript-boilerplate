@@ -9,16 +9,17 @@ function mapStateToProps(state: State): Partial<Props> {
 
   let status = AgentStatus.Connecting;
 
-  if (state.agent.connected === true && state.agent.trusted === false) {
-    status = AgentStatus.Authenticated;
+  if (state.agent.connected === true) {
+    status = AgentStatus.Connected;
   }
 
-  if (state.agent.connected === true && state.agent.trusted === true) {
+  if (state.agent.trusted === true) {
     status = AgentStatus.Trusted;
   }
 
   return {
     status,
+    visible: state.app.visible,
     isTrusted: state.agent.trusted,
     isConnected: state.agent.connected,
     pongMs: state.agent.pongMs

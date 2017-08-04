@@ -2,9 +2,9 @@ import { IAction } from '../actions/helpers';
 
 export enum AgentStatus {
   Connecting = 0,
-  Authenticated,
+  Connected,
   Trusted,
-  Associated
+  Configured
 }
 
 export interface HomeState {
