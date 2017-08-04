@@ -22,7 +22,8 @@ function mapStateToProps(state: State): Partial<Props> {
     visible: state.app.visible,
     isTrusted: state.agent.trusted,
     isConnected: state.agent.connected,
-    pongMs: state.agent.pongMs
+    pongMs: state.agent.pongMs,
+    configured: !!state.configuration.email
   };
 }
 

@@ -1,5 +1,5 @@
 import { combineReducers, Reducer } from 'redux';
-import { routerReducer as routing } from 'react-router-redux';
+import { routerReducer as routing, RouterState } from 'react-router-redux';
 import { counter, CounterState } from './counter';
 import { app, AppState } from './app'
 import { agent, AgentState } from './agent'
@@ -20,7 +20,8 @@ export interface State {
   app: AppState,
   agent: AgentState,
   chat: ChatState,
-  configuration: ConfigurationState
+  configuration: ConfigurationState,
+  routing: RouterState
 } 
 
 export default rootReducer;

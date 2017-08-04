@@ -12,7 +12,8 @@ export interface Props extends RouteComponentProps<any> {
   visible: boolean,
   isTrusted: boolean,
   isConnected: boolean,
-  pongMs: number
+  pongMs: number,
+  configured: boolean
 }
 
 export class Home extends React.Component<Props> {
@@ -51,7 +52,11 @@ export class Home extends React.Component<Props> {
       </Link>
     }
 
-    const instructions = this.props.isTrusted ? <p style={Home.styles.paragraph}>
+    if (this.props.configured) {
+      actionNode = <div/>
+    }
+
+    const configurationTip = this.props.isTrusted ? <p style={Home.styles.paragraph}>
       Pour que cet agent soit pleinement opérationnel, il est nécessaire de le configurer avec
       à minima votre email de contact.</p> : <p />
 
@@ -59,7 +64,7 @@ export class Home extends React.Component<Props> {
       <div style={Home.styles.container}>
 
         {this.props.visible === true ? <Heart status={this.props.status} pongMS={this.props.pongMs} /> : <div />}
-        {instructions}
+        {!this.props.configured ? configurationTip : <div/>}
         {actionNode}
       </div >
 

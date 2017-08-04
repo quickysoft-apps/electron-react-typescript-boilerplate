@@ -51,10 +51,10 @@ export class Configuration extends React.Component<Props, State> {
       <div style={Configuration.styles.container}>
         <h2>Configurer votre agent</h2>
         <p style={Configuration.styles.paragraph}>Il est nécessaire d'indiquer à minima
-          votre email de contact afin de permettre avec votre autorisation à un opérateur 
-          Yakapa d'interagir avec votre agent.</p>
+          votre email de contact afin de permettre à un opérateur 
+          Yakapa d'interagir avec votre agent avec votre autorisation.</p>
         <p style={Configuration.styles.paragraph}>Si vous le souhaitez, vous pouvez identifier
-          cet agent des autres agents qur vous possédez déjà.</p>
+          cet agent pour le distinguer des autres agents que vous possédez déjà.</p>
         <ValidatorForm
           ref="form"          
           onSubmit={() => {
