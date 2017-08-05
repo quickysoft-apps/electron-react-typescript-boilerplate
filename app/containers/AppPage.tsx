@@ -7,7 +7,8 @@ import { Actions } from '../actions'
 
 function mapStateToProps(state: State): Partial<Props> {
   return {
-    visible: state.app.visible,
+    isVisible: state.app.isVisible,
+    isMenuActive: state.app.isMenuActive,
     location: state.routing.location,    
     title: state.configuration.nickname
   };

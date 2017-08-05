@@ -55,7 +55,7 @@ export default class BrowserWindow extends React.Component<Props, State> {
 
     render() {
         if (!this.browserWindow) {
-            this.browserWindow = remote.getCurrentWindow();
+            this.browserWindow = remote.getCurrentWindow();                        
         }
 
         if (this.state.visible === false) {

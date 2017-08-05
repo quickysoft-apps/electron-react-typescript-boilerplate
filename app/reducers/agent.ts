@@ -8,6 +8,7 @@ interface State {
   socketError?: AgentError;
   trusted?: boolean;
   pongMs?: number;
+  connectionDate?: Date;
 }
 
 export interface AgentState extends Partial<State> { };
@@ -27,6 +28,7 @@ export function agent(state: AgentState = {}, action: IAction) {
     return {
       ...state,
       connected: true,
+      connectionDate: new Date(Date.now()),
       trusted: false,
       socketError: undefined,
       connectionError: undefined
@@ -37,7 +39,7 @@ export function agent(state: AgentState = {}, action: IAction) {
     return {
       ...state,
       connected: true,
-      trusted: true,
+      trusted: true,      
       socketError: undefined,
       connectionError: undefined
     };

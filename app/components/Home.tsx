@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
-import { FlatButton } from 'material-ui';
+import { FlatButton, Card, CardActions, CardTitle, CardText, List, ListItem, Subheader, Divider } from 'material-ui';
 import * as Colors from 'material-ui/styles/colors';
 
 import { AgentStatus } from '../reducers/home';
@@ -9,11 +9,13 @@ import { Heart } from './Heart';
 
 export interface Props extends RouteComponentProps<any> {
   status: AgentStatus,
-  visible: boolean,
   isTrusted: boolean,
   isConnected: boolean,
+  isConfigured: boolean,
   pongMs: number,
-  configured: boolean
+  connectedSince: string,
+  email: string,
+  nickname: string
 }
 
 export class Home extends React.Component<Props> {
@@ -35,37 +37,62 @@ export class Home extends React.Component<Props> {
 
   public render() {
 
-    let actionNode: React.ReactNode;
+    let cardTitle = "Détails de l'agent";
+    let cardText = <List>
+      <Subheader>Configuration</Subheader>
+      <ListItem
+        primaryText="Identification"
+        secondaryText={this.props.nickname} />
+      <ListItem
+        primaryText="Email de contact"
+        secondaryText={this.props.email} />
+      <Divider />
+      <Subheader>Connectivité</Subheader>
+      <ListItem
+        primaryText="Dernière connection réussie"
+        secondaryText={this.props.connectedSince} />
+      <ListItem
+        primaryText="Réponse au ping"
+        secondaryText={`${this.props.pongMs} ms.`} />
+    </List>;
+    let cardActions = <div />;
+
+    if (!this.props.isConfigured) {
+      cardTitle = "Configuration requise";
+    }
+
     if (!this.props.isTrusted) {
-      actionNode = <p style={Home.statusStyle}>Identification de l'agent...</p>;
+      cardTitle = "Identification de l'agent...";
     }
 
     if (!this.props.isConnected) {
-      actionNode = <p style={Home.statusStyle}>Connexion au serveur...</p>;
+      cardTitle = "Connexion au serveur...";
     }
 
-    if (this.props.isConnected === true && this.props.isTrusted === true) {
-      actionNode = <Link to="/configuration">
+    if (this.props.isTrusted === true && !this.props.isConfigured) {
+      cardText = <div>
+        Pour que cet agent soit pleinement opérationnel, il est nécessaire de le configurer
+        avec à minima votre email de contact.
+      </div>
+      cardActions = <Link to="/configuration">
         <FlatButton
           label="Configurer"
           primary={true} />
       </Link>
     }
 
-    if (this.props.configured) {
-      actionNode = <div/>
-    }
-
-    const configurationTip = this.props.isTrusted ? <p style={Home.styles.paragraph}>
-      Pour que cet agent soit pleinement opérationnel, il est nécessaire de le configurer avec
-      à minima votre email de contact.</p> : <p />
-
     return (
-      <div style={Home.styles.container}>
-
-        {this.props.visible === true ? <Heart status={this.props.status} pongMS={this.props.pongMs} /> : <div />}
-        {!this.props.configured ? configurationTip : <div/>}
-        {actionNode}
+      <div>
+        <div style={Home.styles.container}>
+          <Heart status={this.props.status} pongMS={this.props.pongMs} />
+        </div>
+        <Card>
+          <CardTitle title={cardTitle} />
+          <CardText>{cardText}</CardText>
+          <CardActions>
+            {cardActions}
+          </CardActions>
+        </Card>
       </div >
 
     );
