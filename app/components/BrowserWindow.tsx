@@ -36,7 +36,7 @@ export default class BrowserWindow extends React.Component<Props, State> {
     private browserWindow: Electron.BrowserWindow;
 
     constructor(props: Props) {
-        super(props);
+        super(props);        
         this.state = { visible: props.visible };
     }
 
@@ -55,8 +55,10 @@ export default class BrowserWindow extends React.Component<Props, State> {
 
     render() {
         if (!this.browserWindow) {
-            this.browserWindow = remote.getCurrentWindow();                        
+            this.browserWindow = remote.getCurrentWindow();                                    
         }
+
+        this.browserWindow.removeAllListeners();
 
         if (this.state.visible === false) {
             this.browserWindow.on('show', this.onShow);

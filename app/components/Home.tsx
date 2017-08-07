@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Avatar, FlatButton, Card, CardActions, CardTitle, CardText, ListItem } from 'material-ui';
+//import { RaisedButton, Paper, ListItem, Avatar } from 'material-ui';
+import { InfoBox } from './InfoBox'
 import * as SvgIcons from 'material-ui/svg-icons';
+import * as Colors from 'material-ui/styles/colors';
 import {
   Table,
   TableBody,
@@ -37,7 +39,7 @@ const styles = {
     paddingRight: 0
   },
   cardStyle: {
-    height: 260
+    height: 258
   }
 };
 
@@ -45,38 +47,44 @@ export class Home extends React.Component<Props> {
 
   public render() {
 
-    let statusTitle = "Détails de l'agent";
+    let statusText = 'Prêt';
 
-    let statusDetails = <Table selectable={false}>
+    if (!this.props.isConfigured) {
+      statusText = "Configuration requise";
+    }
+
+    if (!this.props.isTrusted) {
+      statusText = "Identification de l'agent";
+    }
+
+    if (!this.props.isConnected) {
+      statusText = "Connexion au serveur";
+    }
+
+    let statusDetails = <Table
+      selectable={false}
+      style={{ backgroundColor: 'transparent' }} >
       <TableBody displayRowCheckbox={false}>
-        <TableRow>
+        <TableRow style={{ borderBottom: 0 }}>
           <TableRowColumn style={styles.rowColumn}>
-            <ListItem
-              disabled={true}
-              leftAvatar={<Avatar icon={<SvgIcons.SocialPersonOutline />} />}
-              primaryText="Identification"
-              secondaryText={this.props.nickname} />
+            <InfoBox
+              icon={<SvgIcons.HardwareCastConnected />}
+              primaryText="Statut"
+              secondaryText={statusText} />
           </TableRowColumn>
           <TableRowColumn style={styles.rowColumn}>
-            <ListItem
-              disabled={true}
-              leftAvatar={<Avatar icon={<SvgIcons.CommunicationMailOutline />} />}
-              primaryText="Email de contact"
-              secondaryText={this.props.email} />
           </TableRowColumn>
         </TableRow>
         <TableRow>
           <TableRowColumn style={styles.rowColumn}>
-            <ListItem
-              disabled={true}
-              leftAvatar={<Avatar icon={<SvgIcons.DeviceAccessTime />} />}
+            <InfoBox
+              icon={<SvgIcons.DeviceAccessTime />}
               primaryText="Dernière connexion"
               secondaryText={this.props.connectedSince} />
           </TableRowColumn>
           <TableRowColumn style={styles.rowColumn}>
-            <ListItem
-              disabled={true}
-              leftAvatar={<Avatar icon={<SvgIcons.ActionSettingsBackupRestore />} />}
+            <InfoBox
+              icon={<SvgIcons.ActionSettingsBackupRestore />}
               primaryText="Réponse au ping"
               secondaryText={`${this.props.pongMs} ms.`} />
           </TableRowColumn>
@@ -84,30 +92,20 @@ export class Home extends React.Component<Props> {
       </TableBody>
     </Table>
 
-    let cardActions = <div />;
-
-    if (!this.props.isConfigured) {
-      statusTitle = "Configuration requise";
-    }
-
-    if (!this.props.isTrusted) {
-      statusTitle = "Identification de l'agent...";
-    }
-
-    if (!this.props.isConnected) {
-      statusTitle = "Connexion au serveur...";
-    }
-
     if (this.props.isTrusted === true && !this.props.isConfigured) {
       statusDetails = <div>
-        Pour que cet agent soit pleinement opérationnel, il est nécessaire de le configurer
-        avec à minima votre email de contact.
+        <InfoBox
+          style={{
+            marginTop: 64
+          }}
+          backgroundColor={Colors.pinkA200}
+          disabled={false}
+          containerElement={<Link to="/configuration" />}
+          icon={<SvgIcons.AlertWarning />}
+          primaryText="Configuration requise"
+          secondaryText="Veuillez configurer à minima votre email de contact"
+        />
       </div>
-      cardActions = <Link to="/configuration">
-        <FlatButton
-          label="Configurer"
-          primary={true} />
-      </Link>
     }
 
     return (
@@ -115,15 +113,8 @@ export class Home extends React.Component<Props> {
         <div style={styles.container}>
           <Heart status={this.props.status} pongMS={this.props.pongMs} />
         </div>
-        <Card style={styles.cardStyle}>
-          <CardTitle style={styles.statusTitle} title={statusTitle} />
-          <CardText>{statusDetails}</CardText>
-          <CardActions>
-            {cardActions}
-          </CardActions>
-        </Card>
+        {statusDetails}
       </div >
-
     );
   }
 

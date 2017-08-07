@@ -9,13 +9,15 @@ function mapStateToProps(state: State): Partial<Props> {
   return {
     isVisible: state.app.isVisible,
     isMenuActive: state.app.isMenuActive,
-    location: state.routing.location,    
-    title: state.configuration.nickname
+    location: state.routing.location,
+    nickname: state.configuration.nickname,
+    email: state.configuration.email ? state.configuration.email : '...',
+    title: 'Agent Yakapa'//state.configuration.nickname
   };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<State>): Partial<Props> {
-  return bindActionCreators({...routerActions, ...Actions.App} as any, dispatch);
+  return bindActionCreators({ ...routerActions, ...Actions.App } as any, dispatch);
 }
 
 export default (connect(mapStateToProps, mapDispatchToProps)(App) as any);

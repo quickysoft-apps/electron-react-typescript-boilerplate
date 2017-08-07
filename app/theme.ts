@@ -6,9 +6,10 @@ import { fade } from 'material-ui/utils/colorManipulator'
 document.body.style.position = "relative";
 document.body.style.height = "100vh";
 document.body.style.overflowY = "hidden";
-document.body.style.color = Colors.grey300;
+document.body.style.color = fade(Colors.white, 0.87);
 document.body.style.backgroundColor = fade(Colors.darkBlack, 0.87);
-document.body.style.fontFamily = 'Roboto, sans-serif'
+document.body.style.fontFamily = 'Roboto, sans-serif';
+document.body.style.fontSize = '16px';
 document.body.style.margin = "0px";
 
 const getTheme = () => {
@@ -19,7 +20,7 @@ const getTheme = () => {
       //"canvasColor": fade(Colors.faintBlack, 0.12)
     },
     "appBar": {
-      "height": 50,
+      "height":60,
       "textColor": fade(Colors.darkWhite, 0.87),
       "color": Colors.grey800
     }

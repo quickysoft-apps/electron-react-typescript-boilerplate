@@ -14,30 +14,14 @@ export interface Props {
   isVisible: boolean;
   isMenuActive: boolean;
   title: string;
+  email: string;
+  nickname: string;
   location: Location | null;
 }
 
 export class App extends React.Component<Props> {
 
   public render() {
-
-    const styles = {
-      appBar: {
-        webkitAppRegion: "drag",
-        webkitUserSelect: "none"
-      },
-      drawer: {
-        top: 50
-      },
-      drawerOverlay: {
-        top: 50
-      },
-      button: {
-        webkitAppRegion: "no-drag"
-      }
-    }
-
-
 
     let leftElement: JSX.Element = <IconButton>
       <SvgIcons.NavigationMenu onClick={() => this.props.toggleMenu(!this.props.isMenuActive)} />
@@ -47,6 +31,11 @@ export class App extends React.Component<Props> {
       leftElement = <IconButton onClick={this.props.goBack}><SvgIcons.NavigationArrowBack /></IconButton>;
     }
 
+    const title = <div>
+      <div style={{ marginTop: 8 }}>{this.props.nickname}</div>
+      <div style={{ fontSize: 'small', fontWeight: 300 }}>{this.props.email}</div>
+    </div>
+
     return (
       <div>
         <BrowserWindow
@@ -55,17 +44,18 @@ export class App extends React.Component<Props> {
           onShow={this.props.show}
         />
         <AppBar
-          iconStyleLeft={styles.button}
-          iconStyleRight={styles.button}
+          iconStyleLeft={{ webkitAppRegion: 'no-drag' }}
+          iconStyleRight={{ webkitAppRegion: 'no-drag' }}
+          style={{ webkitAppRegion: 'drag', webkitUserSelect: 'none' }}
+          titleStyle={{ lineHeight: 'normal' }}
           showMenuIconButton={true}
-          style={styles.appBar}
-          title={this.props.title}
+          title={title}
           iconElementLeft={leftElement}
           iconElementRight={<IconButton onClick={this.props.hide}><SvgIcons.ContentRemove /></IconButton>}>
         </AppBar>
         <Drawer
-          containerStyle={styles.drawer}
-          overlayStyle={styles.drawerOverlay}
+          containerStyle={{ top: 60 }}
+          overlayStyle={{ top: 60 }}
           docked={false}
           width={200}
           open={this.props.isMenuActive}
@@ -77,7 +67,7 @@ export class App extends React.Component<Props> {
               onClick={() => {
                 this.props.toggleMenu(false);
                 this.props.push('/configuration');
-              }}/>            
+              }} />
           </List>
         </Drawer>
         {this.props.children}
