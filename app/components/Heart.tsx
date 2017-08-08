@@ -32,8 +32,8 @@ export class Heart extends React.Component<Props, State> {
       fill: Colors.red500
     },
     icon: {
-      width: 256,
-      height: 256,
+      width: 300,
+      height: 300,
       transition: "fill 0.5s ease",
       zIndex: 9999
     }

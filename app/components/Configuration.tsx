@@ -10,7 +10,7 @@ interface State {
   initialNickName: string;
 }
 
-export interface Props extends RouteComponentProps<any> {  
+export interface Props extends RouteComponentProps<any> {
   save: (configuration: AgentConfiguration) => void;
   email: string;
   nickname: string;
@@ -21,13 +21,10 @@ export class Configuration extends React.Component<Props, State> {
   static styles = {
     container: {
       textAlign: "center",
+      margin: 28
     },
     paragraph: {
-      textAlign: "left",
-      margin: 28,
-    },
-    button: {
-      margin: 12
+      textAlign: "left"
     }
   };
 
@@ -51,43 +48,51 @@ export class Configuration extends React.Component<Props, State> {
       <div style={Configuration.styles.container}>
         <h2>Configurer votre agent</h2>
         <p style={Configuration.styles.paragraph}>Il est nécessaire d'indiquer à minima
-          votre email de contact afin de permettre à un opérateur 
-          Yakapa d'interagir avec votre agent avec votre autorisation.</p>
+          votre email de contact afin d'autoriser à un opérateur
+          Yakapa à interagir avec votre agent.</p>
         <p style={Configuration.styles.paragraph}>Si vous le souhaitez, vous pouvez identifier
-          cet agent pour le distinguer des autres agents que vous possédez déjà.</p>
+          cet agent avec un nom particulier pour le distinguer des autres agents que vous possédez déjà.</p>
         <ValidatorForm
-          ref="form"          
+          ref="form"
           onSubmit={() => {
             const nickname: string = this.state.nickname.trim();
             this.props.save({
               email: this.state.email,
               nickname: nickname.length === 0 ? this.state.initialNickName : nickname
             })
-            this.props.history.push("/");
+            this.props.history.goBack();
           }}>
           <TextValidator
+            style={{ textAlign: 'left' }}
             name="email"
             hintText="votre.email@contact.fr"
             floatingLabelText="Email de contact"
             value={this.state.email}
             validators={['required', 'isEmail']}
-            errorMessages={['Ce champ est obligatoire', "L'adresse email n'est pas valide"]}
+            errorMessages={['Ce champ est obligatoire', "Ça ne ressemble pas à une adresse email :/"]}
             onChange={(e: React.FormEvent<{}>, newValue: string) => this.setState({ email: newValue })}
           />
           <TextValidator
+            style={{ textAlign: 'left' }}
             name="nickname"
             hintText={this.state.initialNickName}
             floatingLabelText="Identification"
             floatingLabelFixed={true}
             value={this.state.nickname}
             validators={['isValidNickname']}
-            errorMessages={["L'identifiant ne peut pas contenir de caractères spéciaux et ne doit pas dépasser 20 caractères"]}
+            errorMessages={["Pas de caractères spéciaux et moins 20 caractères !"]}
             onChange={(e: React.FormEvent<{}>, newValue: string) => this.setState({ nickname: newValue })}
           />
           <br />
-          <br />
-          <RaisedButton style={Configuration.styles.button} onClick={() => this.props.history.push("/")}>Annuler</RaisedButton>
-          <RaisedButton primary={true} style={Configuration.styles.button} type="submit">Valider</RaisedButton>
+          <RaisedButton
+            style={{
+              textAlign: 'left',
+              marginTop: 24
+            }}
+            primary={true}
+            type="submit">
+            Enregistrer
+          </RaisedButton>
         </ValidatorForm>
       </div >
 

@@ -1,16 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
-//import { RaisedButton, Paper, ListItem, Avatar } from 'material-ui';
+import { Dialog, FlatButton } from 'material-ui';
 import { InfoBox } from './InfoBox'
 import * as SvgIcons from 'material-ui/svg-icons';
-import * as Colors from 'material-ui/styles/colors';
-import {
-  Table,
-  TableBody,
-  TableRow,
-  TableRowColumn,
-} from 'material-ui/Table';
 
 import { AgentStatus } from '../reducers/home';
 import { Heart } from './Heart';
@@ -61,51 +54,40 @@ export class Home extends React.Component<Props> {
       statusText = "Connexion au serveur";
     }
 
-    let statusDetails = <Table
-      selectable={false}
-      style={{ backgroundColor: 'transparent' }} >
-      <TableBody displayRowCheckbox={false}>
-        <TableRow style={{ borderBottom: 0 }}>
-          <TableRowColumn style={styles.rowColumn}>
-            <InfoBox
-              icon={<SvgIcons.HardwareCastConnected />}
-              primaryText="Statut"
-              secondaryText={statusText} />
-          </TableRowColumn>
-          <TableRowColumn style={styles.rowColumn}>
-          </TableRowColumn>
-        </TableRow>
-        <TableRow>
-          <TableRowColumn style={styles.rowColumn}>
-            <InfoBox
-              icon={<SvgIcons.DeviceAccessTime />}
-              primaryText="Dernière connexion"
-              secondaryText={this.props.connectedSince} />
-          </TableRowColumn>
-          <TableRowColumn style={styles.rowColumn}>
-            <InfoBox
-              icon={<SvgIcons.ActionSettingsBackupRestore />}
-              primaryText="Réponse au ping"
-              secondaryText={`${this.props.pongMs} ms.`} />
-          </TableRowColumn>
-        </TableRow>
-      </TableBody>
-    </Table>
+    let statusDetails = <div>
+      <InfoBox
+        style={{ marginTop: 6, marginBottom: 0 }}
+        leftIcon={<SvgIcons.HardwareCastConnected />}
+        primaryText="Statut de la connexion"
+        secondaryText={statusText} />
+      <InfoBox
+        style={{ marginTop: 6, marginBottom: 0 }}
+        leftIcon={<SvgIcons.DeviceAccessTime />}
+        primaryText="Dernière connexion effective"
+        secondaryText={this.props.connectedSince} />
+      <InfoBox
+        style={{ marginTop: 6, marginBottom: 0 }}
+        leftIcon={<SvgIcons.ActionSettingsBackupRestore />}
+        primaryText="Réponse au ping"
+        secondaryText={`${this.props.pongMs} ms.`} />
+    </div>
 
     if (this.props.isTrusted === true && !this.props.isConfigured) {
-      statusDetails = <div>
-        <InfoBox
-          style={{
-            marginTop: 64
-          }}
-          backgroundColor={Colors.pinkA200}
-          disabled={false}
-          containerElement={<Link to="/configuration" />}
-          icon={<SvgIcons.AlertWarning />}
-          primaryText="Configuration requise"
-          secondaryText="Veuillez configurer à minima votre email de contact"
-        />
-      </div>
+      statusDetails = <Dialog
+        title="Configuration initiale requise"
+        actions={[
+          <Link to="/configuration">
+            <FlatButton
+              label="Configurer"
+              primary={true} />
+          </Link>
+        ]}
+        modal={true}
+        open={true}      >
+        <p>C'est la première fois que cet agent s'exécute. Pour qu'il soit opérationnel, il est
+        nécessaire de configurer à minima votre email de contact.</p>
+        <p>Pour votre information, cet agent sera exécuté à chaque démarrage de votre système.</p>
+      </Dialog>
     }
 
     return (

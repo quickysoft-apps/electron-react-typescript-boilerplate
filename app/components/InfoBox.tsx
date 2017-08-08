@@ -2,11 +2,13 @@ import * as React from 'react';
 import { Avatar, ListItem, Paper } from 'material-ui';
 import * as Colors from 'material-ui/styles/colors';
 import { fade } from 'material-ui/utils/colorManipulator'
+import * as SvgIcons from 'material-ui/svg-icons'
 
 interface Props {
   primaryText: string;
   secondaryText: string;
-  icon: React.ReactElement<any>;
+  leftIcon: React.ReactElement<any>;
+  rightIcon?: React.ReactElement<any>;
   disabled?: boolean;
   backgroundColor?: string;
   containerElement?: React.ReactNode | string;
@@ -18,24 +20,32 @@ export class InfoBox extends React.Component<Props> {
   static defaultProps = {
     backgroundColor: Colors.grey800,
     disabled: true,
-    style: { margin: 16 }
+    style: { margin: 16 },
+    rightIcon: <SvgIcons.NavigationChevronRight style={{
+      width: 32,
+      height: 32,
+      fill: fade(Colors.white, 0.8),
+      margin: 0,
+      right: 0,
+      top: 10
+    }} />
   }
 
   public render() {
 
-    const icon = <div>{this.props.icon}</div>
     let textBackgroundColor = this.props.backgroundColor ? this.props.backgroundColor : Colors.grey800;
     let color1 = this.props.disabled ? fade(textBackgroundColor, 0.8) : fade(textBackgroundColor, 0.2);
-    let color2 = this.props.disabled ? fade(textBackgroundColor, 0.2) : fade(textBackgroundColor, 0.8);        
+    let color2 = this.props.disabled ? fade(textBackgroundColor, 0.2) : fade(textBackgroundColor, 0.8);
 
     return (
       <Paper
-        style={{ 
-          marginLeft: 16, 
-          marginRight: 16, 
+        style={{
+          marginLeft: 48,
+          marginRight: 48,
           marginTop: 6,
           marginBottom: 6,
-          ...this.props.style }}
+          ...this.props.style
+        }}
         zDepth={1}>
         <ListItem
           innerDivStyle={{
@@ -44,6 +54,7 @@ export class InfoBox extends React.Component<Props> {
           hoverColor={color2}
           containerElement={this.props.containerElement}
           disabled={this.props.disabled}
+          rightIcon={!this.props.disabled ? this.props.rightIcon : undefined}
           leftAvatar={<Avatar
             style={{
               borderTopRightRadius: 0,
@@ -56,7 +67,8 @@ export class InfoBox extends React.Component<Props> {
               backgroundColor: color2,
               padding: 6
             }}
-            icon={icon} />}
+            icon={<div>{this.props.leftIcon}</div>}
+          />}
           primaryText={<div style={{
             backgroundColor: color1,
             padding: '6px 0px 4px 4px',
