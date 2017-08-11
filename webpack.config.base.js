@@ -16,6 +16,9 @@ module.exports = {
     }, {
       test: /\.json$/,
       loader: 'json-loader'
+    }, {
+      test: require.resolve('snapsvg'),
+      loader: 'imports-loader?this=>window,fix=>module.exports=0'
     }]
   },
 

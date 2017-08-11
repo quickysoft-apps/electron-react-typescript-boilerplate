@@ -1,7 +1,7 @@
 import * as Log from 'electron-log';
 import * as io from 'socket.io-client';
 import * as LZString from 'lz-string';
-import * as UUID from 'uuid';
+import * as uuid from 'uuid';
 import settings = require('electron-settings');
 import { IEvent, ISignal, ISimpleEvent, SignalDispatcher, EventDispatcher, SimpleEventDispatcher } from 'strongly-typed-events';
 
@@ -27,7 +27,7 @@ export interface AgentMessage {
 export class AgentConfiguration {
 
   public get tag(): string {
-    const value = settings.get('tag', UUID.v4());
+    const value = settings.get('tag', uuid.v4());
     return value as string;
   }
 

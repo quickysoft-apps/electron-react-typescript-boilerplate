@@ -3,11 +3,13 @@ import * as App from './app';
 import * as Agent from './agent';
 import * as Chat from './chat';
 import * as Configuration from './configuration';
+import * as ScriptRunner from './scriptRunner';
 
 export const Actions = {
   Counter,
   App,
   Agent,
   Chat,
-  Configuration
+  Configuration,
+  ScriptRunner
 }

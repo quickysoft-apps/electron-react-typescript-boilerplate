@@ -5,6 +5,7 @@
  */
 
 const webpack = require('webpack');
+const HTMLWebpackPlugin = require('html-webpack-plugin');
 const merge = require('webpack-merge');
 const baseConfig = require('./webpack.config.base');
 
@@ -146,6 +147,7 @@ module.exports = merge(baseConfig, {
   },
 
   plugins: [
+  
     // https://webpack.github.io/docs/hot-module-replacement-with-webpack.html
     new webpack.HotModuleReplacementPlugin(),
 
@@ -158,7 +160,7 @@ module.exports = merge(baseConfig, {
 
     new webpack.LoaderOptionsPlugin({
       debug: true
-    }),
+    })
   ],
 
   // https://github.com/chentsulin/webpack-target-electron-renderer#how-this-module-works

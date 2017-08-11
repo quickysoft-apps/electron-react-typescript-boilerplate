@@ -1,18 +1,20 @@
 {
-  "name": "YakapaSupervisor",
+  "name": "yakapa-supervisor",
   "productName": "YakapaSupervisor",
   "version": "0.5.0",
   "description": "Electron application based on TypeScript, React, React Router, Webpack, React Hot Loader for rapid application development",
   "main": "./main.js",
   "author": {
-     "name": "Quickysoft",
-     "email": "contact@quickysoft.com",
-     "url": "https://github.com/quickysoft-apps"
+    "name": "Quickysoft",
+    "email": "contact@quickysoft.com",
+    "url": "https://github.com/quickysoft-apps"
   },
   "scripts": {
     "postinstall": "npm rebuild --runtime=electron --target=1.6.6 --disturl=https://atom.io/download/atom-shell --build-from-source"
   },
   "license": "MIT",
   "dependencies": {
+    "edge": "^7.10.1",
+    "electron-edge": "^6.5.5"
   }
 }

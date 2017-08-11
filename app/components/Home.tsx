@@ -93,7 +93,10 @@ export class Home extends React.Component<Props> {
     return (
       <div>
         <div style={styles.container}>
-          <Heart status={this.props.status} pongMS={this.props.pongMs} />
+          <Heart
+            status={this.props.status}
+            pongMS={this.props.pongMs}
+            onClick={() => this.props.history.push('/scriptRunner')} />
         </div>
         {statusDetails}
       </div >
