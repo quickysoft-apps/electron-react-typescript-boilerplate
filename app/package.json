@@ -10,11 +10,10 @@
     "url": "https://github.com/quickysoft-apps"
   },
   "scripts": {
-    "postinstall": "npm rebuild --runtime=electron --target=1.6.6 --disturl=https://atom.io/download/atom-shell --build-from-source"
+    "postinstall": "npm rebuild --runtime=electron --target=1.7.6 --disturl=https://atom.io/download/atom-shell --build-from-source"
   },
   "license": "MIT",
   "dependencies": {
-    "edge": "^7.10.1",
-    "electron-edge": "^6.5.5"
+    "edge": "file:///C:\\dev\\edge"
   }
 }
