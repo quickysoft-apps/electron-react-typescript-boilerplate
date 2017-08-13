@@ -42,8 +42,8 @@ export function listenAgentServer(store: any) {
     store.dispatch(Actions.Agent.pong(ms));
   })
 
-  client.onAuthenticated.subscribe((agent: Agent, message: AgentMessage) => {
-    store.dispatch(Actions.Agent.notifySuccessfulAuthentication(message));
+  client.onReady.subscribe((agent: Agent, message: AgentMessage) => {
+    store.dispatch(Actions.Agent.notifyReadiness(message));
     store.dispatch(Actions.Configuration.save({
       ...store.getState().configuration,
       nickname: message.nickname

@@ -6,9 +6,9 @@ import { State } from '../reducers'
 
 function mapStateToProps(state: State): Partial<Props> {
   return {    
-    lastExecutionId: state.scriptRunner.lastExecutionId,
-    currentScript: state.scriptRunner.currentScript,
-    results: state.scriptRunner.results,    
+    current: state.scriptRunner.current,
+    running: state.scriptRunner.running,
+    runs: state.scriptRunner.runs,    
   };
 }
 

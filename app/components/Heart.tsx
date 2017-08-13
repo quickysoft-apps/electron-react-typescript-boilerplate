@@ -20,7 +20,7 @@ export class Heart extends React.Component<Props, State> {
     connecting: {
       fill: Colors.grey800
     },
-    authenticated: {
+    ready: {
       fill: Colors.green400
     },
     trusted: {
@@ -55,7 +55,7 @@ export class Heart extends React.Component<Props, State> {
 
     switch (this.props.status) {
       case AgentStatus.Connected:
-        statusStyle = Heart.styles.authenticated;
+        statusStyle = Heart.styles.ready;
         break;
       case AgentStatus.Trusted:
         statusStyle = Heart.styles.trusted;

@@ -1,34 +1,42 @@
 import { IAction } from '../actions/helpers';
 import { Actions } from '../actions';
-import { ScriptRunnerResult } from '../actions/scriptRunner';
+import { ScriptRunnerData } from '../actions/scriptRunner';
 
 export interface ScriptRunnerState {
-  lastExecutionId?: string;  
-  currentScript?: string;
-  results: Map<string, ScriptRunnerResult>;
+  current?: ScriptRunnerData;
+  running: boolean;
+  runs: Map<string, ScriptRunnerData>;
 }
 
-const initialState =  {
-  results: new Map<string, ScriptRunnerResult>()
+const initialState = {
+  running: false,
+  runs: new Map<string, ScriptRunnerData>()
 }
 
 export function scriptRunner(state: ScriptRunnerState = initialState, action: IAction) {
 
-  if (Actions.ScriptRunner.notifyExecuting.test(action)) {    
+  if (Actions.ScriptRunner.notifyExecuting.test(action)) {
     return {
-      ...state,      
-      lastExecutionId: action.payload.executionId,
-      currentScript: action.payload.script
+      ...state,
+      running: true
     };
   }
 
-  if (Actions.ScriptRunner.notifyExecuted.test(action)) {        
+  if (Actions.ScriptRunner.notifyExecuted.test(action)) {
     return {
-      ...state,      
-      executionId: action.payload.executionId,
-      result: action.payload.result,
-      error: action.payload.error,      
-      results: state.results.set(action.payload.executionId, action.payload)
+      ...state,
+      current: { ...action.payload },
+      runs: action.payload.id ? new Map<string, ScriptRunnerData>(state.runs.set(action.payload.id, action.payload)) : state.runs
+    };
+  }
+
+  if (Actions.ScriptRunner.stopCurrent.test(action)) {
+    if (state.current && state.current.job) {
+      state.current.job.stop();
+    }
+    return {
+      ...state,
+      running: false
     };
   }
 

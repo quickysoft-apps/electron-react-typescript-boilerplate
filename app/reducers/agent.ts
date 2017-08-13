@@ -35,7 +35,7 @@ export function agent(state: AgentState = {}, action: IAction) {
     };
   }
 
-  if (Actions.Agent.notifySuccessfulAuthentication.test(action)) {
+  if (Actions.Agent.notifyReadiness.test(action)) {
     return {
       ...state,
       connected: true,

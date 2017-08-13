@@ -12,7 +12,7 @@ export class AgentEvent {
   public static readonly CHAT: string = `${AgentEvent.PREFIX}/chat`;
   public static readonly RESULT: string = `${AgentEvent.PREFIX}/result`;
   public static readonly EXECUTE: string = `${AgentEvent.PREFIX}/execute`;
-  public static readonly AUTHENTICATED: string = `${AgentEvent.PREFIX}/authenticated`;
+  public static readonly READY: string = `${AgentEvent.PREFIX}/ready`;
   public static readonly CONFIGURED: string = `${AgentEvent.PREFIX}/configured`;
 }
 
@@ -54,7 +54,7 @@ export class AgentConfiguration {
 export class Agent {
 
   private _socket: SocketIOClient.Socket;
-  private _isAuthenticated: boolean = false;
+  private _isReady: boolean = false;
   
   private _configuration: AgentConfiguration = new AgentConfiguration();
   public get configuration() : AgentConfiguration {
@@ -66,9 +66,9 @@ export class Agent {
     return this._onChat.asEvent();
   }
 
-  private _onAuthenticated = new EventDispatcher<Agent, AgentMessage>();
-  public get onAuthenticated(): IEvent<Agent, AgentMessage> {
-    return this._onAuthenticated.asEvent();
+  private _onReady = new EventDispatcher<Agent, AgentMessage>();
+  public get onReady(): IEvent<Agent, AgentMessage> {
+    return this._onReady.asEvent();
   }
 
   private _onConnected = new SignalDispatcher();
@@ -103,7 +103,7 @@ export class Agent {
     this._socket.on('connect_error', (error: Error) => { this.connectionError(error) })
     this._socket.on('error', (error: Error) => { this.socketError(error) })
 
-    this._socket.on(AgentEvent.AUTHENTICATED, (socketMessage: AgentMessage) => { this.authenticated(socketMessage) })
+    this._socket.on(AgentEvent.READY, (socketMessage: AgentMessage) => { this.ready(socketMessage) })
     this._socket.on(AgentEvent.CHAT, async (socketMessage: AgentMessage) => { await this.chat(socketMessage) })
     this._socket.on(AgentEvent.EXECUTE, async (socketMessage: AgentMessage) => { await this.execute(socketMessage) })
   }
@@ -125,8 +125,8 @@ export class Agent {
 
   private check(socketMessage: AgentMessage): boolean {
 
-    if (this._isAuthenticated === false) {
-      Log.warn(`Je ne peux rien faire car je ne suis pas authentifié !`)
+    if (this._isReady === false) {
+      Log.warn(`Je ne peux rien faire car je ne suis pas prêt !`)
       return false
     }
 
@@ -159,15 +159,15 @@ export class Agent {
     this._onConnectionError.dispatch(error);
   }
 
-  private authenticated(socketMessage: AgentMessage): void {
-    this._isAuthenticated = true;
+  private ready(socketMessage: AgentMessage): void {
+    this._isReady = true;
     if (this._configuration.nickname) {
       socketMessage.nickname = this._configuration.nickname;
     } else {
       this._configuration.nickname = socketMessage.nickname;
     }
     Log.info('Bienvenue', this._configuration.nickname);
-    this._onAuthenticated.dispatch(this, socketMessage);
+    this._onReady.dispatch(this, socketMessage);
   }
 
   private async chat(socketMessage: AgentMessage): Promise<void> {

@@ -8,5 +8,5 @@ export interface AgentError extends Partial<Error> {
 export const notifySuccessfulConnection = actionCreatorVoid('agent/NOTIFY_SUCCESSFUL_CONNECTION');
 export const notifyConnectionError = actionCreator<AgentError>('agent/NOTIFY_CONNECTION_ERROR');
 export const notifySocketError = actionCreator<AgentError>('agent/NOTIFY_SOCKET_ERROR');
-export const notifySuccessfulAuthentication = actionCreator<AgentMessage>('agent/NOTIFY_SUCCESSFUL_AUTHENTICATION');
+export const notifyReadiness = actionCreator<AgentMessage>('agent/NOTIFY_READINESS');
 export const pong = actionCreator<number>('agent/PONG');

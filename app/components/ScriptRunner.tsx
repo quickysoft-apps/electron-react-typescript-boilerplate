@@ -1,19 +1,21 @@
 import * as React from 'react';
-import * as uuid from 'uuid';
 import { RouteComponentProps } from 'react-router';
-import { Paper, RaisedButton } from 'material-ui'
+import { TextField, Paper, FloatingActionButton } from 'material-ui'
+import { Tabs, Tab } from 'material-ui/Tabs';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
-import { ScriptRunnerOptions, ScriptRunnerResult } from '../actions/scriptRunner';
+import * as SvgIcons from 'material-ui/svg-icons';
+import { ScriptRunnerData } from '../actions/scriptRunner';
 
 interface State {
   script: string;
 }
 
 export interface Props extends RouteComponentProps<any> {
-  executeAsync: (options: ScriptRunnerOptions) => void;
-  lastExecutionId?: string;
-  currentScript?: string;
-  results: Map<string, ScriptRunnerResult>;
+  executeAsync: (options: ScriptRunnerData) => void;
+  stopCurrent: VoidFunction;
+  running: boolean;
+  current?: ScriptRunnerData;  
+  runs: Map<string, ScriptRunnerData>;
 }
 
 export class ScriptRunner extends React.Component<Props, State> {
@@ -21,57 +23,96 @@ export class ScriptRunner extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      script: props.currentScript ? props.currentScript : ''
+      script: props.current ? props.current.script : ''
     }
   }
 
   public render() {
 
     return (
-      <div style={{
-        margin: 16
-      }}>
-        <ValidatorForm
-          ref="form"
-          onSubmit={() => {
-            this.props.executeAsync({
-              executionId: uuid.v4(),
-              payload: null,
-              script: this.state.script
-            });
-          }}>
+      <Tabs>
+        <Tab label="Éditeur">
+          <ValidatorForm
+            style={{ textAlign: 'right' }}
+            ref="form"
+            onSubmit={() => {
+              this.props.executeAsync({                              
+                script: this.state.script,
+                input: null,
+
+              });
+            }}>
+            <Paper
+              zDepth={1}
+              style={{
+                display: 'inline-block',
+                width: '100%',
+                padding: 6
+              }}
+              rounded={false}>
+              <TextValidator
+                style={{ textAlign: 'left' }}
+                name="script"
+                hintText="C# script..."
+                multiLine={true}
+                fullWidth={true}
+                rows={15}
+                rowsMax={15}
+                underlineShow={false}
+                value={this.state.script}
+                validators={['required']}
+                errorMessages={['Pas de code à exécuter']}
+                onChange={(e: React.FormEvent<{}>, newValue: string) => this.setState({ script: newValue })}
+              />
+            </Paper>
+            <FloatingActionButton
+              style={{
+                marginTop: -28,
+                marginRight: 12
+              }}
+              secondary={true}
+              disabled={!this.props.running}
+              onClick={this.props.stopCurrent}>
+              <SvgIcons.AvStop />
+            </FloatingActionButton>
+            <FloatingActionButton
+              style={{
+                marginTop: -28,
+                marginRight: 12
+              }}
+              disabled={this.props.running}
+              type="submit">
+              <SvgIcons.AvPlayArrow />
+            </FloatingActionButton>
+          </ValidatorForm>
+        </Tab>
+        <Tab label="Résultat">
           <Paper
             zDepth={1}
             style={{
               display: 'inline-block',
-              width: '100%'
-            }}>
-            <TextValidator
-              style={{ margin: 6 }}
-              name="script"
-              hintText="C# script..."
+              width: '100%',
+              padding: 6
+            }}
+            rounded={false}>
+            <TextField
+              name="result"
+              style={{ textAlign: 'left' }}
+              disabled={true}
               multiLine={true}
               fullWidth={true}
               rows={15}
               rowsMax={15}
               underlineShow={false}
-              value={this.state.script}
-              validators={['required']}
-              errorMessages={['Pas de cpde à exécuter ?!']}
-              onChange={(e: React.FormEvent<{}>, newValue: string) => this.setState({ script: newValue })}
+              value={
+                this.props.current && this.props.current.result ? 
+                  this.props.current.result.toString() : 
+                  '(vide)'
+              }
             />
           </Paper>
-          <RaisedButton
-            style={{
-              textAlign: 'left',
-              marginTop: 24
-            }}
-            primary={true}
-            type="submit">
-            Exécuter
-          </RaisedButton>
-        </ValidatorForm>
-      </div>
+        </Tab>
+      </Tabs>
     );
   }
 

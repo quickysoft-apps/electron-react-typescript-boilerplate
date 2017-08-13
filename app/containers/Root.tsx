@@ -1,4 +1,7 @@
 import * as React from 'react';
+const injectTapEventPlugin = require("react-tap-event-plugin");
+injectTapEventPlugin();
+
 import * as Redux from 'react-redux';
 import { History } from 'history';
 
