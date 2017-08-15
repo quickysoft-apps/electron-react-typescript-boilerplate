@@ -9,8 +9,12 @@ const startJob = function (arg, callback, onComplete) {
   let cron = arg.cron;
   try {
     if (!cron) {
-      cron = new Date();
-      cron.setSeconds(cron.getSeconds() + 5);
+      try {
+        callback(id, func(arg.script, true));
+        onComplete();
+      } catch (error) {
+        callback(id, null, error);
+      }
     }
     const job = new CronJob(cron, () => {
       try {
@@ -18,9 +22,7 @@ const startJob = function (arg, callback, onComplete) {
       } catch (error) {
         callback(id, null, error);
       }
-    }, () => {
-      onComplete()
-    }, true, 'Europe/Paris');
+    }, onComplete, true, 'Europe/Paris');
     jobs.set(id, job);
     return id;
   } catch (error) {
