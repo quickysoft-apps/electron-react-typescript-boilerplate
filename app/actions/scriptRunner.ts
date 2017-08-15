@@ -1,41 +1,54 @@
-import { CronJob } from 'cron';
-import * as uuid from 'uuid';
-import { actionCreator, actionCreatorVoid } from './helpers';
-import * as edgeApi from '../api/edge'
+import { ipcRenderer } from 'electron';
+import { actionCreator } from './helpers';
 
 export interface ScriptRunnerData {
   id?: string;
+  cron?: any;
   script: string;
   input: any;
   result?: Object;
   error?: Object;
-  job?: CronJob;
+  resultListener?: Function,
+  startedListener?: Function
 }
 
 export const notifyExecuting = actionCreator<ScriptRunnerData>('scriptRunner/NOTIFY_EXECUTING');
 export const notifyExecuted = actionCreator<ScriptRunnerData>('scriptRunner/NOTIFY_EXECUTED');
-export const stopCurrent = actionCreatorVoid('scriptRunner/STOP_CURRENT');
+export const stopCurrent = actionCreator<ScriptRunnerData>('scriptRunner/STOP_CURRENT');
 
 export const executeAsync = function (options: ScriptRunnerData) {
   return (dispatch: Function) => {
-    const edgeFunction = edgeApi.getEdgeFunctionFromScript(options.script);
-    let data: ScriptRunnerData = {
-      id: uuid.v4(),
+
+    const data: ScriptRunnerData = {
       script: options.script,
       input: options.input,
-      job: new CronJob('* * * * * *', () => {
-        try {
-          const result = edgeFunction(options.input, true);
-          data.result = result;
-        } catch (error) {
-          data.error = error;
-        }
-        dispatch(notifyExecuted(data));
-      }, undefined, false, 'Europe/Paris')
+      cron: '* * * * * *' //FORCE TOUTES lES SECOPNDES POUR TEST
     }
-    if (data.job) {
-      dispatch(notifyExecuting(data));
-      data.job.start();
+
+    const resultListener = (event: any, arg: any) => {
+      dispatch(notifyExecuted({
+        ...data,
+        id: arg.id,
+        result: arg.result
+      }));
     }
-  };
+    ipcRenderer.on('scriptRunner/RESULT', resultListener);
+
+    const startedListener = (event: any, arg: any) => {
+      dispatch(notifyExecuting({
+        ...data,
+        id: arg.id
+      }));
+    }
+    ipcRenderer.on('scriptRunner/STARTED', startedListener);
+    
+    ipcRenderer.send('scriptRunner/START', {
+      ...data,
+      resultListener,
+      startedListener
+    });
+
+  }
+
 }
+

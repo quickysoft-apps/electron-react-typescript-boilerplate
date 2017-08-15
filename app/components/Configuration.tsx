@@ -60,7 +60,7 @@ export class Configuration extends React.Component<Props, State> {
               email: this.state.email,
               nickname: nickname.length === 0 ? this.state.initialNickName : nickname
             })
-            this.props.runHistory.goBack();
+            this.props.history.goBack();
           }}>
           <TextValidator
             style={{ textAlign: 'left' }}
