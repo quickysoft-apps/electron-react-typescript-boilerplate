@@ -23,7 +23,11 @@ const getTheme = () => {
       "height":60,
       "textColor": fade(Colors.darkWhite, 0.87),
       "color": Colors.grey800
+    },
+    "toolbar": {
+      "backgroundColor": Colors.grey800
     }
+    
   };
   return getMuiTheme(baseTheme, overwrites);
 }

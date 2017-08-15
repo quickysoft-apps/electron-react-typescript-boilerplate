@@ -3,23 +3,29 @@ const edge = require('edge');
 const CronJob = require('cron').CronJob;
 const jobs = new Map();
 
-const startJob = function (arg, callback) {
+const startJob = function (arg, callback, onComplete) {
   const func = edge.func(arg.script);
   const id = arg.id;
   let cron = arg.cron;
-  if (!cron) {
-    cron = new Date();
-    cron.setSeconds(startDate.getSeconds() + 1);
-  }
-  const job = new CronJob(cron, () => {
-    try {
-      callback(id, func(arg.script, true));
-    } catch (error) {
-      callback(id, null, error);
+  try {
+    if (!cron) {
+      cron = new Date();
+      cron.setSeconds(cron.getSeconds() + 5);
     }
-  }, undefined, true, 'Europe/Paris');
-  jobs.set(id, job);
-  return id;
+    const job = new CronJob(cron, () => {
+      try {
+        callback(id, func(arg.script, true));
+      } catch (error) {
+        callback(id, null, error);
+      }
+    }, () => {
+      onComplete()
+    }, true, 'Europe/Paris');
+    jobs.set(id, job);
+    return id;
+  } catch (error) {
+    callback(id, null, error);
+  }
 }
 
 const stopJob = function (id) {
@@ -31,13 +37,15 @@ const stopJob = function (id) {
 }
 
 window.onload = function () {
-  ipcRenderer.on('scriptRunner/START', (event, arg) => {    
+  ipcRenderer.on('scriptRunner/START', (event, arg) => {
     const id = startJob(arg, (id, result, error) => {
       if (error) {
         event.sender.send('scriptRunner/ERROR', { id, error })
       } else {
         event.sender.send('scriptRunner/RESULT', { id, result })
       }
+    }, () => {
+      event.sender.send('scriptRunner/COMPLETED', { id, result })
     })
     event.sender.send('scriptRunner/STARTED', { id });
   })

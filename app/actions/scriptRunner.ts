@@ -14,6 +14,7 @@ export interface ScriptRunnerData {
 
 export const notifyExecuting = actionCreator<ScriptRunnerData>('scriptRunner/NOTIFY_EXECUTING');
 export const notifyExecuted = actionCreator<ScriptRunnerData>('scriptRunner/NOTIFY_EXECUTED');
+export const notifyCompleted = actionCreator<ScriptRunnerData>('scriptRunner/NOTIFY_COMPLETED');
 export const stopCurrent = actionCreator<ScriptRunnerData>('scriptRunner/STOP_CURRENT');
 
 export const executeAsync = function (options: ScriptRunnerData) {
@@ -22,7 +23,7 @@ export const executeAsync = function (options: ScriptRunnerData) {
     const data: ScriptRunnerData = {
       script: options.script,
       input: options.input,
-      cron: '* * * * * *' //FORCE TOUTES lES SECOPNDES POUR TEST
+      cron: options.cron
     }
 
     const resultListener = (event: any, arg: any) => {
@@ -41,6 +42,14 @@ export const executeAsync = function (options: ScriptRunnerData) {
       }));
     }
     ipcRenderer.on('scriptRunner/STARTED', startedListener);
+
+    const completedListener = (event: any, arg: any) => {
+      dispatch(notifyCompleted({
+        ...data,
+        id: arg.id        
+      }));
+    }
+    ipcRenderer.on('scriptRunner/COMPLETED', completedListener);
     
     ipcRenderer.send('scriptRunner/START', {
       ...data,

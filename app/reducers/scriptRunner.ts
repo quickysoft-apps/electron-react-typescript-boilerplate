@@ -16,18 +16,22 @@ const initialState = {
 
 export function scriptRunner(state: ScriptRunnerState = initialState, action: IAction) {
 
-  if (Actions.ScriptRunner.notifyExecuting.test(action)) {
+  if (Actions.ScriptRunner.notifyExecuting.test(action)) {        
+    if (action.payload.id) {
+      state.runs.set(action.payload.id, action.payload);
+    }
+    const runs = new Map<string, ScriptRunnerData>(state.runs);
     return {
       ...state,
-      running: true
+      running: true,
+      runs
     };
   }
 
   if (Actions.ScriptRunner.notifyExecuted.test(action)) {
     return {
       ...state,
-      current: { ...action.payload },
-      runs: action.payload.id ? new Map<string, ScriptRunnerData>(state.runs.set(action.payload.id, action.payload)) : state.runs
+      current: { ...action.payload }
     };
   }
 
@@ -44,9 +48,22 @@ export function scriptRunner(state: ScriptRunnerState = initialState, action: IA
     if (action.payload.id) {      
       state.runs.delete(action.payload.id)
     }
+    const runs = new Map<string, ScriptRunnerData>(state.runs);
     return {
       ...state,
-      runs: action.payload.id ? new Map<string, ScriptRunnerData>(state.runs) : state.runs,
+      runs,
+      running: false
+    };
+  }
+
+  if (Actions.ScriptRunner.notifyCompleted.test(action)) {    
+    if (action.payload.id) {      
+      state.runs.delete(action.payload.id)
+    }
+    const runs = new Map<string, ScriptRunnerData>(state.runs);
+    return {
+      ...state,
+      runs,
       running: false
     };
   }

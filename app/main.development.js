@@ -231,4 +231,12 @@ ipcMain.on('scriptRunner/STOPPED', (event, arg) => {
   mainWindow.webContents.send('scriptRunner/STOPPED', arg);
 });
 
+ipcMain.on('scriptRunner/COMPLETED', (event, arg) => {
+  const bw = BrowserWindow.fromId(arg.id);
+  bw.close();
+  bw.on('close', () => {    
+    mainWindow.webContents.send('scriptRunner/COMPLETED', arg);
+  })    
+});
+
 

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { TextField, Paper, FloatingActionButton } from 'material-ui'
+import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
 import { Tabs, Tab } from 'material-ui/Tabs';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import * as SvgIcons from 'material-ui/svg-icons';
@@ -8,13 +9,14 @@ import { ScriptRunnerData } from '../actions/scriptRunner';
 
 interface State {
   script: string;
+  cron?: string;
 }
 
 export interface Props extends RouteComponentProps<any> {
   executeAsync: (options: ScriptRunnerData) => void;
   stopCurrent: VoidFunction;
   running: boolean;
-  current?: ScriptRunnerData;  
+  current?: ScriptRunnerData;
   runs: Map<string, ScriptRunnerData>;
 }
 
@@ -32,14 +34,27 @@ export class ScriptRunner extends React.Component<Props, State> {
     return (
       <Tabs>
         <Tab label="Éditeur">
+          <Toolbar>
+            <ToolbarGroup>
+              <TextField
+                name="cron"
+                floatingLabelFixed={true}
+                underlineShow={false}
+                floatingLabelText="Fréquence"
+                hintText="*/5 * * * * *"
+                value={this.state.cron}
+                onChange={(e: React.FormEvent<{}>, newValue: string) => this.setState({ cron: newValue })}
+              />
+            </ToolbarGroup>
+          </Toolbar>
           <ValidatorForm
             style={{ textAlign: 'right' }}
             ref="form"
             onSubmit={() => {
-              this.props.executeAsync({                              
+              this.props.executeAsync({
                 script: this.state.script,
                 input: null,
-
+                cron: this.state.cron
               });
             }}>
             <Paper
@@ -56,8 +71,8 @@ export class ScriptRunner extends React.Component<Props, State> {
                 hintText="C# script..."
                 multiLine={true}
                 fullWidth={true}
-                rows={15}
-                rowsMax={15}
+                rows={13}
+                rowsMax={13}
                 underlineShow={false}
                 value={this.state.script}
                 validators={['required']}
@@ -105,8 +120,8 @@ export class ScriptRunner extends React.Component<Props, State> {
               rowsMax={15}
               underlineShow={false}
               value={
-                this.props.current && this.props.current.result ? 
-                  this.props.current.result.toString() : 
+                this.props.current && this.props.current.result ?
+                  this.props.current.result.toString() :
                   '(vide)'
               }
             />
