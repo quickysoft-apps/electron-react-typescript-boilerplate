@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
-import { Dialog, FlatButton } from 'material-ui';
-import { InfoBox } from './InfoBox'
+import { Avatar, Dialog, FlatButton } from 'material-ui';
+import { List, ListItem } from 'material-ui/List';
+//import { InfoBox } from './InfoBox'
 import * as SvgIcons from 'material-ui/svg-icons';
 
 import { AgentStatus } from '../reducers/home';
@@ -54,23 +55,22 @@ export class Home extends React.Component<Props> {
       statusText = "Connexion au serveur";
     }
 
-    let statusDetails = <div>
-      <InfoBox
-        style={{ marginTop: 6, marginBottom: 0 }}
-        leftIcon={<SvgIcons.HardwareCastConnected />}
+    let statusDetails = <List>
+      <ListItem
+        leftAvatar={<Avatar icon={<Heart status={this.props.status} />} />}
         primaryText="Statut de la connexion"
         secondaryText={statusText} />
-      <InfoBox
-        style={{ marginTop: 6, marginBottom: 0 }}
-        leftIcon={<SvgIcons.DeviceAccessTime />}
+      <ListItem
+        disabled={true}
+        leftAvatar={<Avatar icon={<SvgIcons.DeviceAccessTime />} />}
         primaryText="Dernière connexion effective"
         secondaryText={this.props.connectedSince} />
-      <InfoBox
-        style={{ marginTop: 6, marginBottom: 0 }}
-        leftIcon={<SvgIcons.ActionSettingsBackupRestore />}
+      <ListItem
+        disabled={true}
+        leftAvatar={<Avatar icon={<SvgIcons.NotificationNetworkCheck />} />}
         primaryText="Réponse au ping"
         secondaryText={`${this.props.pongMs} ms.`} />
-    </div>
+    </List>
 
     if (this.props.isTrusted === true && !this.props.isConfigured) {
       statusDetails = <Dialog
@@ -93,10 +93,7 @@ export class Home extends React.Component<Props> {
     return (
       <div>
         <div style={styles.container}>
-          <Heart
-            status={this.props.status}
-            pongMS={this.props.pongMs}
-            onClick={() => this.props.history.push('/scriptRunner')} />
+
         </div>
         {statusDetails}
       </div >

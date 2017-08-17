@@ -3,57 +3,56 @@ const edge = require('edge');
 const CronJob = require('cron').CronJob;
 const jobs = new Map();
 
-const startJob = function (arg, callback, onComplete) {
-  const func = edge.func(arg.script);
-  const id = arg.id;
+const startJob = function (arg, callback, onCompleted) {
+  const func = edge.func(arg.code);
+  const jobId = arg.jobId;
   let cron = arg.cron;
   try {
     if (!cron) {
+
       try {
-        callback(id, func(arg.script, true));
-        onComplete();
+        callback(jobId, func(arg.code, true));
+        onCompleted();
       } catch (error) {
-        callback(id, null, error);
+        callback(jobId, null, error);
       }
     }
     const job = new CronJob(cron, () => {
       try {
-        callback(id, func(arg.script, true));
+        callback(jobId, func(arg.code, true));
       } catch (error) {
-        callback(id, null, error);
+        callback(jobId, null, error);
       }
-    }, onComplete, true, 'Europe/Paris');
-    jobs.set(id, job);
-    return id;
+    }, onCompleted, true, 'Europe/Paris');
+    jobs.set(jobId, job);
+    return jobId;
   } catch (error) {
-    callback(id, null, error);
+    callback(jobId, null, error);
   }
 }
 
-const stopJob = function (id) {
-  const job = jobs.get(id);
+const stopJob = function (jobId) {
+  const job = jobs.get(jobId);
   if (job) {
     job.stop();
   }
-  jobs.delete(id);
+  jobs.delete(jobId);
 }
 
 window.onload = function () {
-  ipcRenderer.on('scriptRunner/START', (event, arg) => {
-    const id = startJob(arg, (id, result, error) => {
+  ipcRenderer.on('job/START', (event, arg) => {
+    const jobId = startJob(arg, (jobId, result, error) => {
       if (error) {
-        event.sender.send('scriptRunner/ERROR', { id, error })
+        event.sender.send('job/ERROR', { jobId, error })
       } else {
-        event.sender.send('scriptRunner/RESULT', { id, result })
+        event.sender.send('job/RESULT', { jobId, result })
       }
-    }, () => {
-      event.sender.send('scriptRunner/COMPLETED', { id, result })
-    })
-    event.sender.send('scriptRunner/STARTED', { id });
+    }, () => { event.sender.send('job/COMPLETED', { jobId, result }) })
+    event.sender.send('job/STARTED', { jobId });
   })
 
-  ipcRenderer.on('scriptRunner/STOP', (event, arg) => {
-    stopJob(arg.id);
-    event.sender.send('scriptRunner/STOPPED', { id: arg.id })
+  ipcRenderer.on('job/STOP', (event, arg) => {
+    stopJob(arg.jobId);
+    event.sender.send('job/STOPPED', { jobId: arg.jobId })
   });
 }

@@ -6,43 +6,22 @@ import { AgentStatus } from '../reducers/home'
 
 interface Props {
   onClick?: VoidFunction,
-  status: AgentStatus,
-  pongMS: number
+  status: AgentStatus,  
+  width?: number;
+  height?: number;
 }
 
 interface State {
-  hover: boolean
+  hover: boolean;
 }
 
 export class Heart extends React.Component<Props, State> {
 
-  static styles = {
-    connecting: {
-      fill: Colors.grey800
-    },
-    ready: {
-      fill: Colors.green400
-    },
-    trusted: {
-      fill: Colors.orange700
-    },
-    configured: {
-      fill: Colors.red800
-    },
-    hover: {
-      fill: Colors.red500
-    },
-    icon: {
-      width: 300,
-      height: 300,
-      transition: "fill 0.5s ease",
-      zIndex: 9999
-    }
-  };
-
   public constructor(props: Props) {
     super(props);
-    this.state = { hover: false };
+    this.state = { 
+      hover: false 
+    };
   }
 
   public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
@@ -51,24 +30,48 @@ export class Heart extends React.Component<Props, State> {
 
   public render() {
 
+    const styles = {
+      connecting: {
+        fill: Colors.grey800
+      },
+      ready: {
+        fill: Colors.green400
+      },
+      trusted: {
+        fill: Colors.orange700
+      },
+      configured: {
+        fill: Colors.red800
+      },
+      hover: {
+        fill: Colors.red500
+      },
+      icon: {
+        width: this.props.width ? this.props.width : 24,
+        height: this.props.height ? this.props.height : 24,
+        transition: "fill 0.5s ease",
+        zIndex: 9999
+      }
+    };
+
     let statusStyle = {};
 
     switch (this.props.status) {
       case AgentStatus.Connected:
-        statusStyle = Heart.styles.ready;
+        statusStyle = styles.ready;
         break;
       case AgentStatus.Trusted:
-        statusStyle = Heart.styles.trusted;
+        statusStyle = styles.trusted;
         break;
       case AgentStatus.Configured:
-        statusStyle = this.state.hover ? Heart.styles.hover : Heart.styles.configured;
+        statusStyle = this.state.hover ? styles.hover : styles.configured;
         break;
       default:
-        statusStyle = Heart.styles.connecting;
+        statusStyle = styles.connecting;
         break;
     }
 
-    const iconStyle = { ...Heart.styles.icon, ...statusStyle }
+    const iconStyle = { ...styles.icon, ...statusStyle }
 
     return (
       <div>
@@ -97,8 +100,8 @@ export class Heart extends React.Component<Props, State> {
     const path = svg.select('path');
     const fullScale = new Snap.Matrix();
     const midScale = new Snap.Matrix();
-    midScale.scale(0.9, 0.9, path.getBBox().cx, path.getBBox().cy);
-    fullScale.scale(1, 1, path.getBBox().cx, path.getBBox().cy);
+    midScale.scale(1, 1, path.getBBox().cx, path.getBBox().cy);
+    fullScale.scale(1.1, 1.1, path.getBBox().cx, path.getBBox().cy);
     path.animate({ transform: fullScale }, 1000, mina.elastic);
     setTimeout(() => { path.animate({ transform: midScale }, 1000, mina.elastic); }, 100);
   }

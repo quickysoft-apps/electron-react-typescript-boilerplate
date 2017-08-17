@@ -5,7 +5,7 @@ import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
 import { Tabs, Tab } from 'material-ui/Tabs';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import * as SvgIcons from 'material-ui/svg-icons';
-import { ScriptRunnerData } from '../actions/scriptRunner';
+import { ScriptRunnerItem } from '../actions/scriptRunner';
 
 interface State {
   script: string;
@@ -13,11 +13,11 @@ interface State {
 }
 
 export interface Props extends RouteComponentProps<any> {
-  executeAsync: (options: ScriptRunnerData) => void;
+  executeAsync: (options: ScriptRunnerItem) => void;
   stopCurrent: VoidFunction;
   running: boolean;
-  current?: ScriptRunnerData;
-  runs: Map<string, ScriptRunnerData>;
+  current?: ScriptRunnerItem;
+  runs: Map<string, ScriptRunnerItem>;
 }
 
 export class ScriptRunner extends React.Component<Props, State> {
@@ -25,7 +25,7 @@ export class ScriptRunner extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      script: props.current ? props.current.script : ''
+      script: props.current ? props.current.code : ''
     }
   }
 
@@ -33,7 +33,9 @@ export class ScriptRunner extends React.Component<Props, State> {
 
     return (
       <Tabs>
-        <Tab label="Éditeur">
+        <Tab icon={<SvgIcons.ActionHistory />}>
+        </Tab>
+        <Tab icon={<SvgIcons.ActionCode />}>
           <Toolbar>
             <ToolbarGroup>
               <TextField
@@ -52,7 +54,7 @@ export class ScriptRunner extends React.Component<Props, State> {
             ref="form"
             onSubmit={() => {
               this.props.executeAsync({
-                script: this.state.script,
+                code: this.state.script,
                 input: null,
                 cron: this.state.cron
               });
@@ -101,7 +103,9 @@ export class ScriptRunner extends React.Component<Props, State> {
             </FloatingActionButton>
           </ValidatorForm>
         </Tab>
-        <Tab label="Résultat">
+        <Tab
+          style={{ fontWeight: 700 }}
+          label="{...}">
           <Paper
             zDepth={1}
             style={{

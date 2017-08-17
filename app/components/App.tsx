@@ -68,6 +68,13 @@ export class App extends React.Component<Props> {
                 this.props.toggleMenu(false);
                 this.props.push('/configuration');
               }} />
+              <ListItem
+              primaryText="Tâches actives"
+              leftIcon={<SvgIcons.AvPlaylistPlay />}
+              onClick={() => {
+                this.props.toggleMenu(false);
+                this.props.push('/scriptRunner');
+              }} />
           </List>
         </Drawer>
         {this.props.children}
