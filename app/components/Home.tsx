@@ -3,7 +3,6 @@ import { RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Avatar, Dialog, FlatButton } from 'material-ui';
 import { List, ListItem } from 'material-ui/List';
-//import { InfoBox } from './InfoBox'
 import * as SvgIcons from 'material-ui/svg-icons';
 
 import { AgentStatus } from '../reducers/home';

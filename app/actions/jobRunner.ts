@@ -1,5 +1,4 @@
 import { ipcRenderer } from 'electron';
-import * as uuid from 'uuid';
 import { actionCreator, actionCreatorVoid } from './helpers';
 
 class Ipc {
@@ -36,7 +35,7 @@ const ipc = new Ipc(ipcRenderer);
 export interface IpcEventArg {
   jobId: string;
   result?: any;
-  error?: Object;
+  error?: Object;  
 }
 
 export interface Job {
@@ -44,6 +43,7 @@ export interface Job {
   cron?: any;
   script: string;
   input: any;
+  title?: string;
 }
 
 export const notifyStarted = actionCreator<IpcEventArg>('jobRunner/NOTIFY_STARTED');
@@ -54,7 +54,7 @@ export const notifyStopped = actionCreator<IpcEventArg>('jobRunner/NOTIFY_STOPPE
 export const stop = actionCreatorVoid('jobRunner/STOP');
 
 export const executeAsync = function (job: Job) {
-  return (dispatch: Function) => {
+  return (dispatch: Function, getState: Function) => {
 
     ipc.addListener('ipc/JOB_RESULT', (event: any, arg: any) => {
       dispatch(notifyResult(arg));
@@ -77,8 +77,10 @@ export const executeAsync = function (job: Job) {
       dispatch(notifyStopped(arg));
     });
 
+    const jobId = getState().jobRunner.jobId;
+
     const arg = {
-      jobId: uuid.v4(),
+      jobId,
       cron: job.cron,
       script: job.script,
       input: job.input 

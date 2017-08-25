@@ -34,8 +34,6 @@ export class JobRunner extends React.Component<Props, State> {
 
     return (
       <Tabs>
-        <Tab icon={<SvgIcons.ActionHistory />}>
-        </Tab>
         <Tab icon={<SvgIcons.ActionCode />}>
           <Toolbar>
             <ToolbarGroup>
@@ -127,7 +125,9 @@ export class JobRunner extends React.Component<Props, State> {
               value={
                 this.props.result ?
                   this.props.result.toString() :
-                  '(vide)'
+                  this.props.error ?
+                    this.props.error :
+                    ''
               }
             />
           </Paper>

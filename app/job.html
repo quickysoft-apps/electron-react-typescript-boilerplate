@@ -7,7 +7,7 @@
     const edge = require('edge');
     const CronJob = require('cron').CronJob;
 
-    var cronJob = null; //global => accessible par window
+    var cronJob = null; //var pour stocker dans scope global => accessible par window.xxx
 
     const callEdgeFunction = function (func, input, callback) {
       try {
@@ -35,8 +35,8 @@
 
     window.onload = () => {
       ipcRenderer.on('ipc/JOB_START', (event, arg) => {
-        const { jobId, input, script, cron } = arg;
-        console.log('start', arg)
+        const { jobId, input, script, cron, title } = arg;
+        window.job = arg;
         window.cronJob = startScript(input, script, cron, (result, error) => {
           if (error) {
             event.sender.send('ipc/JOB_ERROR', { jobId, error: error.message })
@@ -46,12 +46,10 @@
         }, () => {
           event.sender.send('ipc/JOB_COMPLETED', { jobId });
         })
-        event.sender.send('ipc/JOB_STARTED', { jobId });
-        console.log('CronJob started', window);
+        event.sender.send('ipc/JOB_STARTED', { jobId });        
       });
 
       ipcRenderer.on('ipc/JOB_STOP', (event, arg) => {
-        console.log('Stopping CronJob', window.cronJob);
         if (window.cronJob) {
           window.cronJob.stop();
         }

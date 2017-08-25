@@ -1,10 +1,10 @@
 import { ipcRenderer } from 'electron';
+import * as uuid from 'uuid';
 import { IAction } from '../actions/helpers';
 import { Actions } from '../actions';
 
 export interface JobRunnerState {
-  jobId?: string;
-  windowId?: string;
+  jobId: string;
   cron?: any;
   script?: string;
   input?: any;
@@ -14,6 +14,7 @@ export interface JobRunnerState {
 }
 
 const initialState = {
+  jobId: uuid.v4(),
   running: false
 }
 
