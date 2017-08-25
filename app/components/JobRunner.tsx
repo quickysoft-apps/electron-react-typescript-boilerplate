@@ -5,27 +5,28 @@ import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
 import { Tabs, Tab } from 'material-ui/Tabs';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import * as SvgIcons from 'material-ui/svg-icons';
-import { ScriptRunnerItem } from '../actions/scriptRunner';
+import { Job } from '../actions/jobRunner';
 
 interface State {
-  script: string;
   cron?: string;
+  script: string;
 }
 
 export interface Props extends RouteComponentProps<any> {
-  executeAsync: (options: ScriptRunnerItem) => void;
-  stopCurrent: VoidFunction;
+  executeAsync: (job: Job) => void;
+  stop: VoidFunction;
   running: boolean;
-  current?: ScriptRunnerItem;
-  runs: Map<string, ScriptRunnerItem>;
+  script: string;
+  result: any;
+  error: Object;
 }
 
-export class ScriptRunner extends React.Component<Props, State> {
+export class JobRunner extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props)
     this.state = {
-      script: props.current ? props.current.code : ''
+      script: props.script
     }
   }
 
@@ -54,7 +55,7 @@ export class ScriptRunner extends React.Component<Props, State> {
             ref="form"
             onSubmit={() => {
               this.props.executeAsync({
-                code: this.state.script,
+                script: this.state.script,
                 input: null,
                 cron: this.state.cron
               });
@@ -89,7 +90,7 @@ export class ScriptRunner extends React.Component<Props, State> {
               }}
               secondary={true}
               disabled={!this.props.running}
-              onClick={this.props.stopCurrent}>
+              onClick={this.props.stop}>
               <SvgIcons.AvStop />
             </FloatingActionButton>
             <FloatingActionButton
@@ -124,8 +125,8 @@ export class ScriptRunner extends React.Component<Props, State> {
               rowsMax={15}
               underlineShow={false}
               value={
-                this.props.current && this.props.current.result ?
-                  this.props.current.result.toString() :
+                this.props.result ?
+                  this.props.result.toString() :
                   '(vide)'
               }
             />

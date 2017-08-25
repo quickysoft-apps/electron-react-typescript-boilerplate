@@ -1,0 +1,67 @@
+<html>
+
+<head>
+  <title>Job Window</title>
+  <script>
+    const { ipcRenderer } = require('electron');
+    const edge = require('edge');
+    const CronJob = require('cron').CronJob;
+
+    var cronJob = null; //global => accessible par window
+
+    const callEdgeFunction = function (func, input, callback) {
+      try {
+        const result = func(input, true);
+        callback(result, null);
+      } catch (error) {
+        callback(null, error);
+      }
+    }
+
+    const startScript = function (input, script, cron, callback, onCompleted) {
+      const func = edge.func(script);
+      try {
+        if (!cron) {
+          callEdgeFunction(func, input, callback);
+          onCompleted();
+          return null;
+        } else {
+          return new CronJob(cron, () => { callEdgeFunction(func, input, callback) }, onCompleted, true, 'Europe/Paris');
+        }
+      } catch (error) {
+        callback(null, error);
+      }
+    }
+
+    window.onload = () => {
+      ipcRenderer.on('ipc/JOB_START', (event, arg) => {
+        const { jobId, input, script, cron } = arg;
+        console.log('start', arg)
+        window.cronJob = startScript(input, script, cron, (result, error) => {
+          if (error) {
+            event.sender.send('ipc/JOB_ERROR', { jobId, error: error.message })
+          } else {
+            event.sender.send('ipc/JOB_RESULT', { jobId, result })
+          }
+        }, () => {
+          event.sender.send('ipc/JOB_COMPLETED', { jobId });
+        })
+        event.sender.send('ipc/JOB_STARTED', { jobId });
+        console.log('CronJob started', window);
+      });
+
+      ipcRenderer.on('ipc/JOB_STOP', (event, arg) => {
+        console.log('Stopping CronJob', window.cronJob);
+        if (window.cronJob) {
+          window.cronJob.stop();
+        }
+        event.sender.send('ipc/JOB_STOPPED', arg);
+      });
+    }
+  </script>
+</head>
+
+<body>
+</body>
+
+</html>

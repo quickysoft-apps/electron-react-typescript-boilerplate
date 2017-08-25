@@ -73,7 +73,7 @@ export class App extends React.Component<Props> {
               leftIcon={<SvgIcons.AvPlaylistPlay />}
               onClick={() => {
                 this.props.toggleMenu(false);
-                this.props.push('/scriptRunner');
+                this.props.push('/jobRunner');
               }} />
           </List>
         </Drawer>

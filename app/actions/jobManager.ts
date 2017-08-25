@@ -1,8 +1,8 @@
 import { actionCreator } from './helpers';
 
-export interface ScriptHistoryItem {
+export interface Job {
   id: string;
-  jobId?: string;  
+  windowId?: string;  
   cron?: any;
   code: string;
   input: any;
@@ -10,4 +10,4 @@ export interface ScriptHistoryItem {
   error?: Object;  
 }
 
-export const add = actionCreator<ScriptHistoryItem>('scriptHistory/ADD');
+export const add = actionCreator<Job>('jobManager/ADD');

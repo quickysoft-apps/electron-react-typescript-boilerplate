@@ -3,6 +3,7 @@ const autoUpdater = require('electron-updater').autoUpdater;
 const log = require('electron-log');
 const os = require('os');
 const pjson = require('./package.json');
+const jobManager = require('./jobManager')
 
 let menu;
 let template;
@@ -126,6 +127,8 @@ const initializeMainWindow = () => {
     alwaysOnTop: false
   });
 
+  jobManager.initialize();
+
   mainWindow.loadURL(`file://${__dirname}/app.html`);
 
   mainWindow.webContents.on('did-finish-load', () => {
@@ -166,15 +169,6 @@ const initializeMainWindow = () => {
   }
 }
 
-const initializeJobWindow = () => {
-  const jobWindow = new BrowserWindow({ show: false });
-  jobWindow.loadURL(`file://${__dirname}/jobs.html`);
-  if (process.env.NODE_ENV === 'development') {
-    jobWindow.openDevTools();
-  }
-  return jobWindow.id
-}
-
 app.on('ready', () =>
   initializeExtensions()
     .then(() => {
@@ -195,48 +189,3 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
     callback(false)
   }
 })
-
-ipcMain.on('job/START', (event, arg) => {
-  const jobId = initializeJobWindow();
-  const bw = BrowserWindow.fromId(jobId);    
-  arg.jobId = jobId;
-  bw.on('ready-to-show', () => {
-    bw.webContents.send('job/START', arg);
-    mainWindow.webContents.send('job/STARTED', { jobId });  
-  })  
-});
-
-ipcMain.on('job/STOP', (event, arg) => {
-  const bw = BrowserWindow.fromId(arg.jobId);
-  bw.close();
-  bw.on('close', () => {
-    bw.webContents.send('job/STOP', arg)
-    mainWindow.webContents.send('scriptRunner/STOPPED', {jobId: arg.jobId })
-  })  
-});
-
-ipcMain.on('job/STARTED', (event, arg) => {
-  mainWindow.webContents.send('job/STARTED', arg);
-});
-
-ipcMain.on('job/RESULT', (event, arg) => {
-  mainWindow.webContents.send('job/RESULT', arg);
-});
-
-ipcMain.on('job/ERROR', (event, arg) => {
-  mainWindow.webContents.send('job/ERROR', arg);
-});
-
-ipcMain.on('job/STOPPED', (event, arg) => {
-  mainWindow.webContents.send('job/STOPPED', arg);
-});
-
-ipcMain.on('job/COMPLETED', (event, arg) => {
-  const bw = BrowserWindow.fromId(arg.jobId);
-  bw.close();
-  bw.on('close', () => {    
-    mainWindow.webContents.send('job/COMPLETED', arg);
-  })    
-});
-
-
