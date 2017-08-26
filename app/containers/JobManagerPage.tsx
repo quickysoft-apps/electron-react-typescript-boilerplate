@@ -11,7 +11,7 @@ function mapStateToProps(state: State): Partial<Props> {
 }
 
 function mapDispatchToProps(dispatch: Dispatch<State>): Partial<Props> {
-  return bindActionCreators(Actions.JobRunner as any, dispatch);
+  return bindActionCreators(Actions.JobManager as any, dispatch);
 }
 
 export default (connect(mapStateToProps, mapDispatchToProps)(JobManager) as any);

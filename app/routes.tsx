@@ -4,6 +4,7 @@ import AppPage from './containers/AppPage';
 import HomePage from './containers/HomePage';
 import ConfigurationPage from './containers/ConfigurationPage';
 import JobManagerPage from './containers/JobManagerPage';
+import JobRunnerPage from './containers/JobRunnerPage';
 import CounterPage from './containers/CounterPage';
 
 export default () => (
@@ -12,6 +13,7 @@ export default () => (
       <Route path="/counter" component={CounterPage} />      
       <Route path="/configuration" component={ConfigurationPage} />
       <Route path="/jobManager" component={JobManagerPage} />
+      <Route path="/jobRunner" component={JobRunnerPage} />
       <Route path="/" component={HomePage} />      
     </Switch>
   </AppPage>
