@@ -6,6 +6,7 @@ import { agent, AgentState } from './agent'
 import { chat, ChatState } from './chat'
 import { configuration, ConfigurationState } from './configuration'
 import { jobRunner, JobRunnerState } from './jobRunner'
+import { jobManager, JobManagerState } from './jobManager'
 
 const rootReducer = combineReducers({  
   app,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   chat,
   configuration,
   jobRunner,
+  jobManager,
   counter, 
   routing: routing as Reducer<any>
 });
@@ -23,7 +25,8 @@ export interface State {
   agent: AgentState,
   chat: ChatState,
   configuration: ConfigurationState,
-  jobRunner: JobRunnerState
+  jobRunner: JobRunnerState,
+  jobManager: JobManagerState,
   routing: RouterState
 } 
 

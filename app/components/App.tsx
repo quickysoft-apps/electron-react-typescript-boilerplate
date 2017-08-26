@@ -69,11 +69,11 @@ export class App extends React.Component<Props> {
                 this.props.push('/configuration');
               }} />
               <ListItem
-              primaryText="Tâches actives"
+              primaryText="Tâches"
               leftIcon={<SvgIcons.AvPlaylistPlay />}
               onClick={() => {
                 this.props.toggleMenu(false);
-                this.props.push('/jobRunner');
+                this.props.push('/jobManager');
               }} />
           </List>
         </Drawer>

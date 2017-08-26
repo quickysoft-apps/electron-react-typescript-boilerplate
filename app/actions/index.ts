@@ -4,6 +4,7 @@ import * as Agent from './agent';
 import * as Chat from './chat';
 import * as Configuration from './configuration';
 import * as JobRunner from './jobRunner';
+import * as JobManager from './jobManager';
 
 export const Actions = {
   Counter,
@@ -11,5 +12,6 @@ export const Actions = {
   Agent,
   Chat,
   Configuration,
-  JobRunner
+  JobRunner,
+  JobManager
 }

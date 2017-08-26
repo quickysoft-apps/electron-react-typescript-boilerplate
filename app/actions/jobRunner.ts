@@ -1,35 +1,7 @@
-import { ipcRenderer } from 'electron';
 import { actionCreator, actionCreatorVoid } from './helpers';
 
-class Ipc {
-
-  private _listeners: Map<string, Function> = new Map<string, Function>();
-  private _ipc: Electron.IpcRenderer;
-
-  constructor(ipc: Electron.IpcRenderer) {
-    this._ipc = ipc;
-  }
-
-  addListener(event: string, listener: Function): void {
-    if (!this._listeners.has(event)) {
-      this._listeners.set(event, listener);
-      this._ipc.on(event, listener)
-    }
-  }
-
-  clearListeners(): void {
-    this._listeners.forEach((value, key) => {
-      this._ipc.removeListener(key, value);
-    });
-    this._listeners.clear();
-  }
-
-  send(channel: string, ...args: any[]): void {
-    this._ipc.send(channel, args[0]);
-  }
-
-}
-
+import { Ipc } from '../api/ipc';
+import { ipcRenderer } from 'electron';
 const ipc = new Ipc(ipcRenderer);
 
 export interface IpcEventArg {
@@ -39,7 +11,7 @@ export interface IpcEventArg {
 }
 
 export interface Job {
-  jobId?: string;  
+  jobId: string;  
   cron?: any;
   script: string;
   input: any;
@@ -60,7 +32,7 @@ export const executeAsync = function (job: Job) {
       dispatch(notifyResult(arg));
     });
 
-    ipc.addListener('ipc/JOB_ERROR', (event: any, arg: any) => {
+    ipc.addListener('ipc/JOB_ERROR', (event: any, arg: any) => {      
       dispatch(notifyError(arg));
     });
 

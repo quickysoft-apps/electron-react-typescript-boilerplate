@@ -15,6 +15,8 @@ interface State {
 export interface Props extends RouteComponentProps<any> {
   executeAsync: (job: Job) => void;
   stop: VoidFunction;
+  jobId: string;
+  cron: string;
   running: boolean;
   script: string;
   result: any;
@@ -26,7 +28,8 @@ export class JobRunner extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props)
     this.state = {
-      script: props.script
+      script: props.script,
+      cron: props.cron
     }
   }
 
@@ -53,6 +56,7 @@ export class JobRunner extends React.Component<Props, State> {
             ref="form"
             onSubmit={() => {
               this.props.executeAsync({
+                jobId: this.props.jobId,
                 script: this.state.script,
                 input: null,
                 cron: this.state.cron
