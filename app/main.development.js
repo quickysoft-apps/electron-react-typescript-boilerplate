@@ -118,7 +118,7 @@ const checkUpdates = () => {
 const initializeMainWindow = () => {
 
   mainWindow = new BrowserWindow({
-    show: false,
+    show: true,
     width: 500,
     height: 568,
     resizable: false,

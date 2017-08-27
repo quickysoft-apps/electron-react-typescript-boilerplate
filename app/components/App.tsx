@@ -51,7 +51,7 @@ export class App extends React.Component<Props> {
           showMenuIconButton={true}
           title={title}
           iconElementLeft={leftElement}
-          iconElementRight={<IconButton onClick={this.props.hide}><SvgIcons.ContentRemove /></IconButton>}>
+          iconElementRight={<IconButton onClick={this.props.hide}><SvgIcons.ContentRemove /></IconButton>}>          
         </AppBar>
         <Drawer
           containerStyle={{ top: 60 }}
@@ -68,7 +68,7 @@ export class App extends React.Component<Props> {
                 this.props.toggleMenu(false);
                 this.props.push('/configuration');
               }} />
-              <ListItem
+            <ListItem
               primaryText="Tâches"
               leftIcon={<SvgIcons.AvPlaylistPlay />}
               onClick={() => {
