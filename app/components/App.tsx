@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { Location } from 'history';
+import { LocationDescriptor, LocationState } from 'history';
 import { RouterAction } from 'react-router-redux';
 import { AppBar, IconButton, Drawer, List, ListItem } from 'material-ui';
 import BrowserWindow from './BrowserWindow';
 import * as SvgIcons from 'material-ui/svg-icons';
 
-export interface Props {
-  goBack: () => RouterAction;
-  push: (path: string) => RouterAction
+export interface Props {  
+  push: (location: LocationDescriptor, state?: LocationState) => RouterAction;  
+  back: () => void;
   toggleMenu: (visible: boolean) => void;
   hide: VoidFunction;
   show: VoidFunction;
@@ -16,10 +16,17 @@ export interface Props {
   title: string;
   email: string;
   nickname: string;
-  location: Location | null;
+  navigationHistory: string[];
 }
 
 export class App extends React.Component<Props> {
+
+  public componentWillReceiveProps(nextProps: Props): void {
+    if (nextProps.navigationHistory.length < this.props.navigationHistory.length) {
+      const pathname = nextProps.navigationHistory.slice(-1)[0];
+      this.props.push(pathname);
+    }
+  }
 
   public render() {
 
@@ -27,8 +34,8 @@ export class App extends React.Component<Props> {
       <SvgIcons.NavigationMenu onClick={() => this.props.toggleMenu(!this.props.isMenuActive)} />
     </IconButton>;
 
-    if (this.props.location && this.props.location.pathname !== '/') {
-      leftElement = <IconButton onClick={this.props.goBack}><SvgIcons.NavigationArrowBack /></IconButton>;
+    if (this.props.navigationHistory.length > 1) {
+      leftElement = <IconButton onClick={this.props.back}><SvgIcons.NavigationArrowBack /></IconButton>;
     }
 
     const title = <div>
@@ -51,7 +58,7 @@ export class App extends React.Component<Props> {
           showMenuIconButton={true}
           title={title}
           iconElementLeft={leftElement}
-          iconElementRight={<IconButton onClick={this.props.hide}><SvgIcons.ContentRemove /></IconButton>}>          
+          iconElementRight={<IconButton onClick={this.props.hide}><SvgIcons.ContentRemove /></IconButton>}>
         </AppBar>
         <Drawer
           containerStyle={{ top: 60 }}

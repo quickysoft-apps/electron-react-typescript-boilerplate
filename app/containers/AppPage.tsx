@@ -9,10 +9,10 @@ function mapStateToProps(state: State): Partial<Props> {
   return {
     isVisible: state.app.isVisible,
     isMenuActive: state.app.isMenuActive,
-    location: state.routing.location,
     nickname: state.configuration.nickname,
     email: state.configuration.email ? state.configuration.email : '...',
-    title: 'Agent Yakapa'//state.configuration.nickname
+    title: 'Agent Yakapa',//state.configuration.nickname
+    navigationHistory: state.app.navigationHistory
   };
 }
 

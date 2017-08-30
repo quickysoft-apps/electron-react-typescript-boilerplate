@@ -80,7 +80,6 @@ export class JobRunner extends React.Component<Props, State> {
                 style={textAreaStyle}>
                 <TextValidator
                   style={{ textAlign: 'left' }}
-                  mini={true}
                   name="script"
                   hintText="C# script..."
                   multiLine={true}
@@ -94,27 +93,27 @@ export class JobRunner extends React.Component<Props, State> {
                   onChange={(e: React.FormEvent<{}>, newValue: string) => this.setState({ script: newValue })}
                 />
               </div>
+              <div style={{
+                width: '100%',
+                textAlign: 'right',
+                marginTop: -80
+              }}>
+                {this.props.running ?
+                  <FloatingActionButton
+                    style={floatingStyle}
+                    secondary={true}
+                    disabled={!this.props.running}
+                    onClick={this.props.stop}>
+                    <SvgIcons.AvStop />
+                  </FloatingActionButton> :
+                  <FloatingActionButton
+                    style={floatingStyle}
+                    disabled={this.props.running}
+                    type="submit">
+                    <SvgIcons.AvPlayArrow />
+                  </FloatingActionButton>}
+              </div>
             </ValidatorForm>
-            <div style={{
-              width: '100%',
-              textAlign: 'right',
-              marginTop: -80
-            }}>
-              {this.props.running ?
-                <FloatingActionButton
-                  style={floatingStyle}
-                  mini={true}
-                  disabled={!this.props.running}
-                  onClick={this.props.stop}>
-                  <SvgIcons.AvStop />
-                </FloatingActionButton> :
-                <FloatingActionButton
-                  style={floatingStyle}
-                  disabled={this.props.running}
-                  type="submit">
-                  <SvgIcons.AvPlayArrow />
-                </FloatingActionButton>}
-            </div>
           </Tab>
           <Tab
             style={{ fontWeight: 700 }}
