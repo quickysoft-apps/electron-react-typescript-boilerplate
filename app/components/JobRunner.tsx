@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { TextField, FloatingActionButton } from 'material-ui'
+import { TextField } from 'material-ui'
 import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
 import { Tabs, Tab } from 'material-ui/Tabs';
-import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
+import AceEditor from 'react-ace';
+import 'brace/mode/csharp';
+import 'brace/theme/monokai';
+import * as Ps from 'perfect-scrollbar';
 import * as SvgIcons from 'material-ui/svg-icons';
-import { TopSheet } from './TopSheet';
+import { FloatingAction } from './FloatingAction';
 import { Job } from '../actions/jobRunner';
 
 interface State {
@@ -26,6 +29,8 @@ export interface Props extends RouteComponentProps<any> {
 
 export class JobRunner extends React.Component<Props, State> {
 
+  private scriptEditor: any = undefined;
+
   constructor(props: Props) {
     super(props)
     this.state = {
@@ -35,10 +40,6 @@ export class JobRunner extends React.Component<Props, State> {
   }
 
   public render() {
-
-    const floatingStyle = {
-      marginRight: 24
-    };
 
     const textAreaStyle = {
       display: 'inline-block',
@@ -50,9 +51,9 @@ export class JobRunner extends React.Component<Props, State> {
 
     return (
       <div>
-        <TopSheet title="Nouvelle tâche" />
         <Tabs>
-          <Tab icon={<SvgIcons.ActionCode />}>
+          <Tab
+            icon={<SvgIcons.ActionCode />}>
             <Toolbar>
               <ToolbarGroup>
                 <TextField
@@ -66,54 +67,50 @@ export class JobRunner extends React.Component<Props, State> {
                 />
               </ToolbarGroup>
             </Toolbar>
-            <ValidatorForm
-              ref="form"
-              onSubmit={() => {
-                this.props.executeAsync({
-                  jobId: this.props.jobId,
-                  script: this.state.script,
-                  input: null,
-                  cron: this.state.cron
-                });
+            <div
+              style={{
+                position: 'absolute',
+                height: 404,
+                width: '100%'
               }}>
-              <div
-                style={textAreaStyle}>
-                <TextValidator
-                  style={{ textAlign: 'left' }}
-                  name="script"
-                  hintText="C# script..."
-                  multiLine={true}
-                  fullWidth={true}
-                  rows={textAreaRowCount}
-                  rowsMax={textAreaRowCount}
-                  underlineShow={false}
-                  value={this.state.script}
-                  validators={['required']}
-                  errorMessages={['Pas de code à exécuter']}
-                  onChange={(e: React.FormEvent<{}>, newValue: string) => this.setState({ script: newValue })}
-                />
-              </div>
-              <div style={{
-                width: '100%',
-                textAlign: 'right',
-                marginTop: -80
-              }}>
-                {this.props.running ?
-                  <FloatingActionButton
-                    style={floatingStyle}
-                    secondary={true}
-                    disabled={!this.props.running}
-                    onClick={this.props.stop}>
-                    <SvgIcons.AvStop />
-                  </FloatingActionButton> :
-                  <FloatingActionButton
-                    style={floatingStyle}
-                    disabled={this.props.running}
-                    type="submit">
-                    <SvgIcons.AvPlayArrow />
-                  </FloatingActionButton>}
-              </div>
-            </ValidatorForm>
+              <AceEditor
+                ref={(editor) => { this.scriptEditor = editor; }}
+                mode="csharp"
+                theme="monokai"
+                name="script-editor"
+                height="100%"
+                onChange={(value: string, event?: any) => this.setState({ script: value })}
+                fontSize={14}
+                showPrintMargin={false}
+                showGutter={true}
+                highlightActiveLine={true}
+                value={this.state.script}
+                setOptions={{
+                  enableBasicAutocompletion: false,
+                  enableLiveAutocompletion: false,
+                  enableSnippets: false,
+                  showLineNumbers: true,
+                  hScrollBarAlwaysVisible: false,
+                  vScrollBarAlwaysVisible: false,
+                  tabSize: 4,
+                }} />
+              {this.props.running ?
+                <FloatingAction
+                  actionIcon={<SvgIcons.AvStop />}
+                  actionclick={this.props.stop}
+                  secondary={true} /> :
+                <FloatingAction
+                  actionIcon={<SvgIcons.AvPlayArrow />}
+                  actionclick={() => {
+                    this.props.executeAsync({
+                      jobId: this.props.jobId,
+                      script: this.state.script,
+                      input: null,
+                      cron: this.state.cron
+                    })
+                  }} />
+              }
+            </div>
           </Tab>
           <Tab
             style={{ fontWeight: 700 }}
@@ -142,6 +139,24 @@ export class JobRunner extends React.Component<Props, State> {
         </Tabs>
       </div>
     );
+  }
+
+  componentDidMount() {
+    const scrollbars: Node[] = [];    
+    this.scriptEditor.refEditor.childNodes.forEach((e: HTMLTextAreaElement) => {
+      if (e.className === 'ace_scrollbar ace_scrollbar-h') {
+        scrollbars.push(e);        
+      }
+      if (e.className === 'ace_scrollbar ace_scrollbar-v') {
+        scrollbars.push(e);        
+      }      
+    })
+
+    for (let node of scrollbars) {
+      this.scriptEditor.refEditor.removeChild(node);
+    }
+
+    Ps.initialize(this.scriptEditor.refEditor);
   }
 
 }

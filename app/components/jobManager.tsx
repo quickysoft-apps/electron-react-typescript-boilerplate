@@ -5,7 +5,7 @@ import { List, ListItem } from 'material-ui/List';
 import { Avatar } from 'material-ui';
 import * as SvgIcons from 'material-ui/svg-icons';
 import * as Colors from 'material-ui/styles/colors';
-import { TopSheet } from './TopSheet';
+import { FloatingAction } from './FloatingAction';
 import { Job } from '../actions/jobRunner';
 
 
@@ -75,13 +75,9 @@ export class JobManager extends React.Component<Props> {
     }
 
     return (
-      <div>
-        <TopSheet
-          title="Tâches"
-          actionclick={this.addJob}
-          actionIcon={<SvgIcons.ContentAdd />}
-        />
+      <div>        
         {this.props.jobs.size === 0 ? renderEmpty() : list()}
+        <FloatingAction actionclick={this.addJob} actionIcon={<SvgIcons.ContentAdd />} />
       </div>
     );
 
