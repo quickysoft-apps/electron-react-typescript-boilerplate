@@ -10,23 +10,25 @@
     var cronJob = null; //var pour stocker dans scope global => accessible par window.xxx
 
     const callEdgeFunction = function (func, input, callback) {
-      try {
-        const result = func(input, true);
-        callback(result, null);
-      } catch (error) {
-        callback(null, error);
-      }
+      const result = func(input, true);
+      callback(result, null);
     }
 
     const startScript = function (input, script, cron, callback, onCompleted) {
-      const func = edge.func(script);
       try {
+        const func = edge.func(script);
         if (!cron) {
           callEdgeFunction(func, input, callback);
           onCompleted();
           return null;
         } else {
-          return new CronJob(cron, () => { callEdgeFunction(func, input, callback) }, onCompleted, true, 'Europe/Paris');
+          return new CronJob(cron, () => {
+            try {
+              callEdgeFunction(func, input, callback)
+            } catch (error) {
+              callback(null, error);
+            }
+          }, onCompleted, true, 'Europe/Paris');
         }
       } catch (error) {
         callback(null, error);
@@ -46,7 +48,7 @@
         }, () => {
           event.sender.send('ipc/JOB_COMPLETED', { jobId });
         })
-        event.sender.send('ipc/JOB_STARTED', { jobId });        
+        event.sender.send('ipc/JOB_STARTED', { jobId });
       });
 
       ipcRenderer.on('ipc/JOB_STOP', (event, arg) => {

@@ -3,7 +3,7 @@ import { actionCreatorVoid } from './helpers';
 export const increment = actionCreatorVoid('INCREMENT_COUNTER');
 export const decrement = actionCreatorVoid('DECREMENT_COUNTER');
 
- export const incrementIfOdd = function() {
+export function incrementIfOdd() {
   return (dispatch: Function, getState: Function) => {
     const { counter } = getState();
 
@@ -15,7 +15,7 @@ export const decrement = actionCreatorVoid('DECREMENT_COUNTER');
   };
 }
 
-export const incrementAsync = function(delay: number = 1000) {
+export function incrementAsync(delay: number = 1000) {
   return (dispatch: Function) => {
     setTimeout(() => {
       dispatch(increment());

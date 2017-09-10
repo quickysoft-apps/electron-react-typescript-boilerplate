@@ -40,9 +40,9 @@ exports.initialize = function () {
 
   ipcMain.on('ipc/JOB_START', (event, arg) => {
     mainWebContents = event.sender;
-    const bw = createJobWindow();    
+    const bw = createJobWindow();
     bw.on('ready-to-show', () => {
-      addJob(arg.jobId, bw);    
+      addJob(arg.jobId, bw);
       bw.webContents.send('ipc/JOB_START', arg);
     })
   });
@@ -54,8 +54,8 @@ exports.initialize = function () {
     }
   });
 
-  ipcMain.on('ipc/JOB_STARTED', (event, arg) => {    
-    if (!mainWebContents) return;    
+  ipcMain.on('ipc/JOB_STARTED', (event, arg) => {
+    if (!mainWebContents) return;
     mainWebContents.send('ipc/JOB_STARTED', arg);
   });
 
@@ -65,22 +65,22 @@ exports.initialize = function () {
   });
 
   ipcMain.on('ipc/JOB_ERROR', (event, arg) => {
+    removeJob(arg.jobId);
     if (!mainWebContents) return;
     mainWebContents.send('ipc/JOB_ERROR', arg);
+    mainWebContents.send('ipc/JOB_STOPPED', arg.jobId);
   });
 
   ipcMain.on('ipc/JOB_STOPPED', (event, arg) => {
     removeJob(arg);
-    if (mainWebContents) {
-      mainWebContents.send('ipc/JOB_STOPPED', arg);
-    }
+    if (!mainWebContents) return;
+    mainWebContents.send('ipc/JOB_STOPPED', arg);
   });
 
   ipcMain.on('job/JOB_COMPLETED', (event, arg) => {
     removeJob(arg);
-    if (mainWebContents) {
-      mainWebContents.send('ipc/JOB_COMPLETED', arg);
-    }
+    if (!mainWebContents) return;
+    mainWebContents.send('ipc/JOB_COMPLETED', arg);
   });
 
 }

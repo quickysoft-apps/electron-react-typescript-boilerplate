@@ -1,4 +1,4 @@
-import { IAction } from '../actions/helpers';
+import { IAction, IActionWithPayload } from '../actions/helpers';
 import { Actions } from '../actions';
 import { LOCATION_CHANGE, LocationChangeAction } from 'react-router-redux';
 
@@ -58,9 +58,10 @@ export function app(state: AppState = initialState, action: IAction) {
   }
 
   if (Actions.App.toggleMenu.test(action)) {
+    const actionWithPayload = action as IActionWithPayload<boolean>;
     return {
       ...state,
-      isMenuActive: action.payload
+      isMenuActive: actionWithPayload.payload
     };
   }
 

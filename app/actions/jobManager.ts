@@ -6,9 +6,9 @@ import { ipcRenderer } from 'electron';
 import { Ipc } from '../api/ipc';
 const ipc = new Ipc(ipcRenderer);
 
-interface JsonObject {
+/*interface JsonObject {
   [x: string]: JsonObject | null;
-}
+}*/
 
 // interface JobWindow extends Electron.BrowserWindow {
 //   job: Job;

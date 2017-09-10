@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as Colors from 'material-ui/styles/colors';
-import * as Snap from 'snapsvg';
+//import * as Snap from 'snapsvg';
+const Snap = require(`imports-loader?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg.js`);
 
 import { AgentStatus } from '../reducers/home'
 

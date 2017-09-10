@@ -1,4 +1,4 @@
-import { IAction } from '../actions/helpers';
+import { IAction, IActionWithPayload } from '../actions/helpers';
 import { Actions } from '../actions';
 import { AgentError } from '../actions/agent';
 
@@ -46,22 +46,24 @@ export function agent(state: AgentState = {}, action: IAction) {
   }
 
   if (Actions.Agent.notifySocketError.test(action)) {
+    const actionWithPayload = action as IActionWithPayload<AgentError>;
     return {
       ...state,
-      connected: action.payload.type === 'DiscoverError' ? false : true,
+      connected: actionWithPayload.payload.type === 'DiscoverError' ? false : true,
       trusted: false,
-      socketError: action.payload,
+      socketError: actionWithPayload.payload,
       connectionError: undefined,
     };
   }
 
   if (Actions.Agent.notifyConnectionError.test(action)) {
+    const actionWithPayload = action as IActionWithPayload<AgentError>;
     return {
       ...state,
-      connected: action.payload.type === 'TransportError' ? false : true,
+      connected: actionWithPayload.payload.type === 'TransportError' ? false : true,
       trusted: false,
       socketError: undefined,
-      connectionError: action.payload
+      connectionError: actionWithPayload.payload
     };
   }
 
