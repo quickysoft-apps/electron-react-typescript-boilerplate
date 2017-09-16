@@ -11,6 +11,7 @@ import { Job } from '../actions/jobRunner';
 
 export interface Props extends RouteComponentProps<any> {
   add: (job: Job) => void;
+  open: (job: Job) => void;
   jobs: Array<Job>;
 }
 
@@ -38,6 +39,7 @@ export class JobManager extends React.Component<Props> {
       input: null
     }
     this.props.add(job);
+    this.props.open(job);
     this.props.history.push('/jobRunner');
   }
 
@@ -59,24 +61,22 @@ export class JobManager extends React.Component<Props> {
       )
     }
 
-    const list = () => {
+    const listItems = this.props.jobs.map(job => { 
       return (
-        <div>
-          <List>
-            {Array.from(this.props.jobs).map(([jobId, job]) => {
-              <ListItem
-                leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm />} />}
-                primaryText={job.title ? job.title : job.jobId}
-                secondaryText={job.cron} />
-            })}
-          </List>
-        </div>
-      )
-    }
+      <ListItem
+        leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm />} />}
+        primaryText={job.title ? job.title : job.jobId}
+        secondaryText={job.cron} 
+        key={job.jobId}
+        onClick={()=> {
+          this.props.open(job);
+          this.props.history.push('/jobRunner');
+          }} />
+    )})
 
     return (
       <div>        
-        {this.props.jobs.size === 0 ? renderEmpty() : list()}
+        {this.props.jobs.length === 0 ? renderEmpty() :  <List>{listItems}</List>}
         <FloatingAction actionclick={this.addJob} actionIcon={<SvgIcons.ContentAdd />} />
       </div>
     );

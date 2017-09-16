@@ -36,7 +36,7 @@ export function jobManager(state = initialState, action: IAction) {
   }
 
   if (Actions.JobManager.open.test(action)) {
-    const job = state.jobs.find(x => x.jobId === action.payload);
+    const job = state.jobs.find(x => x.jobId === action.payload.jobId);
     if (job) {
       return {
         ...state,

@@ -16,7 +16,7 @@ const ipc = new Ipc(ipcRenderer);
 
 
 export const add = actionCreator<Job>('jobManager/ADD');
-export const open = actionCreator<string>('jobManager/OPEN');
+export const open = actionCreator<Job>('jobManager/OPEN');
 
 export const syncAsync = function () {
   return (dispatch: Function, getState: Function) => {

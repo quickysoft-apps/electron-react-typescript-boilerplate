@@ -1,6 +1,7 @@
 import { ipcRenderer } from 'electron';
 import * as uuid from 'uuid';
-import { IAction } from '../actions/helpers';
+import { Job } from '../actions/jobRunner';
+import { IAction, IActionWithPayload } from '../actions/helpers';
 import { Actions } from '../actions';
 
 export interface JobRunnerState {
@@ -19,6 +20,14 @@ const initialState = {
 }
 
 export function jobRunner(state: JobRunnerState = initialState, action: IAction) {
+
+  if (Actions.JobManager.open.test(action)) {
+    const newAction = action as IActionWithPayload<Job>;
+    return {
+      ...state,
+      script:newAction.payload.script
+    };
+  }
 
   if (Actions.JobRunner.notifyStarted.test(action)) {
     return {
