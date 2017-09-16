@@ -14,7 +14,9 @@ const ipc = new Ipc(ipcRenderer);
 //   job: Job;
 // }
 
+
 export const add = actionCreator<Job>('jobManager/ADD');
+export const open = actionCreator<string>('jobManager/OPEN');
 
 export const syncAsync = function () {
   return (dispatch: Function, getState: Function) => {
