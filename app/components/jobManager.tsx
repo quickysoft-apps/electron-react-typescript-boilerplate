@@ -11,7 +11,7 @@ import { Job } from '../actions/jobRunner';
 
 export interface Props extends RouteComponentProps<any> {
   add: (job: Job) => void;
-  jobs: Map<string, Job>;
+  jobs: Array<Job>;
 }
 
 export class JobManager extends React.Component<Props> {
