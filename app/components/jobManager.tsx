@@ -11,7 +11,7 @@ import { JobStatus } from '../actions/jobManager';
 
 export interface Props extends RouteComponentProps<any> {
   add: (job: JobDefinition) => void;
-  select: (status: JobStatus) => void;
+  select: (status: JobStatus) => void;  
   statuses: Array<JobStatus>;
 }
 

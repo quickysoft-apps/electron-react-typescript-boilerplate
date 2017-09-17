@@ -6,10 +6,11 @@ import * as Configuration from './configuration';
 import * as JobRunner from './jobRunner';
 import * as JobManager from './jobManager';
 
+
 export const Actions = {
   Counter,
   App,
-  Agent,
+  Agent,  
   Chat,
   Configuration,
   JobRunner,

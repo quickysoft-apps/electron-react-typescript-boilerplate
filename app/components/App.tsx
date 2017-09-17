@@ -6,6 +6,7 @@ import BrowserWindow from './BrowserWindow';
 import * as SvgIcons from 'material-ui/svg-icons';
 
 export interface Props {  
+  loadFromSettings: VoidFunction;
   push: (location: LocationDescriptor, state?: LocationState) => RouterAction;  
   back: () => void;
   toggleMenu: (visible: boolean) => void;
@@ -90,7 +91,9 @@ export class App extends React.Component<Props> {
 
   }
 
-
+  componentDidMount() {
+    this.props.loadFromSettings();
+  }
 
 }
 

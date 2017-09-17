@@ -9,14 +9,15 @@ import { AgentStatus } from '../reducers/home';
 import { Heart } from './Heart';
 
 export interface Props extends RouteComponentProps<any> {
-  status: AgentStatus,
-  isTrusted: boolean,
-  isConnected: boolean,
-  isConfigured: boolean,
-  pongMs: number,
-  connectedSince: string,
-  email: string,
-  nickname: string
+  loadFromSettings: VoidFunction;
+  status: AgentStatus;
+  isTrusted: boolean;
+  isConnected: boolean;
+  isConfigured: boolean;
+  pongMs: number;
+  connectedSince: string;
+  email: string;
+  nickname: string;
 }
 
 const styles = {

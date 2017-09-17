@@ -24,11 +24,11 @@ function mapStateToProps(state: State): Partial<Props> {
     status,
     isTrusted: state.agent.trusted,
     isConnected: state.agent.connected,
-    pongMs: state.agent.pongMs ? state.agent.pongMs : 0,    
+    pongMs: state.agent.pongMs ? state.agent.pongMs : 0,
     connectedSince: moment(state.agent.connectionDate).fromNow(),
     isConfigured: !!state.configuration.email,
     nickname: state.configuration.nickname,
-    email: state.configuration.email    
+    email: state.configuration.email
   };
 }
 
