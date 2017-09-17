@@ -2,7 +2,7 @@ import { IAction, IActionWithPayload } from '../actions/helpers';
 import { Actions } from '../actions';
 import { AgentError } from '../actions/agent';
 
-interface State {
+export interface AgentState {
   connected?: boolean;
   connectionError?: AgentError;
   socketError?: AgentError;
@@ -10,8 +10,6 @@ interface State {
   pongMs?: number;
   connectionDate?: Date;
 }
-
-export interface AgentState extends Partial<State> { };
 
 export function agent(state: AgentState = {}, action: IAction) {
 

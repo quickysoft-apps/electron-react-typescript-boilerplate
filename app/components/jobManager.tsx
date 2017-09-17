@@ -6,13 +6,13 @@ import { Avatar } from 'material-ui';
 import * as SvgIcons from 'material-ui/svg-icons';
 import * as Colors from 'material-ui/styles/colors';
 import { FloatingAction } from './FloatingAction';
-import { Job } from '../actions/jobRunner';
-
+import { JobDefinition } from '../actions/jobRunner';
+import { JobStatus } from '../actions/jobManager';
 
 export interface Props extends RouteComponentProps<any> {
-  add: (job: Job) => void;
-  open: (job: Job) => void;
-  jobs: Array<Job>;
+  add: (job: JobDefinition) => void;
+  select: (status: JobStatus) => void;
+  statuses: Array<JobStatus>;
 }
 
 export class JobManager extends React.Component<Props> {
@@ -22,24 +22,35 @@ export class JobManager extends React.Component<Props> {
   }
 
   addJob = () => {
-    const job: Job = {
+    const jobDefinition: JobDefinition = {
       jobId: uuid.v4(),
       cron: '*/5 * * * * *',
       script: `
-      //Ceci est un exemple simple de script. la méthode doit respecter la signature ci-dessous :
+      //Ceci est un exemple simple de script. 
+      //la méthode doit respecter la signature ci-dessous :
       async (input) => { 
+        /*
         string text;
-        var fileStream = new System.IO.FileStream(@"c:\logs\mylog.log", System.IO.FileMode.Open, System.IO.FileAccess.Read);
-        using (var streamReader = new System.IO.StreamReader(fileStream, System.Text.Encoding.UTF8))
+        var fileStream = new System.IO.FileStream(
+          @"c:\\logs\\mylog.log", 
+          System.IO.FileMode.Open, 
+          System.IO.FileAccess.Read
+        );
+        using (
+          var streamReader = new System.IO.StreamReader(
+            fileStream, 
+            System.Text.Encoding.UTF8
+        ))
         {
           text = streamReader.ReadToEnd();
         }
         return text;
+        */
       }`,
       input: null
     }
-    this.props.add(job);
-    this.props.open(job);
+    this.props.add(jobDefinition);
+    this.props.select({ jobDefinition, isRunning: false });
     this.props.history.push('/jobRunner');
   }
 
@@ -61,22 +72,23 @@ export class JobManager extends React.Component<Props> {
       )
     }
 
-    const listItems = this.props.jobs.map(job => { 
+    const listItems = this.props.statuses.map(status => {
       return (
-      <ListItem
-        leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm />} />}
-        primaryText={job.title ? job.title : job.jobId}
-        secondaryText={job.cron} 
-        key={job.jobId}
-        onClick={()=> {
-          this.props.open(job);
-          this.props.history.push('/jobRunner');
+        <ListItem
+          leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm />} />}
+          primaryText={status.jobDefinition.title ? status.jobDefinition.title : status.jobDefinition.jobId}
+          secondaryText={status.jobDefinition.cron}
+          key={status.jobDefinition.jobId}
+          onClick={() => {
+            this.props.select(status);
+            this.props.history.push('/jobRunner');
           }} />
-    )})
+      )
+    })
 
     return (
-      <div>        
-        {this.props.jobs.length === 0 ? renderEmpty() :  <List>{listItems}</List>}
+      <div>
+        {this.props.statuses.length === 0 ? renderEmpty() : <List>{listItems}</List>}
         <FloatingAction actionclick={this.addJob} actionIcon={<SvgIcons.ContentAdd />} />
       </div>
     );

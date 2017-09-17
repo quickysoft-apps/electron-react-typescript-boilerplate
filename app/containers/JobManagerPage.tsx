@@ -6,7 +6,7 @@ import { State } from '../reducers'
 
 function mapStateToProps(state: State): Partial<Props> {
   return {     
-    jobs: state.jobManager.jobs
+    statuses: state.jobManager.statuses
   };
 }
 

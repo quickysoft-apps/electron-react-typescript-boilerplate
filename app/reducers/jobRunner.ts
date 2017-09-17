@@ -1,7 +1,6 @@
 import { ipcRenderer } from 'electron';
 import * as uuid from 'uuid';
-import { Job } from '../actions/jobRunner';
-import { IAction, IActionWithPayload } from '../actions/helpers';
+import { IAction } from '../actions/helpers';
 import { Actions } from '../actions';
 
 export interface JobRunnerState {
@@ -11,25 +10,28 @@ export interface JobRunnerState {
   input?: any;
   result?: Object;
   error?: Object;
-  running: boolean;
+  isRunning: boolean;
 }
 
 const initialState = {
   jobId: uuid.v4(),
-  running: false
+  isRunning: false
 }
 
 export function jobRunner(state: JobRunnerState = initialState, action: IAction) {
 
-  if (Actions.JobManager.open.test(action)) {
-    const newAction = action as IActionWithPayload<Job>;
+  if (Actions.JobManager.select.test(action)) {
     return {
       ...state,
-      script:newAction.payload.script
+      script: action.payload.jobDefinition.script,
+      jobId: action.payload.jobDefinition.jobId,
+      cron: action.payload.jobDefinition.cron,
+      input: action.payload.jobDefinition.input,
+      running: action.payload.isRunning
     };
   }
 
-  if (Actions.JobRunner.notifyStarted.test(action)) {
+  if (Actions.JobRunner.started.test(action)) {
     return {
       ...state,
       jobId: action.payload.jobId,
@@ -37,21 +39,21 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
     };
   }
 
-  if (Actions.JobRunner.notifyResult.test(action) && action.payload.jobId === state.jobId) {
+  if (Actions.JobRunner.result.test(action) && action.payload.jobId === state.jobId) {
     return {
       ...state,
       result: action.payload.result
     };
   }
 
-  if (Actions.JobRunner.notifyError.test(action) && action.payload.jobId === state.jobId) {
+  if (Actions.JobRunner.error.test(action) && action.payload.jobId === state.jobId) {
     return {
       ...state,
       result: action.payload.error
     };
   }
 
-  if (Actions.JobRunner.notifyCompleted.test(action) && action.payload.jobId === state.jobId) {
+  if (Actions.JobRunner.completed.test(action) && action.payload.jobId === state.jobId) {
     return {
       ...state,
       running: false

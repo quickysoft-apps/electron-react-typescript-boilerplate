@@ -1,65 +1,70 @@
 import { IAction } from '../actions/helpers';
 import { Actions } from '../actions';
 import * as settings from 'electron-settings';
-import { Job } from '../actions/jobRunner';
+import { JobStatus } from '../actions/jobManager';
 
 export interface JobManagerState {
-  jobs: Array<Job>;
-  selectedJob?: Job;
+  statuses: Array<JobStatus>;
 }
 
 const initialState: JobManagerState = {
-  jobs: new Array<Job>()
+  statuses: new Array<JobStatus>()
 }
 
-function saveToSettings(job: Job) {
-  if (!job) return;
-  const jobKey = `jobs.${job.jobId}`;
-  if (!settings.has(jobKey)) {
-    settings.set(jobKey, job as any);
-  }
+function saveToSettings(status: JobStatus) {
+  const key = `jobs.${status.jobDefinition.jobId}`;
+  settings.delete(key).set(key, status as any);
+}
+
+function setStatus(statuses: Array<JobStatus>, status: JobStatus) {
+  const filteredStatuses = statuses.filter(x => x.jobDefinition.jobId !== status.jobDefinition.jobId);
+  filteredStatuses.push(status);
+  return filteredStatuses;
 }
 
 export function jobManager(state = initialState, action: IAction) {
 
   if (Actions.JobManager.add.test(action)) {
-    if (!state.jobs.find(x => x.jobId === action.payload.jobId)) {
-      const jobs = new Array<Job>(...state.jobs);
-      jobs.push(action.payload)
-      saveToSettings(action.payload);
-      return {
-        ...state,
-        jobs
-      }
+    const status: JobStatus = {
+      jobDefinition: action.payload,
+      isRunning: false
+    };
+    saveToSettings(status);
+    const newState: JobManagerState = {
+      ...state,
+      statuses: setStatus(state.statuses, status)
     }
+    return newState;
+  }
+
+  if (Actions.JobRunner.started.test(action)) {
     return state;
   }
 
-  if (Actions.JobManager.open.test(action)) {
-    const job = state.jobs.find(x => x.jobId === action.payload.jobId);
-    if (job) {
-      return {
+  if (Actions.JobRunner.stopped.test(action)) {
+    return state;
+  }
+
+  if (Actions.JobRunner.error.test(action)) {
+    return state;
+  }
+
+  if (Actions.JobRunner.completed.test(action)) {
+    return state;
+  }
+
+  if (Actions.JobRunner.save.test(action)) {
+    const status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    if (status) {
+      const newState: JobManagerState = {
         ...state,
-        selectedJob: job.jobId
-      }
-    } 
-    return state;
-  }
-
-  if (Actions.JobRunner.notifyStarted.test(action)) {
-    return state;
-  }
-
-  if (Actions.JobRunner.notifyStopped.test(action)) {
-    return state;
-  }
-
-  if (Actions.JobRunner.notifyError.test(action)) {
-    return state;
-  }
-
-  if (Actions.JobRunner.notifyCompleted.test(action)) {
-    return state;
+        statuses: setStatus(state.statuses, {
+          jobDefinition: action.payload,
+          isRunning: status.isRunning
+        })
+      };
+      return newState;
+    }
   }
 
   return state;

@@ -1,5 +1,5 @@
 import { IAction } from '../actions/helpers';
-import settings = require('electron-settings');
+import * as settings from 'electron-settings';
 import { Actions } from '../actions';
 
 export interface ConfigurationState {

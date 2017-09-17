@@ -1,37 +1,21 @@
 import { actionCreator } from './helpers';
 import settings = require('electron-settings');
-import { Job } from './jobRunner';
-//import { BrowserWindow } from 'electron';
+import { JobDefinition } from './jobRunner';
 import { ipcRenderer } from 'electron';
 import { Ipc } from '../api/ipc';
 const ipc = new Ipc(ipcRenderer);
 
-/*interface JsonObject {
-  [x: string]: JsonObject | null;
-}*/
+export interface JobStatus {
+  jobDefinition: JobDefinition;
+  isRunning: boolean;
+}
 
-// interface JobWindow extends Electron.BrowserWindow {
-//   job: Job;
-// }
+export const add = actionCreator<JobDefinition>('jobManager/ADD');
+export const select = actionCreator<JobStatus>('jobManager/SELECT');
 
-
-export const add = actionCreator<Job>('jobManager/ADD');
-export const open = actionCreator<Job>('jobManager/OPEN');
-
-export const syncAsync = function () {
+export const load = function () {
   return (dispatch: Function, getState: Function) => {
 
-    //running job windows
-    /*BrowserWindow.getAllWindows().forEach((window: JobWindow) => {
-      const job = {
-        ...window.job,
-        running: true
-      }
-      addJobToSettings(job);
-      dispatch(add(job));
-    });*/
-
-    //settings
     const jobs: any = settings.get('jobs');
     Object.keys(jobs).forEach(key => {
       if (jobs[key]) {

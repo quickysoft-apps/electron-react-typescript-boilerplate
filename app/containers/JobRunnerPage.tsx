@@ -7,7 +7,7 @@ import { State } from '../reducers'
 function mapStateToProps(state: State): Partial<Props> {
   return {
     jobId: state.jobRunner.jobId,
-    running: state.jobRunner.running,
+    isRunning: state.jobRunner.isRunning,
     cron: state.jobRunner.cron,
     script: state.jobRunner.script,
     result: state.jobRunner.result,

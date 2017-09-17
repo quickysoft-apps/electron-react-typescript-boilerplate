@@ -15,7 +15,7 @@ export class FloatingAction extends React.Component<Props> {
       <div
         style={{
           position: 'absolute',
-          width: '95%',
+          left: '86%',
           bottom: 24,
           textAlign: 'right'
         }}>        

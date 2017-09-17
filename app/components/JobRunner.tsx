@@ -9,7 +9,7 @@ import 'brace/theme/monokai';
 import * as Ps from 'perfect-scrollbar';
 import * as SvgIcons from 'material-ui/svg-icons';
 import { FloatingAction } from './FloatingAction';
-import { Job } from '../actions/jobRunner';
+import { JobDefinition } from '../actions/jobRunner';
 
 interface State {
   cron?: string;
@@ -17,11 +17,12 @@ interface State {
 }
 
 export interface Props extends RouteComponentProps<any> {
-  executeAsync: (job: Job) => void;
+  start: (job: JobDefinition) => void;
+  save: (job: JobDefinition) => void;
   stop: VoidFunction;
   jobId: string;
   cron: string;
-  running: boolean;
+  isRunning: boolean;
   script: string;
   result: any;
   error: Object;
@@ -94,7 +95,7 @@ export class JobRunner extends React.Component<Props, State> {
                   vScrollBarAlwaysVisible: false,
                   tabSize: 4,
                 }} />
-              {this.props.running ?
+              {this.props.isRunning ?
                 <FloatingAction
                   actionIcon={<SvgIcons.AvStop />}
                   actionclick={this.props.stop}
@@ -102,7 +103,7 @@ export class JobRunner extends React.Component<Props, State> {
                 <FloatingAction
                   actionIcon={<SvgIcons.AvPlayArrow />}
                   actionclick={() => {
-                    this.props.executeAsync({
+                    this.props.start({
                       jobId: this.props.jobId,
                       script: this.state.script,
                       input: null,
@@ -142,14 +143,14 @@ export class JobRunner extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const scrollbars: Node[] = [];    
+    const scrollbars: Node[] = [];
     this.scriptEditor.refEditor.childNodes.forEach((e: HTMLTextAreaElement) => {
       if (e.className === 'ace_scrollbar ace_scrollbar-h') {
-        scrollbars.push(e);        
+        scrollbars.push(e);
       }
       if (e.className === 'ace_scrollbar ace_scrollbar-v') {
-        scrollbars.push(e);        
-      }      
+        scrollbars.push(e);
+      }
     })
 
     for (let node of scrollbars) {
@@ -157,6 +158,16 @@ export class JobRunner extends React.Component<Props, State> {
     }
 
     Ps.initialize(this.scriptEditor.refEditor);
+  }
+
+  componentWillUnmount() {
+    const job: JobDefinition = {
+      jobId: this.props.jobId,
+      script: this.state.script,
+      cron: this.state.cron,
+      input: null
+    };
+    this.props.save(job);
   }
 
 }
