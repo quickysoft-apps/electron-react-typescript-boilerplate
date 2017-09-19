@@ -77,7 +77,7 @@ exports.initialize = function () {
     mainWebContents.send('ipc/JOB_STOPPED', arg);
   });
 
-  ipcMain.on('job/JOB_COMPLETED', (event, arg) => {
+  ipcMain.on('ipc/JOB_COMPLETED', (event, arg) => {
     removeJob(arg);
     if (!mainWebContents) return;
     mainWebContents.send('ipc/JOB_COMPLETED', arg);
