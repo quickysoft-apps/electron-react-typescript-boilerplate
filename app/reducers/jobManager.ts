@@ -54,15 +54,17 @@ export function jobManager(state = initialState, action: IAction) {
   }
 
   if (Actions.JobRunner.save.test(action)) {
-    const status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    const status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);    
     if (status) {
+      const newStatus: JobStatus = {
+        jobDefinition: action.payload,
+        isRunning: status.isRunning
+      };
       const newState: JobManagerState = {
         ...state,
-        statuses: setStatus(state.statuses, {
-          jobDefinition: action.payload,
-          isRunning: status.isRunning
-        })
+        statuses: setStatus(state.statuses,newStatus)
       };
+      saveToSettings(newStatus);
       return newState;
     }
   }
