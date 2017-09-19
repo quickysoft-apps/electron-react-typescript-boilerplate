@@ -27,7 +27,7 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
       jobId: action.payload.jobDefinition.jobId,
       cron: action.payload.jobDefinition.cron,
       input: action.payload.jobDefinition.input,
-      running: action.payload.isRunning
+      isRunning: action.payload.isRunning
     };
   }
 
@@ -35,11 +35,11 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
     return {
       ...state,
       jobId: action.payload.jobId,
-      running: true
+      isRunning: true
     };
   }
 
-  if (Actions.JobRunner.result.test(action) && action.payload.jobId === state.jobId) {
+  if (Actions.JobRunner.resultChanged.test(action) && action.payload.jobId === state.jobId) {
     return {
       ...state,
       result: action.payload.result
@@ -56,7 +56,7 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
   if (Actions.JobRunner.completed.test(action) && action.payload.jobId === state.jobId) {
     return {
       ...state,
-      running: false
+      isRunning: false
     };
   }
 
@@ -64,7 +64,7 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
     ipcRenderer.send('ipc/JOB_STOP', state.jobId)
     return {
       ...state,
-      running: false
+      isRunning: false
     };
   }
 

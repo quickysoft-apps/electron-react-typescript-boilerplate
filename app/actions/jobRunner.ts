@@ -19,7 +19,7 @@ export interface JobDefinition {
 }
 
 export const started = actionCreator<IpcEventArg>('jobRunner/STARTED');
-export const result = actionCreator<IpcEventArg>('jobRunner/RESULT');
+export const resultChanged = actionCreator<IpcEventArg>('jobRunner/RESULT_CHANGED');
 export const error = actionCreator<IpcEventArg>('jobRunner/ERROR');
 export const completed = actionCreator<IpcEventArg>('jobRunner/COMPLETED');
 export const stopped = actionCreator<IpcEventArg>('jobRunner/STOPPED');
@@ -29,7 +29,7 @@ export const start = function (job: JobDefinition) {
   return (dispatch: Function, getState: Function) => {
 
     ipc.addListener('ipc/JOB_RESULT', (event: any, arg: any) => {
-      dispatch(result(arg));
+      dispatch(resultChanged(arg));
     });
 
     ipc.addListener('ipc/JOB_ERROR', (event: any, arg: any) => {      
