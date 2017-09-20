@@ -38,11 +38,33 @@ export function jobManager(state = initialState, action: IAction) {
   }
 
   if (Actions.JobRunner.started.test(action)) {
-    return state;
+    let status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    if (status) {
+      status.isRunning = true;
+      const newState: JobManagerState = {
+        ...state,
+        statuses: setStatus(state.statuses, status)
+      }
+      saveToSettings(status);
+      return newState;
+    } else {
+      return state;
+    }
   }
 
   if (Actions.JobRunner.stopped.test(action)) {
-    return state;
+    let status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    if (status) {
+      status.isRunning = false;
+      const newState: JobManagerState = {
+        ...state,
+        statuses: setStatus(state.statuses, status)
+      }
+      saveToSettings(status);
+      return newState;
+    } else {
+      return state;
+    }
   }
 
   if (Actions.JobRunner.error.test(action)) {
@@ -50,11 +72,22 @@ export function jobManager(state = initialState, action: IAction) {
   }
 
   if (Actions.JobRunner.completed.test(action)) {
-    return state;
+    let status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    if (status) {
+      status.isRunning = false;
+      const newState: JobManagerState = {
+        ...state,
+        statuses: setStatus(state.statuses, status)
+      }
+      saveToSettings(status);
+      return newState;
+    } else {
+      return state;
+    }
   }
 
   if (Actions.JobRunner.save.test(action)) {
-    const status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);    
+    const status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
       const newStatus: JobStatus = {
         jobDefinition: action.payload,
@@ -62,7 +95,7 @@ export function jobManager(state = initialState, action: IAction) {
       };
       const newState: JobManagerState = {
         ...state,
-        statuses: setStatus(state.statuses,newStatus)
+        statuses: setStatus(state.statuses, newStatus)
       };
       saveToSettings(newStatus);
       return newState;
