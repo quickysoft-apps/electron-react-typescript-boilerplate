@@ -68,17 +68,17 @@ exports.initialize = function () {
     removeJob(arg.jobId);
     if (!mainWebContents) return;
     mainWebContents.send('ipc/JOB_ERROR', arg);
-    mainWebContents.send('ipc/JOB_STOPPED', arg.jobId);
+    mainWebContents.send('ipc/JOB_STOPPED', arg);
   });
 
   ipcMain.on('ipc/JOB_STOPPED', (event, arg) => {
-    removeJob(arg);
+    removeJob(arg.jobId);
     if (!mainWebContents) return;
     mainWebContents.send('ipc/JOB_STOPPED', arg);
   });
 
   ipcMain.on('ipc/JOB_COMPLETED', (event, arg) => {
-    removeJob(arg);
+    removeJob(arg.jobId);
     if (!mainWebContents) return;
     mainWebContents.send('ipc/JOB_COMPLETED', arg);
   });

@@ -16,10 +16,9 @@
 
     const startScript = function (input, script, cron, callback, onCompleted) {
       try {
-        const func = edge.func(script);        
-        if ((cron && cron.length === 0) || !cron) {          
-          callEdgeFunction(func, input, callback);
-          onCompleted();
+        const func = edge.func(script);
+        if ((cron && cron.length === 0) || !cron) {
+          callEdgeFunction(func, input, callback);          
           return null;
         } else {
           return new CronJob(cron, () => {
@@ -45,18 +44,20 @@
             event.sender.send('ipc/JOB_RESULT', { jobId, result })
           }
         }, () => {
-          console.log('COMPLETED')
           event.sender.send('ipc/JOB_COMPLETED', { jobId });
         })
-        console.log(window.cronJob)
         event.sender.send('ipc/JOB_STARTED', { jobId });
+        if (!window.cronJob) {
+          event.sender.send('ipc/JOB_COMPLETED', { jobId });
+        }        
       });
 
       ipcRenderer.on('ipc/JOB_STOP', (event, arg) => {
+        const { jobId } = arg;
         if (window.cronJob) {
           window.cronJob.stop();
         }
-        event.sender.send('ipc/JOB_STOPPED', arg);
+        event.sender.send('ipc/JOB_STOPPED', { jobId });
       });
     }
   </script>
