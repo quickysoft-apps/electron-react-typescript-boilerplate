@@ -14,6 +14,7 @@ import { JobDefinition } from '../actions/jobRunner';
 interface State {
   cron?: string;
   script: string;
+  title: string;
 }
 
 export interface Props extends RouteComponentProps<any> {
@@ -25,6 +26,7 @@ export interface Props extends RouteComponentProps<any> {
   isRunning: boolean;
   script: string;
   result: any;
+  title:string;
   error: Object;
 }
 
@@ -36,7 +38,8 @@ export class JobRunner extends React.Component<Props, State> {
     super(props)
     this.state = {
       script: props.script,
-      cron: props.cron
+      cron: props.cron,
+      title:props.title
     }
   }
 
@@ -65,6 +68,15 @@ export class JobRunner extends React.Component<Props, State> {
                   hintText="*/5 * * * * *"
                   value={this.state.cron}
                   onChange={(e: React.FormEvent<{}>, newValue: string) => this.setState({ cron: newValue })}
+                />
+                <TextField
+                  name="scriptTitle"
+                  floatingLabelFixed={true}
+                  underlineShow={false}
+                  floatingLabelText="Nom du Script"
+                  hintText="exemple de script"
+                  value={this.state.title}
+                  onChange={(e: React.FormEvent<{}>, newValue: string) => this.setState({ title: newValue })}
                 />
               </ToolbarGroup>
             </Toolbar>
@@ -107,7 +119,8 @@ export class JobRunner extends React.Component<Props, State> {
                       jobId: this.props.jobId,
                       script: this.state.script,
                       input: null,
-                      cron: this.state.cron
+                      cron: this.state.cron,
+                      title: this.state.title
                     })
                   }} />
               }
@@ -164,6 +177,7 @@ export class JobRunner extends React.Component<Props, State> {
     const job: JobDefinition = {
       jobId: this.props.jobId,
       script: this.state.script,
+      title: this.state.title,
       cron: this.state.cron,
       input: null
     };

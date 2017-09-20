@@ -7,6 +7,7 @@ export interface JobRunnerState {
   jobId: string;
   cron?: any;
   script?: string;
+  title?: string;
   input?: any;
   result?: Object;
   error?: Object;
@@ -23,10 +24,7 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
   if (Actions.JobManager.select.test(action)) {
     return {
       ...state,
-      script: action.payload.jobDefinition.script,
-      jobId: action.payload.jobDefinition.jobId,
-      cron: action.payload.jobDefinition.cron,
-      input: action.payload.jobDefinition.input,
+      ...action.payload.jobDefinition,
       isRunning: action.payload.isRunning
     };
   }

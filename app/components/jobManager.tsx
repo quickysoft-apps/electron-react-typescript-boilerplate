@@ -8,10 +8,11 @@ import * as Colors from 'material-ui/styles/colors';
 import { FloatingAction } from './FloatingAction';
 import { JobDefinition } from '../actions/jobRunner';
 import { JobStatus } from '../actions/jobManager';
+import {green500,  grey500} from 'material-ui/styles/colors';
 
 export interface Props extends RouteComponentProps<any> {
   add: (job: JobDefinition) => void;
-  select: (status: JobStatus) => void;  
+  select: (status: JobStatus) => void;
   statuses: Array<JobStatus>;
 }
 
@@ -24,6 +25,7 @@ export class JobManager extends React.Component<Props> {
   addJob = () => {
     const jobDefinition: JobDefinition = {
       jobId: uuid.v4(),
+      title: 'exemple de script',
       cron: '*/5 * * * * *',
       script: `
       //Ceci est un exemple simple de script. 
@@ -72,10 +74,13 @@ export class JobManager extends React.Component<Props> {
       )
     }
 
-    const listItems = this.props.statuses.map(status => {
+    const listSortedItems = this.props.statuses.sort((a: JobStatus, b: JobStatus) => {
+      return (a.jobDefinition.title > b.jobDefinition.title) ? 1 : ((b.jobDefinition.title > a.jobDefinition.title) ? -1 : 0);
+    });
+    const listItems = listSortedItems.map(status => {
       return (
         <ListItem
-          leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm />} />}
+          leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm  />} color={status.isRunning ? green500 : grey500} />}
           primaryText={status.jobDefinition.title ? status.jobDefinition.title : status.jobDefinition.jobId}
           secondaryText={status.jobDefinition.cron}
           key={status.jobDefinition.jobId}

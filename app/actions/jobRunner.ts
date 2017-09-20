@@ -15,7 +15,7 @@ export interface JobDefinition {
   cron?: any;
   script: string;
   input: any;
-  title?: string;
+  title: string;
 }
 
 export const started = actionCreator<IpcEventArg>('jobRunner/STARTED');

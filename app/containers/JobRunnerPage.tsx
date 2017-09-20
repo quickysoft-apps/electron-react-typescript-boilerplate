@@ -11,7 +11,8 @@ function mapStateToProps(state: State): Partial<Props> {
     cron: state.jobRunner.cron,
     script: state.jobRunner.script,
     result: state.jobRunner.result,
-    error: state.jobRunner.error
+    error: state.jobRunner.error,
+    title: state.jobRunner.title
   };
 }
 
