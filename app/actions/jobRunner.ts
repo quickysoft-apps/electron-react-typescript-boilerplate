@@ -16,6 +16,7 @@ export interface JobDefinition {
   script: string;
   input: any;
   title: string;
+  error?:object;
 }
 
 export const started = actionCreator<IpcEventArg>('jobRunner/STARTED');

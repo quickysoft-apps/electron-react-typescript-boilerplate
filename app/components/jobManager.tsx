@@ -8,7 +8,7 @@ import * as Colors from 'material-ui/styles/colors';
 import { FloatingAction } from './FloatingAction';
 import { JobDefinition } from '../actions/jobRunner';
 import { JobStatus } from '../actions/jobManager';
-import {green500,  grey500} from 'material-ui/styles/colors';
+import {green500, red500,  grey500} from 'material-ui/styles/colors';
 
 export interface Props extends RouteComponentProps<any> {
   add: (job: JobDefinition) => void;
@@ -27,6 +27,7 @@ export class JobManager extends React.Component<Props> {
       jobId: uuid.v4(),
       title: 'exemple de script',
       cron: '*/5 * * * * *',
+      error:undefined,
       script: `
       //Ceci est un exemple simple de script. 
       //la méthode doit respecter la signature ci-dessous :
@@ -80,7 +81,7 @@ export class JobManager extends React.Component<Props> {
     const listItems = listSortedItems.map(status => {
       return (
         <ListItem
-          leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm  />} color={status.isRunning ? green500 : grey500} />}
+          leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm  />} color={status.isRunning ? ((!status.jobDefinition.error) ? green500 : red500) : grey500} />}
           primaryText={status.jobDefinition.title ? status.jobDefinition.title : status.jobDefinition.jobId}
           secondaryText={status.jobDefinition.cron}
           key={status.jobDefinition.jobId}
