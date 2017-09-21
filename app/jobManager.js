@@ -29,7 +29,7 @@ const createJobWindow = function () {
   const jobWindow = new BrowserWindow({ show: false });
   jobWindow.loadURL(`file://${__dirname}/job.html`);
   if (process.env.NODE_ENV === 'development') {
-    jobWindow.openDevTools();
+    //jobWindow.openDevTools();
   }
   return jobWindow
 }
@@ -48,7 +48,7 @@ exports.initialize = function () {
   });
 
   ipcMain.on('ipc/JOB_STOP', (event, arg) => {
-    const job = findJob(arg);
+    const job = findJob(arg.jobId);
     if (job && job.window) {
       job.window.webContents.send('ipc/JOB_STOP', arg);
     }

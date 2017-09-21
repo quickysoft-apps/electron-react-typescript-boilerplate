@@ -27,7 +27,8 @@ export function jobManager(state = initialState, action: IAction) {
   if (Actions.JobManager.add.test(action)) {
     const status: JobStatus = {
       jobDefinition: action.payload,
-      isRunning: false
+      isRunning: false,
+      hasError:false
     };
     saveToSettings(status);
     const newState: JobManagerState = {
@@ -91,7 +92,7 @@ export function jobManager(state = initialState, action: IAction) {
     if (status) {
       const newStatus: JobStatus = {
         jobDefinition: action.payload,
-        isRunning: status.isRunning
+        ...status
       };
       const newState: JobManagerState = {
         ...state,

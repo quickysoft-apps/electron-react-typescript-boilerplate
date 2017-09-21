@@ -15,7 +15,6 @@ interface State {
   cron?: string;
   script: string;
   title: string;
-  error?: object;
 }
 
 export interface Props extends RouteComponentProps<any> {
@@ -25,6 +24,7 @@ export interface Props extends RouteComponentProps<any> {
   jobId: string;
   cron: string;
   isRunning: boolean;
+  hasError:boolean;
   script: string;
   result: any;
   title:string;
@@ -40,8 +40,7 @@ export class JobRunner extends React.Component<Props, State> {
     this.state = {
       script: props.script,
       cron: props.cron,
-      title:props.title,
-      error:undefined
+      title:props.title
     }
   }
 
@@ -122,8 +121,7 @@ export class JobRunner extends React.Component<Props, State> {
                       script: this.state.script,
                       input: null,
                       cron: this.state.cron,
-                      title: this.state.title,
-                      error: undefined
+                      title: this.state.title
                     })
                   }} />
               }
@@ -182,7 +180,6 @@ export class JobRunner extends React.Component<Props, State> {
       script: this.state.script,
       title: this.state.title,
       cron: this.state.cron,
-      error: this.props.error,
       input: null
     };
     this.props.save(job);

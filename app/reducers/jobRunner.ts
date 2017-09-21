@@ -58,11 +58,17 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
     };
   }
 
-  if (Actions.JobRunner.stop.test(action)) {
-    ipcRenderer.send('ipc/JOB_STOP', state.jobId)
+  if (Actions.JobRunner.stopped.test(action) && action.payload.jobId === state.jobId) {
     return {
       ...state,
       isRunning: false
+    };
+  }
+
+  if (Actions.JobRunner.stop.test(action)) {
+    ipcRenderer.send('ipc/JOB_STOP', { jobId: state.jobId })
+    return {
+      ...state
     };
   }
 
