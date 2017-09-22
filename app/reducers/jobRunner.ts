@@ -40,14 +40,16 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
   if (Actions.JobRunner.resultChanged.test(action) && action.payload.jobId === state.jobId) {
     return {
       ...state,
-      result: action.payload.result
+      result: action.payload.result,
+      error: undefined
     };
   }
 
   if (Actions.JobRunner.error.test(action) && action.payload.jobId === state.jobId) {
     return {
       ...state,
-      result: action.payload.error
+      result: {},
+      error: action.payload.error
     };
   }
 

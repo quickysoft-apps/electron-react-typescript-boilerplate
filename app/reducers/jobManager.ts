@@ -27,23 +27,36 @@ export function jobManager(state = initialState, action: IAction) {
   if (Actions.JobManager.add.test(action)) {
     const status: JobStatus = {
       jobDefinition: action.payload,
-      isRunning: false,
-      hasError:false
+      isRunning: false
     };
     saveToSettings(status);
-    const newState: JobManagerState = {
-      ...state,
+    const newState: JobManagerState = {      
       statuses: setStatus(state.statuses, status)
     }
     return newState;
+  }
+
+  if (Actions.JobRunner.resultChanged.test(action)) {
+    let status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    if (status) {
+      status.error = undefined;
+      
+      const newState: JobManagerState = {        
+        statuses: setStatus(state.statuses, status)
+      }
+      saveToSettings(status);
+      return newState;
+    } else {
+      return state;
+    }
   }
 
   if (Actions.JobRunner.started.test(action)) {
     let status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
       status.isRunning = true;
-      const newState: JobManagerState = {
-        ...state,
+      
+      const newState: JobManagerState = {        
         statuses: setStatus(state.statuses, status)
       }
       saveToSettings(status);
@@ -57,8 +70,7 @@ export function jobManager(state = initialState, action: IAction) {
     let status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
       status.isRunning = false;
-      const newState: JobManagerState = {
-        ...state,
+      const newState: JobManagerState = {        
         statuses: setStatus(state.statuses, status)
       }
       saveToSettings(status);
@@ -69,15 +81,26 @@ export function jobManager(state = initialState, action: IAction) {
   }
 
   if (Actions.JobRunner.error.test(action)) {
-    return state;
+    let status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    if (status) {      
+      status.error = action.payload.error;
+      const newState: JobManagerState = {        
+        statuses: setStatus(state.statuses, status)
+      }
+      console.log('newState', newState);
+      
+      saveToSettings(status);
+      return newState;
+    } else {
+      return state;
+    }
   }
 
   if (Actions.JobRunner.completed.test(action)) {
     let status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
       status.isRunning = false;
-      const newState: JobManagerState = {
-        ...state,
+      const newState: JobManagerState = {        
         statuses: setStatus(state.statuses, status)
       }
       saveToSettings(status);
@@ -91,11 +114,10 @@ export function jobManager(state = initialState, action: IAction) {
     const status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
       const newStatus: JobStatus = {
-        jobDefinition: action.payload,
-        ...status
+        ...status,
+        jobDefinition: action.payload
       };
-      const newState: JobManagerState = {
-        ...state,
+      const newState: JobManagerState = {        
         statuses: setStatus(state.statuses, newStatus)
       };
       saveToSettings(newStatus);

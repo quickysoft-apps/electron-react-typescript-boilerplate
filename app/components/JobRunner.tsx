@@ -24,10 +24,10 @@ export interface Props extends RouteComponentProps<any> {
   jobId: string;
   cron: string;
   isRunning: boolean;
-  hasError:boolean;
+  hasError: boolean;
   script: string;
   result: any;
-  title:string;
+  title: string;
   error: Object;
 }
 
@@ -40,7 +40,7 @@ export class JobRunner extends React.Component<Props, State> {
     this.state = {
       script: props.script,
       cron: props.cron,
-      title:props.title
+      title: props.title
     }
   }
 
@@ -71,6 +71,9 @@ export class JobRunner extends React.Component<Props, State> {
                   onChange={(e: React.FormEvent<{}>, newValue: string) => this.setState({ cron: newValue })}
                 />
                 <TextField
+                  style={{ 
+                    width: '100%' 
+                    }}
                   name="scriptTitle"
                   floatingLabelFixed={true}
                   underlineShow={false}

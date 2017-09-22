@@ -50,10 +50,8 @@ export const start = function (job: JobDefinition) {
       dispatch(stopped(arg));
     });
 
-    const jobId = getState().jobRunner.jobId;
-
     const arg = {
-      jobId,
+      jobId: job.jobId,
       cron: job.cron,
       script: job.script,
       input: job.input 
