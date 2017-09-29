@@ -9,14 +9,15 @@ export interface JobRunnerState {
   script?: string;
   title?: string;
   input?: string;
-  result?: Object;
-  error?: Error;
+  result: Object;
+  errorMessage?: string;
   isRunning: boolean;
 }
 
 const initialState = {
   jobId: uuid.v4(),
-  isRunning: false
+  isRunning: false, 
+  result: {}
 }
 
 export function jobRunner(state: JobRunnerState = initialState, action: IAction) {
@@ -41,7 +42,7 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
     return {
       ...state,
       result: action.payload.result,
-      error: undefined
+      errorMessage: undefined
     };
   }
 
@@ -49,7 +50,7 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
     return {
       ...state,
       result: {},
-      error: action.payload.error
+      errorMessage: action.payload.error ? action.payload.error : undefined
     };
   }
 

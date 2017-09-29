@@ -3,11 +3,7 @@ import { RouteComponentProps } from 'react-router';
 import { TextField } from 'material-ui'
 import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
 import { Tabs, Tab } from 'material-ui/Tabs';
-import AceEditor from 'react-ace';
-import 'brace/mode/csharp';
-import 'brace/mode/json';
-import 'brace/theme/monokai';
-//import * as Ps from 'perfect-scrollbar';
+import { Editor } from './editor';
 import * as SvgIcons from 'material-ui/svg-icons';
 import { FloatingAction } from './FloatingAction';
 import { JobDefinition } from '../actions/jobRunner';
@@ -27,24 +23,13 @@ export interface Props extends RouteComponentProps<any> {
   cron: string;
   input: string;
   isRunning: boolean;
-  hasError: boolean;
   script: string;
-  result: any;
+  result: Object;
   title: string;
-  error: Error;
+  errorMessage: string;
 }
 
-const textAreaStyle: React.CSSProperties = {  
-  height: 404,
-  position: "absolute",
-  width: '100%'
-};
-
 export class JobRunner extends React.Component<Props, State> {
-
-  /*private scriptEditor: any = undefined;
-  private inputEditor: any = undefined;
-  private resultEditor: any = undefined;*/
 
   constructor(props: Props) {
     super(props)
@@ -75,9 +60,9 @@ export class JobRunner extends React.Component<Props, State> {
                   onChange={(e: React.FormEvent<{}>, newValue: string) => this.setState({ cron: newValue })}
                 />
                 <TextField
-                  style={{ 
-                    width: '100%' 
-                    }}
+                  style={{
+                    width: '100%'
+                  }}
                   name="scriptTitle"
                   floatingLabelFixed={true}
                   underlineShow={false}
@@ -88,27 +73,12 @@ export class JobRunner extends React.Component<Props, State> {
                 />
               </ToolbarGroup>
             </Toolbar>
-            <div
-            style={textAreaStyle}>
-              <AceEditor
-                mode="csharp"
-                theme="monokai"
-                name="script-editor"
-                height="100%"
-                onChange={(value: string, event?: any) => this.setState({ script: value })}
-                fontSize={14}
-                showPrintMargin={false}
-                showGutter={true}
-                highlightActiveLine={true}
-                value={this.state.script}
-                setOptions={{
-                  enableBasicAutocompletion: true,
-                  enableLiveAutocompletion: true,
-                  showLineNumbers: true,
-                  hScrollBarAlwaysVisible: false,
-                  vScrollBarAlwaysVisible: false,
-                  tabSize: 4,
-                }} />
+            <Editor
+              mode="csharp"
+              name="script-editor"
+              onChange={(value: string, event?: any) => this.setState({ script: value })}
+              value={this.state.script}
+            >
               {this.props.isRunning ?
                 <FloatingAction
                   actionIcon={<SvgIcons.AvStop />}
@@ -124,77 +94,35 @@ export class JobRunner extends React.Component<Props, State> {
                       cron: this.state.cron,
                       title: this.state.title
                     })
-                  }} />
+                  }}
+                />
               }
-            </div>
+            </Editor>
           </Tab>
           <Tab
             icon={<SvgIcons.ActionInput />}>
-            <div
-              style={textAreaStyle}>
-              <AceEditor
-                mode="json"
-                theme="monokai"
-                name="input-editor"
-                height="100%"
-                defaultValue="{}"
-                onChange={(value: string, event?: any) => this.setState({ input: value })}
-                fontSize={14}
-                showPrintMargin={false}
-                showGutter={false}
-                highlightActiveLine={true}
-                value={this.state.input}
-                setOptions={{
-                  hScrollBarAlwaysVisible: false,
-                  vScrollBarAlwaysVisible: false,
-                  tabSize: 4,
-                }} />
-            </div>
+            <Editor
+              mode="json"
+              name="input-editor"
+              onChange={(value: string, event?: any) => this.setState({ input: value })}
+              value={this.state.input}
+              defaultValue="{}"
+            />
           </Tab>
           <Tab
             style={{ fontWeight: 700 }}
             label="{...}">
-            <div
-              style={textAreaStyle}>
-              <AceEditor
-                mode="json"
-                theme="monokai"
-                name="result-editor"
-                height="100%"                
-                fontSize={14}
-                showPrintMargin={false}
-                showGutter={false}
-                highlightActiveLine={true}
-                value={this.props.error ? this.props.error.message : this.props.result.toString()}
-                setOptions={{
-                  readOnly: true,
-                  hScrollBarAlwaysVisible: false,
-                  vScrollBarAlwaysVisible: false,
-                  tabSize: 4,
-                }} />              
-            </div>
+            <Editor
+              mode="json"
+              name="result-editor"
+              onChange={(value: string, event?: any) => this.setState({ input: value })}
+              value={this.props.errorMessage ? this.props.errorMessage : this.props.result.toString()}
+              defaultValue="{}"
+            />
           </Tab>
         </Tabs>
-      </div>
+      </div >
     );
-  }
-
-  componentDidMount() {
-    /*const scrollbars: Node[] = [];
-    this.scriptEditor.refEditor.childNodes.forEach((e: HTMLTextAreaElement) => {
-      if (e.className === 'ace_scrollbar ace_scrollbar-h') {
-        scrollbars.push(e);
-      }
-      if (e.className === 'ace_scrollbar ace_scrollbar-v') {
-        scrollbars.push(e);
-      }
-    })
-
-    for (let node of scrollbars) {
-      this.scriptEditor.refEditor.removeChild(node);
-    }
-
-    Ps.initialize(this.scriptEditor.refEditor);*/
   }
 
   componentWillUnmount() {

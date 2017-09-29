@@ -7,16 +7,16 @@ const ipc = new Ipc(ipcRenderer);
 export interface IpcEventArg {
   jobId: string;
   result?: any;
-  error?: Object;  
+  error?: Object;
 }
 
 export interface JobDefinition {
-  jobId: string;  
+  jobId: string;
   cron?: any;
   script: string;
   input: any;
   title: string;
-  error?:object;
+  error?: Object;
 }
 
 export const started = actionCreator<IpcEventArg>('jobRunner/STARTED');
@@ -29,11 +29,12 @@ export const save = actionCreator<JobDefinition>('jobRunner/SAVE');
 export const start = function (job: JobDefinition) {
   return (dispatch: Function, getState: Function) => {
 
-    ipc.addListener('ipc/JOB_RESULT', (event: any, arg: any) => {
+    ipc.addListener('ipc/JOB_RESULT', (event: any, arg: any) => {      
       dispatch(resultChanged(arg));
     });
 
-    ipc.addListener('ipc/JOB_ERROR', (event: any, arg: any) => {      
+    ipc.addListener('ipc/JOB_ERROR', (event: any, arg: any) => {
+      console.log('ipc/JOB_ERROR', arg)
       dispatch(error(arg));
     });
 
@@ -54,7 +55,7 @@ export const start = function (job: JobDefinition) {
       jobId: job.jobId,
       cron: job.cron,
       script: job.script,
-      input: job.input 
+      input: job.input
     }
     ipc.send('ipc/JOB_START', arg);
 
