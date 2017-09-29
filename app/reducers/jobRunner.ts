@@ -8,9 +8,9 @@ export interface JobRunnerState {
   cron?: any;
   script?: string;
   title?: string;
-  input?: any;
+  input?: string;
   result?: Object;
-  error?: Object;
+  error?: Error;
   isRunning: boolean;
 }
 

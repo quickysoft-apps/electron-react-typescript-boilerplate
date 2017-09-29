@@ -5,8 +5,9 @@ import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
 import { Tabs, Tab } from 'material-ui/Tabs';
 import AceEditor from 'react-ace';
 import 'brace/mode/csharp';
+import 'brace/mode/json';
 import 'brace/theme/monokai';
-import * as Ps from 'perfect-scrollbar';
+//import * as Ps from 'perfect-scrollbar';
 import * as SvgIcons from 'material-ui/svg-icons';
 import { FloatingAction } from './FloatingAction';
 import { JobDefinition } from '../actions/jobRunner';
@@ -15,6 +16,7 @@ interface State {
   cron?: string;
   script: string;
   title: string;
+  input: string;
 }
 
 export interface Props extends RouteComponentProps<any> {
@@ -23,36 +25,38 @@ export interface Props extends RouteComponentProps<any> {
   stop: VoidFunction;
   jobId: string;
   cron: string;
+  input: string;
   isRunning: boolean;
   hasError: boolean;
   script: string;
   result: any;
   title: string;
-  error: Object;
+  error: Error;
 }
+
+const textAreaStyle: React.CSSProperties = {  
+  height: 404,
+  position: "absolute",
+  width: '100%'
+};
 
 export class JobRunner extends React.Component<Props, State> {
 
-  private scriptEditor: any = undefined;
+  /*private scriptEditor: any = undefined;
+  private inputEditor: any = undefined;
+  private resultEditor: any = undefined;*/
 
   constructor(props: Props) {
     super(props)
     this.state = {
       script: props.script,
       cron: props.cron,
-      title: props.title
+      title: props.title,
+      input: props.input
     }
   }
 
   public render() {
-
-    const textAreaStyle = {
-      display: 'inline-block',
-      width: 494,
-      paddingLeft: 6
-    };
-
-    const textAreaRowCount = 14;
 
     return (
       <div>
@@ -85,13 +89,8 @@ export class JobRunner extends React.Component<Props, State> {
               </ToolbarGroup>
             </Toolbar>
             <div
-              style={{
-                position: 'absolute',
-                height: 404,
-                width: '100%'
-              }}>
+            style={textAreaStyle}>
               <AceEditor
-                ref={(editor) => { this.scriptEditor = editor; }}
                 mode="csharp"
                 theme="monokai"
                 name="script-editor"
@@ -103,9 +102,8 @@ export class JobRunner extends React.Component<Props, State> {
                 highlightActiveLine={true}
                 value={this.state.script}
                 setOptions={{
-                  enableBasicAutocompletion: false,
-                  enableLiveAutocompletion: false,
-                  enableSnippets: false,
+                  enableBasicAutocompletion: true,
+                  enableLiveAutocompletion: true,
                   showLineNumbers: true,
                   hScrollBarAlwaysVisible: false,
                   vScrollBarAlwaysVisible: false,
@@ -131,27 +129,49 @@ export class JobRunner extends React.Component<Props, State> {
             </div>
           </Tab>
           <Tab
+            icon={<SvgIcons.ActionInput />}>
+            <div
+              style={textAreaStyle}>
+              <AceEditor
+                mode="json"
+                theme="monokai"
+                name="input-editor"
+                height="100%"
+                defaultValue="{}"
+                onChange={(value: string, event?: any) => this.setState({ input: value })}
+                fontSize={14}
+                showPrintMargin={false}
+                showGutter={false}
+                highlightActiveLine={true}
+                value={this.state.input}
+                setOptions={{
+                  hScrollBarAlwaysVisible: false,
+                  vScrollBarAlwaysVisible: false,
+                  tabSize: 4,
+                }} />
+            </div>
+          </Tab>
+          <Tab
             style={{ fontWeight: 700 }}
             label="{...}">
             <div
               style={textAreaStyle}>
-              <TextField
-                name="result"
-                style={{ textAlign: 'left' }}
-                disabled={true}
-                multiLine={true}
-                fullWidth={true}
-                rows={textAreaRowCount}
-                rowsMax={textAreaRowCount}
-                underlineShow={false}
-                value={
-                  this.props.result ?
-                    this.props.result.toString() :
-                    this.props.error ?
-                      this.props.error :
-                      ''
-                }
-              />
+              <AceEditor
+                mode="json"
+                theme="monokai"
+                name="result-editor"
+                height="100%"                
+                fontSize={14}
+                showPrintMargin={false}
+                showGutter={false}
+                highlightActiveLine={true}
+                value={this.props.error ? this.props.error.message : this.props.result.toString()}
+                setOptions={{
+                  readOnly: true,
+                  hScrollBarAlwaysVisible: false,
+                  vScrollBarAlwaysVisible: false,
+                  tabSize: 4,
+                }} />              
             </div>
           </Tab>
         </Tabs>
@@ -160,7 +180,7 @@ export class JobRunner extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const scrollbars: Node[] = [];
+    /*const scrollbars: Node[] = [];
     this.scriptEditor.refEditor.childNodes.forEach((e: HTMLTextAreaElement) => {
       if (e.className === 'ace_scrollbar ace_scrollbar-h') {
         scrollbars.push(e);
@@ -174,7 +194,7 @@ export class JobRunner extends React.Component<Props, State> {
       this.scriptEditor.refEditor.removeChild(node);
     }
 
-    Ps.initialize(this.scriptEditor.refEditor);
+    Ps.initialize(this.scriptEditor.refEditor);*/
   }
 
   componentWillUnmount() {
