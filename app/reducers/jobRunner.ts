@@ -8,16 +8,19 @@ export interface JobRunnerState {
   cron?: any;
   script?: string;
   title?: string;
-  input?: string;
-  result: Object;
+  input: string;
+  result: string;
   errorMessage?: string;
   isRunning: boolean;
 }
 
+const defaultJson = '{}';
+
 const initialState = {
   jobId: uuid.v4(),
   isRunning: false, 
-  result: {}
+  input: defaultJson,
+  result: defaultJson
 }
 
 export function jobRunner(state: JobRunnerState = initialState, action: IAction) {
@@ -47,6 +50,7 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
   }
 
   if (Actions.JobRunner.error.test(action) && action.payload.jobId === state.jobId) {
+    console.log('action.payload.error', action.payload.error)
     return {
       ...state,
       result: {},

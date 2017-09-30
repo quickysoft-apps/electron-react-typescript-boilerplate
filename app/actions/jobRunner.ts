@@ -12,9 +12,9 @@ export interface IpcEventArg {
 
 export interface JobDefinition {
   jobId: string;
-  cron?: any;
+  cron?: string;
   script: string;
-  input: any;
+  input: string;
   title: string;
   error?: Object;
 }

@@ -27,7 +27,8 @@ export function jobManager(state = initialState, action: IAction) {
   if (Actions.JobManager.add.test(action)) {
     const status: JobStatus = {
       jobDefinition: action.payload,
-      isRunning: false
+      isRunning: false,
+      hasError: false
     };
     saveToSettings(status);
     const newState: JobManagerState = {      
@@ -39,7 +40,7 @@ export function jobManager(state = initialState, action: IAction) {
   if (Actions.JobRunner.resultChanged.test(action)) {
     let status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
-      status.error = undefined;
+      status.hasError = false;
       
       const newState: JobManagerState = {        
         statuses: setStatus(state.statuses, status)
@@ -83,7 +84,7 @@ export function jobManager(state = initialState, action: IAction) {
   if (Actions.JobRunner.error.test(action)) {
     let status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {      
-      status.error = action.payload.error;
+      status.hasError = !!action.payload.error;
       const newState: JobManagerState = {        
         statuses: setStatus(state.statuses, status)
       }

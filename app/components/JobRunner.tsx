@@ -15,6 +15,12 @@ interface State {
   input: string;
 }
 
+interface ErrorOutput {
+  error: {
+    message: string | undefined
+  }
+}
+
 export interface Props extends RouteComponentProps<any> {
   start: (job: JobDefinition) => void;
   save: (job: JobDefinition) => void;
@@ -24,9 +30,9 @@ export interface Props extends RouteComponentProps<any> {
   input: string;
   isRunning: boolean;
   script: string;
-  result: Object;
+  result: string;
   title: string;
-  errorMessage: string;
+  errorMessage?: string;
 }
 
 export class JobRunner extends React.Component<Props, State> {
@@ -41,7 +47,23 @@ export class JobRunner extends React.Component<Props, State> {
     }
   }
 
+  toJsonString(value: any) {
+    let obj: any = {};
+    try {
+      obj = typeof value === 'object' ? value : JSON.parse(value);
+    } catch (error) {
+      obj = { data: value };
+    }
+    return JSON.stringify(obj, null, '  ');
+  }
+
   public render() {
+
+    const errorOutput: ErrorOutput = {
+      error: {
+        message: this.props.errorMessage
+      }
+    };
 
     return (
       <div>
@@ -78,6 +100,7 @@ export class JobRunner extends React.Component<Props, State> {
               name="script-editor"
               onChange={(value: string, event?: any) => this.setState({ script: value })}
               value={this.state.script}
+              showLineNumbers={true}
             >
               {this.props.isRunning ?
                 <FloatingAction
@@ -90,7 +113,7 @@ export class JobRunner extends React.Component<Props, State> {
                     this.props.start({
                       jobId: this.props.jobId,
                       script: this.state.script,
-                      input: null,
+                      input: this.state.input,
                       cron: this.state.cron,
                       title: this.state.title
                     })
@@ -106,7 +129,6 @@ export class JobRunner extends React.Component<Props, State> {
               name="input-editor"
               onChange={(value: string, event?: any) => this.setState({ input: value })}
               value={this.state.input}
-              defaultValue="{}"
             />
           </Tab>
           <Tab
@@ -115,9 +137,9 @@ export class JobRunner extends React.Component<Props, State> {
             <Editor
               mode="json"
               name="result-editor"
+              readOnly={true}
               onChange={(value: string, event?: any) => this.setState({ input: value })}
-              value={this.props.errorMessage ? this.props.errorMessage : this.props.result.toString()}
-              defaultValue="{}"
+              value={errorOutput.error.message ? this.toJsonString(errorOutput) : this.toJsonString(this.props.result)}
             />
           </Tab>
         </Tabs>
@@ -131,7 +153,7 @@ export class JobRunner extends React.Component<Props, State> {
       script: this.state.script,
       title: this.state.title,
       cron: this.state.cron,
-      input: null
+      input: this.state.input
     };
     this.props.save(job);
   }

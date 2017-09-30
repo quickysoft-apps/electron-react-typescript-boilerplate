@@ -11,6 +11,7 @@ export interface Props {
   readOnly?: boolean;
   value?: string;
   defaultValue?: string;
+  showLineNumbers?: boolean;
 }
 
 const style: React.CSSProperties = {
@@ -30,17 +31,19 @@ export class Editor extends React.Component<Props> {
           readOnly={this.props.readOnly}
           value={this.props.value}
           defaultValue={this.props.defaultValue}
+          onChange={this.props.onChange}
           theme="monokai"
           height="100%"          
           fontSize={14}
           showPrintMargin={false}
           showGutter={true}
           highlightActiveLine={true}
+          wrapEnabled={true}                    
           setOptions={{
-            showLineNumbers: true,
+            showLineNumbers: this.props.showLineNumbers,
             hScrollBarAlwaysVisible: false,
-            vScrollBarAlwaysVisible: false,
-            tabSize: 4,
+            vScrollBarAlwaysVisible: true,
+            tabSize: 2
           }} />
         {this.props.children}
       </div>

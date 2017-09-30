@@ -4,7 +4,7 @@ import { JobDefinition } from './jobRunner';
 export interface JobStatus {
   jobDefinition: JobDefinition;
   isRunning: boolean;
-  error?: object;
+  hasError: boolean;
 }
 
 export const add = actionCreator<JobDefinition>('jobManager/ADD');

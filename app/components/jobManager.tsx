@@ -50,10 +50,10 @@ export class JobManager extends React.Component<Props> {
         return text;
         */
       }`,
-      input: null
+      input: '{}'
     }
     this.props.add(jobDefinition);
-    this.props.select({ jobDefinition, isRunning: false });
+    this.props.select({ jobDefinition, isRunning: false, hasError: false });
     this.props.history.push('/jobRunner');
   }
 
@@ -81,7 +81,7 @@ export class JobManager extends React.Component<Props> {
     const listItems = listSortedItems.map(status => {
       return (
         <ListItem
-          leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm />} color={status.error ? red500 : status.isRunning ? green500 : grey500} />}
+          leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm />} color={status.hasError ? red500 : status.isRunning ? green500 : grey500} />}
           primaryText={status.jobDefinition.title ? status.jobDefinition.title : status.jobDefinition.jobId}
           secondaryText={status.jobDefinition.cron}
           key={status.jobDefinition.jobId}
