@@ -14,7 +14,7 @@ export interface JobDefinition {
   jobId: string;
   cron?: string;
   script: string;
-  input: Object;
+  input?: Object;
   title: string;
   scriptError?: Object;
 }

@@ -16,7 +16,8 @@ export interface JobRunnerState {
 
 const initialState = {
   jobId: uuid.v4(),
-  isRunning: false
+  isRunning: false,
+  input: undefined
 }
 
 export function jobRunner(state: JobRunnerState = initialState, action: IAction) {

@@ -28,6 +28,7 @@ export class JobManager extends React.Component<Props> {
       title: 'exemple de script',
       cron: '*/5 * * * * *',
       scriptError: undefined,
+      input: undefined,
       script: `
       //Ceci est un exemple simple de script. 
       //la méthode doit respecter la signature ci-dessous :
@@ -49,8 +50,7 @@ export class JobManager extends React.Component<Props> {
         }
         return text;
         */
-      }`,
-      input: '{}'
+      }`
     }
     this.props.add(jobDefinition);
     this.props.select({ jobDefinition, isRunning: false, hasError: false });

@@ -12,7 +12,7 @@ interface State {
   cron?: string;
   script: string;
   title: string;
-  input: Object;
+  input: string;
 }
 
 export interface Props extends RouteComponentProps<any> {
@@ -37,12 +37,21 @@ export class JobRunner extends React.Component<Props, State> {
       script: props.script,
       cron: props.cron,
       title: props.title,
-      input: props.input
+      input: this.toJsonString(props.input)
     }
   }
 
-  toJsonString(value: Object | undefined) {    
+  toJsonString(value: Object | undefined) {
     return JSON.stringify(value, null, '  ');
+  }
+
+  getInput() {    
+    try {
+      return JSON.parse(this.state.input);
+    } catch (error) {
+      console.warn('Cannot use invalid input for script execution:', error);
+      return undefined;
+    }
   }
 
   public render() {
@@ -95,7 +104,7 @@ export class JobRunner extends React.Component<Props, State> {
                     this.props.start({
                       jobId: this.props.jobId,
                       script: this.state.script,
-                      input: this.state.input,
+                      input: this.getInput(),
                       cron: this.state.cron,
                       title: this.state.title
                     })
@@ -110,7 +119,7 @@ export class JobRunner extends React.Component<Props, State> {
               mode="json"
               name="input-editor"
               onChange={(value: string, event?: any) => this.setState({ input: value })}
-              value={ this.toJsonString(this.state.input)}
+              value={this.state.input}
             />
           </Tab>
           <Tab
@@ -130,14 +139,22 @@ export class JobRunner extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    const job: JobDefinition = {
-      jobId: this.props.jobId,
-      script: this.state.script,
-      title: this.state.title,
-      cron: this.state.cron,
-      input: this.state.input
-    };
-    this.props.save(job);
+
+    try {
+      const input = JSON.parse(this.state.input);
+      const job: JobDefinition = {
+        jobId: this.props.jobId,
+        script: this.state.script,
+        title: this.state.title,
+        cron: this.state.cron,
+        input
+      };
+      this.props.save(job);
+    } catch (error) {
+      //do not save invalid inputs
+      console.warn('Cannot save invalid input:', error);
+    }
+    
   }
 
 }
