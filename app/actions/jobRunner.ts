@@ -29,25 +29,25 @@ export const save = actionCreator<JobDefinition>('jobRunner/SAVE');
 export const start = function (job: JobDefinition) {
   return (dispatch: Function, getState: Function) => {
 
-    ipc.addListener('ipc/JOB_RESULT', (event: any, arg: any) => {      
+    ipc.addListener(job.jobId, 'ipc/JOB_RESULT', (event: any, arg: any) => {      
       dispatch(resultChanged(arg));
     });
 
-    ipc.addListener('ipc/JOB_ERROR', (event: any, arg: any) => {
+    ipc.addListener(job.jobId, 'ipc/JOB_ERROR', (event: any, arg: any) => {
       console.log('ipc/JOB_ERROR', arg)
       dispatch(error(arg));
     });
 
-    ipc.addListener('ipc/JOB_STARTED', (event: any, arg: any) => {
+    ipc.addListener(job.jobId, 'ipc/JOB_STARTED', (event: any, arg: any) => {
       dispatch(started(arg));
     });
 
-    ipc.addListener('ipc/JOB_COMPLETED', (event: any, arg: any) => {
+    ipc.addListener(job.jobId, 'ipc/JOB_COMPLETED', (event: any, arg: any) => {
       dispatch(completed(arg));
     });
 
-    ipc.addListener('ipc/JOB_STOPPED', (event: any, arg: any) => {
-      ipc.clearListeners();
+    ipc.addListener(job.jobId, 'ipc/JOB_STOPPED', (event: any, arg: any) => {
+      ipc.clearListeners(job.jobId);
       dispatch(stopped(arg));
     });
 

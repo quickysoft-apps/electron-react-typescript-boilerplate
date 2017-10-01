@@ -1,31 +1,32 @@
+
+
 export class Ipc {
 
-    //private _listeners: Map<string, Function> = new Map<string, Function>();
-    private _ipc: Electron.IpcRenderer;
+  private _listeners: Map<string, Function> = new Map<string, Function>();
+  private _ipc: Electron.IpcRenderer;
 
-    constructor(ipc: Electron.IpcRenderer) {
-        this._ipc = ipc;
-    }
+  constructor(ipc: Electron.IpcRenderer) {
+    this._ipc = ipc;
+  }
 
-    addListener(event: string, listener: Function): void {
-        this._ipc.on(event, listener);
-        /*if (!this._listeners.has(event)) {
-            this._listeners.set(event, listener);
-            this._ipc.on(event, listener)
-        }*/
+  addListener(jobId: string, event: string, listener: Function): void {
+    const key = `${jobId}_${event}`;
+    if (!this._listeners.has(key)) {
+      this._listeners.set(key, listener);
+      this._ipc.on(event, listener)
     }
+  }
 
-    clearListeners(): void {
-        /*
-        this._listeners.forEach((value, key) => {
-            this._ipc.removeListener(key, value);
-        });
-        this._listeners.clear();
-        */
-    }
+  clearListeners(jobId: string): void {
+    this._listeners.forEach((value, key) => {
+      if (key.substring(0, jobId.length) === jobId) {
+        this._ipc.removeListener(key, value);
+      }
+    });
+  }
 
-    send(channel: string, ...args: any[]): void {
-        this._ipc.send(channel, args[0]);
-    }
+  send(channel: string, ...args: any[]): void {
+    this._ipc.send(channel, args[0]);
+  }
 
 }
