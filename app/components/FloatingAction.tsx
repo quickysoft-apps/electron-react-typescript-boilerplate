@@ -6,6 +6,7 @@ export interface Props {
   actionclick: VoidFunction;
   secondary?: boolean;
   type?: string;
+  disabled?: boolean;
 }
 
 export class FloatingAction extends React.Component<Props> {
@@ -21,7 +22,8 @@ export class FloatingAction extends React.Component<Props> {
         }}>        
         {this.props.actionIcon ?
           <FloatingActionButton    
-            type={this.props.type}        
+            type={this.props.type}  
+            disabled={this.props.disabled}      
             secondary={this.props.secondary}            
             onClick={() => this.props.actionclick ? this.props.actionclick() : () => { }}>
             {this.props.actionIcon}

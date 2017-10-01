@@ -13,6 +13,7 @@ interface State {
   script: string;
   title: string;
   input: string;
+  inputError: Object | undefined;
 }
 
 export interface Props extends RouteComponentProps<any> {
@@ -37,7 +38,8 @@ export class JobRunner extends React.Component<Props, State> {
       script: props.script,
       cron: props.cron,
       title: props.title,
-      input: this.toJsonString(props.input)
+      input: this.toJsonString(props.input),
+      inputError: undefined
     }
   }
 
@@ -45,13 +47,17 @@ export class JobRunner extends React.Component<Props, State> {
     return JSON.stringify(value, null, '  ');
   }
 
-  getInput() {    
+  getInput() {
     try {
       return JSON.parse(this.state.input);
     } catch (error) {
-      console.warn('Cannot use invalid input for script execution:', error);
+      console.warn('Cannot use invalid input for script execution:', error);      
       return undefined;
     }
+  }
+
+  checkInput() {
+    return !!this.getInput();
   }
 
   public render() {
@@ -99,8 +105,9 @@ export class JobRunner extends React.Component<Props, State> {
                   actionclick={this.props.stop}
                   secondary={true} /> :
                 <FloatingAction
-                  actionIcon={<SvgIcons.AvPlayArrow />}
-                  actionclick={() => {
+                  actionIcon={<SvgIcons.AvPlayArrow />}      
+                  disabled={!!this.state.inputError}            
+                  actionclick={() => {                                           
                     this.props.start({
                       jobId: this.props.jobId,
                       script: this.state.script,
@@ -118,7 +125,15 @@ export class JobRunner extends React.Component<Props, State> {
             <Editor
               mode="json"
               name="input-editor"
-              onChange={(value: string, event?: any) => this.setState({ input: value })}
+              onChange={(value: string, event?: any) => {
+                try {
+                  JSON.parse(value);
+                  this.setState({ inputError: undefined });
+                } catch (error) {
+                  this.setState({ inputError: error });
+                }
+                this.setState({ input: value });
+              }}
               value={this.state.input}
             />
           </Tab>
@@ -140,21 +155,20 @@ export class JobRunner extends React.Component<Props, State> {
 
   componentWillUnmount() {
 
-    try {
-      const input = JSON.parse(this.state.input);
+    if (!this.state.inputError) {
       const job: JobDefinition = {
         jobId: this.props.jobId,
         script: this.state.script,
         title: this.state.title,
         cron: this.state.cron,
-        input
+        input: this.getInput()
       };
       this.props.save(job);
-    } catch (error) {
+    } else {
       //do not save invalid inputs
-      console.warn('Cannot save invalid input:', error);
+      console.warn('Cannot save invalid input:', this.state.inputError);
     }
-    
+
   }
 
 }
