@@ -8,19 +8,15 @@ export interface JobRunnerState {
   cron?: any;
   script?: string;
   title?: string;
-  input: string;
-  result: string;
-  errorMessage?: string;
+  input?: Object;
+  result?: Object;
+  scriptError?: Object;
   isRunning: boolean;
 }
 
-const defaultJson = '{}';
-
 const initialState = {
   jobId: uuid.v4(),
-  isRunning: false, 
-  input: defaultJson,
-  result: defaultJson
+  isRunning: false
 }
 
 export function jobRunner(state: JobRunnerState = initialState, action: IAction) {
@@ -45,7 +41,7 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
     return {
       ...state,
       result: action.payload.result,
-      errorMessage: undefined
+      scriptError: undefined
     };
   }
 
@@ -54,7 +50,7 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
     return {
       ...state,
       result: {},
-      errorMessage: action.payload.error ? action.payload.error : undefined
+      scriptError: action.payload.error ? action.payload.error : undefined
     };
   }
 

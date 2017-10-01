@@ -27,7 +27,7 @@ export class JobManager extends React.Component<Props> {
       jobId: uuid.v4(),
       title: 'exemple de script',
       cron: '*/5 * * * * *',
-      error: undefined,
+      scriptError: undefined,
       script: `
       //Ceci est un exemple simple de script. 
       //la méthode doit respecter la signature ci-dessous :

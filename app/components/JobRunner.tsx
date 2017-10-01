@@ -12,13 +12,7 @@ interface State {
   cron?: string;
   script: string;
   title: string;
-  input: string;
-}
-
-interface ErrorOutput {
-  error: {
-    message: string | undefined
-  }
+  input: Object;
 }
 
 export interface Props extends RouteComponentProps<any> {
@@ -27,12 +21,12 @@ export interface Props extends RouteComponentProps<any> {
   stop: VoidFunction;
   jobId: string;
   cron: string;
-  input: string;
+  input: Object;
   isRunning: boolean;
   script: string;
-  result: string;
+  result?: Object;
   title: string;
-  errorMessage?: string;
+  scriptError?: Object;
 }
 
 export class JobRunner extends React.Component<Props, State> {
@@ -47,23 +41,11 @@ export class JobRunner extends React.Component<Props, State> {
     }
   }
 
-  toJsonString(value: any) {
-    let obj: any = {};
-    try {
-      obj = typeof value === 'object' ? value : JSON.parse(value);
-    } catch (error) {
-      obj = { data: value };
-    }
-    return JSON.stringify(obj, null, '  ');
+  toJsonString(value: Object | undefined) {    
+    return JSON.stringify(value, null, '  ');
   }
 
   public render() {
-
-    const errorOutput: ErrorOutput = {
-      error: {
-        message: this.props.errorMessage
-      }
-    };
 
     return (
       <div>
@@ -128,7 +110,7 @@ export class JobRunner extends React.Component<Props, State> {
               mode="json"
               name="input-editor"
               onChange={(value: string, event?: any) => this.setState({ input: value })}
-              value={this.state.input}
+              value={ this.toJsonString(this.state.input)}
             />
           </Tab>
           <Tab
@@ -139,7 +121,7 @@ export class JobRunner extends React.Component<Props, State> {
               name="result-editor"
               readOnly={true}
               onChange={(value: string, event?: any) => this.setState({ input: value })}
-              value={errorOutput.error.message ? this.toJsonString(errorOutput) : this.toJsonString(this.props.result)}
+              value={this.props.scriptError ? this.toJsonString(this.props.scriptError) : this.toJsonString(this.props.result)}
             />
           </Tab>
         </Tabs>
