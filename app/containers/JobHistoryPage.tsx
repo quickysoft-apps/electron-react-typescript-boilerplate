@@ -1,17 +1,17 @@
 import { bindActionCreators } from "redux";
 import { connect, Dispatch } from "react-redux";
-import { JobManager, IProps } from "../components/JobManager";
+import { JobHistory, IProps } from "../components/JobHistory";
 import { Actions } from "../actions";
 import { IState } from "../reducers";
 
 function mapStateToProps(state: IState): Partial<IProps> {
   return {
-    statuses: state.jobManager.statuses
+    jobHistories: state.jobHistory.jobHistories
   };
 }
 
 function mapDispatchToProps(dispatch: Dispatch<IState>): Partial<IProps> {
-  return bindActionCreators(Actions.JobManager as any, dispatch);
+  return bindActionCreators(Actions.JobHistory as any, dispatch);
 }
 
-export default (connect(mapStateToProps, mapDispatchToProps)(JobManager) as any);
+export default (connect(mapStateToProps, mapDispatchToProps)(JobHistory) as any);

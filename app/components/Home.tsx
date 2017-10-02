@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
-import { Link } from 'react-router-dom';
-import { Avatar, Dialog, FlatButton } from 'material-ui';
-import { List, ListItem } from 'material-ui/List';
-import * as SvgIcons from 'material-ui/svg-icons';
+import * as React from "react";
+import { RouteComponentProps } from "react-router";
+import { Link } from "react-router-dom";
+import { Avatar, Dialog, FlatButton } from "material-ui";
+import { List, ListItem } from "material-ui/List";
+import * as SvgIcons from "material-ui/svg-icons";
 
-import { AgentStatus } from '../reducers/home';
-import { Heart } from './Heart';
+import { AgentStatus } from "../reducers/home";
+import { Heart } from "./Heart";
 
-export interface Props extends RouteComponentProps<any> {
+export interface IProps extends RouteComponentProps<any> {
   loadFromSettings: VoidFunction;
   status: AgentStatus;
   isTrusted: boolean;
@@ -18,8 +18,10 @@ export interface Props extends RouteComponentProps<any> {
   connectedSince: string;
   email: string;
   nickname: string;
+  version:string;
 }
 
+// tslint:disable-next-line:typedef
 const styles = {
   container: {
     textAlign: "center"
@@ -37,11 +39,11 @@ const styles = {
   }
 };
 
-export class Home extends React.Component<Props> {
+export class Home extends React.Component<IProps> {
 
-  public render() {
+  public render():JSX.Element {
 
-    let statusText = 'Prêt';
+    let statusText:string = "Prêt";
 
     if (!this.props.isConfigured) {
       statusText = "Configuration requise";
@@ -55,7 +57,7 @@ export class Home extends React.Component<Props> {
       statusText = "Connexion au serveur";
     }
 
-    let statusDetails = <List>
+    let statusDetails:JSX.Element = <List>
       <ListItem
         leftAvatar={<Avatar icon={<Heart status={this.props.status} />} />}
         primaryText="Statut de la connexion"
@@ -65,12 +67,17 @@ export class Home extends React.Component<Props> {
         leftAvatar={<Avatar icon={<SvgIcons.DeviceAccessTime />} />}
         primaryText="Dernière connexion effective"
         secondaryText={this.props.connectedSince} />
-      <ListItem
+        <ListItem
         disabled={true}
         leftAvatar={<Avatar icon={<SvgIcons.NotificationNetworkCheck />} />}
         primaryText="Réponse au ping"
         secondaryText={`${this.props.pongMs} ms.`} />
-    </List>
+        <ListItem
+        disabled={true}
+        leftAvatar={<Avatar icon={<SvgIcons.ActionInfo />} />}
+        primaryText="Version"
+        secondaryText={`${this.props.version}`} />
+    </List>;
 
     if (this.props.isTrusted === true && !this.props.isConfigured) {
       statusDetails = <Dialog
@@ -87,7 +94,7 @@ export class Home extends React.Component<Props> {
         <p>C'est la première fois que cet agent s'exécute. Pour qu'il soit opérationnel, il est
         nécessaire de configurer à minima votre email de contact.</p>
         <p>Pour votre information, cet agent sera exécuté à chaque démarrage de votre système.</p>
-      </Dialog>
+      </Dialog>;
     }
 
     return (

@@ -1,10 +1,10 @@
-import { bindActionCreators } from 'redux';
-import { connect, Dispatch } from 'react-redux';
-import { JobRunner, Props } from '../components/JobRunner';
-import { Actions } from '../actions';
-import { State } from '../reducers'
+import { bindActionCreators } from "redux";
+import { connect, Dispatch } from "react-redux";
+import { JobRunner, IProps } from "../components/JobRunner";
+import { Actions } from "../actions";
+import { IState } from "../reducers";
 
-function mapStateToProps(state: State): Partial<Props> {
+function mapStateToProps(state: IState): Partial<IProps> {
   return {
     jobId: state.jobRunner.jobId,
     isRunning: state.jobRunner.isRunning,
@@ -17,7 +17,7 @@ function mapStateToProps(state: State): Partial<Props> {
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<State>): Partial<Props> {
+function mapDispatchToProps(dispatch: Dispatch<IState>): Partial<IProps> {
   return bindActionCreators(Actions.JobRunner as any, dispatch);
 }
 

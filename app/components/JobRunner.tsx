@@ -1,14 +1,14 @@
-import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
-import { TextField } from 'material-ui'
-import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
-import { Tabs, Tab } from 'material-ui/Tabs';
-import { Editor } from './editor';
-import * as SvgIcons from 'material-ui/svg-icons';
-import { FloatingAction } from './FloatingAction';
-import { JobDefinition, LibraryReference } from '../actions/jobRunner';
+import * as React from "react";
+import { RouteComponentProps } from "react-router";
+import { TextField } from "material-ui";
+import { Toolbar, ToolbarGroup } from "material-ui/Toolbar";
+import { Tabs, Tab } from "material-ui/Tabs";
+import { Editor } from "./editor";
+import * as SvgIcons from "material-ui/svg-icons";
+import { FloatingAction } from "./FloatingAction";
+import { JobDefinition, LibraryReference } from "../actions/jobRunner";
 
-interface State {
+interface IState {
   cron?: string;
   script: string;
   title: string;
@@ -16,7 +16,7 @@ interface State {
   inputError: Object | undefined;
 }
 
-export interface Props extends RouteComponentProps<any> {
+export interface IProps extends RouteComponentProps<any> {
   start: (job: JobDefinition) => void;
   save: (job: JobDefinition) => void;
   stop: VoidFunction;
@@ -28,40 +28,40 @@ export interface Props extends RouteComponentProps<any> {
   result?: Object;
   title: string;
   scriptError?: Object;
-  libraries: Array<LibraryReference>
+  libraries: Array<LibraryReference>;
 }
 
-export class JobRunner extends React.Component<Props, State> {
+export class JobRunner extends React.Component<IProps, IState> {
 
-  constructor(props: Props) {
-    super(props)
+  constructor(props: IProps) {
+    super(props);
     this.state = {
       script: props.script,
       cron: props.cron,
       title: props.title,
       input: this.toJsonString(props.input),
       inputError: undefined
-    }
+    };
   }
 
-  toJsonString(value: Object | undefined) {
-    return JSON.stringify(value, null, '  ');
+  toJsonString(value: Object | undefined):string {
+    return JSON.stringify(value, null, "  ");
   }
 
-  getInput() {
+  getInput():any {
     try {
       return JSON.parse(this.state.input);
     } catch (error) {
-      console.warn('Cannot use invalid input for script execution:', error);      
+      console.warn("Cannot use invalid input for script execution:", error);
       return undefined;
     }
   }
 
-  checkInput() {
+  checkInput():boolean {
     return !!this.getInput();
   }
 
-  public render() {
+  public render():JSX.Element {
 
     return (
       <div>
@@ -81,7 +81,7 @@ export class JobRunner extends React.Component<Props, State> {
                 />
                 <TextField
                   style={{
-                    width: '100%'
+                    width: "100%"
                   }}
                   name="scriptTitle"
                   floatingLabelFixed={true}
@@ -106,9 +106,9 @@ export class JobRunner extends React.Component<Props, State> {
                   actionclick={this.props.stop}
                   secondary={true} /> :
                 <FloatingAction
-                  actionIcon={<SvgIcons.AvPlayArrow />}      
-                  disabled={!!this.state.inputError}            
-                  actionclick={() => {                                           
+                  actionIcon={<SvgIcons.AvPlayArrow />}
+                  disabled={!!this.state.inputError}
+                  actionclick={() => {
                     this.props.start({
                       jobId: this.props.jobId,
                       script: this.state.script,
@@ -116,14 +116,14 @@ export class JobRunner extends React.Component<Props, State> {
                       cron: this.state.cron,
                       title: this.state.title,
                       libraries: this.props.libraries
-                    })
+                    });
                   }}
                 />
               }
             </Editor>
           </Tab>
           <Tab
-            icon={<SvgIcons.ActionNoteAdd />}>            
+            icon={<SvgIcons.ActionNoteAdd />}>
           </Tab>
           <Tab
             icon={<SvgIcons.ActionInput />}>
@@ -158,7 +158,7 @@ export class JobRunner extends React.Component<Props, State> {
     );
   }
 
-  componentWillUnmount() {
+  componentWillUnmount():void {
 
     if (!this.state.inputError) {
       const job: JobDefinition = {
@@ -171,8 +171,8 @@ export class JobRunner extends React.Component<Props, State> {
       };
       this.props.save(job);
     } else {
-      //do not save invalid inputs
-      console.warn('Cannot save invalid input:', this.state.inputError);
+      // do not save invalid inputs
+      console.warn("Cannot save invalid input:", this.state.inputError);
     }
 
   }
