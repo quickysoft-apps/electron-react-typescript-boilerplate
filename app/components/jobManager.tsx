@@ -6,7 +6,7 @@ import { Avatar } from 'material-ui';
 import * as SvgIcons from 'material-ui/svg-icons';
 import * as Colors from 'material-ui/styles/colors';
 import { FloatingAction } from './FloatingAction';
-import { JobDefinition } from '../actions/jobRunner';
+import { JobDefinition, LibraryReference } from '../actions/jobRunner';
 import { JobStatus } from '../actions/jobManager';
 import { green500, red500, grey500 } from 'material-ui/styles/colors';
 
@@ -26,9 +26,9 @@ export class JobManager extends React.Component<Props> {
     const jobDefinition: JobDefinition = {
       jobId: uuid.v4(),
       title: 'exemple de script',
-      cron: '*/5 * * * * *',
-      scriptError: undefined,
+      cron: '*/5 * * * * *',      
       input: undefined,
+      libraries: new Array<LibraryReference>(),
       script: `
       //Ceci est un exemple simple de script. 
       //la méthode doit respecter la signature ci-dessous :

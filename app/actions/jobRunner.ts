@@ -10,13 +10,18 @@ export interface IpcEventArg {
   error?: Object;
 }
 
+export interface LibraryReference {
+  name: string;
+  content: Uint8Array;
+}
+
 export interface JobDefinition {
   jobId: string;
   cron?: string;
   script: string;
   input?: Object;
-  title: string;
-  scriptError?: Object;
+  title: string;  
+  libraries: Array<LibraryReference>;
 }
 
 export const started = actionCreator<IpcEventArg>('jobRunner/STARTED');
@@ -26,10 +31,13 @@ export const completed = actionCreator<IpcEventArg>('jobRunner/COMPLETED');
 export const stopped = actionCreator<IpcEventArg>('jobRunner/STOPPED');
 export const stop = actionCreatorVoid('jobRunner/STOP');
 export const save = actionCreator<JobDefinition>('jobRunner/SAVE');
+
+export const addLibrary = actionCreator<number>('jobRunner/ADD_LIBRARY');
+
 export const start = function (job: JobDefinition) {
   return (dispatch: Function, getState: Function) => {
 
-    ipc.addListener(job.jobId, 'ipc/JOB_RESULT', (event: any, arg: any) => {      
+    ipc.addListener(job.jobId, 'ipc/JOB_RESULT', (event: any, arg: any) => {
       dispatch(resultChanged(arg));
     });
 

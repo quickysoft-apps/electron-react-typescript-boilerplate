@@ -6,7 +6,7 @@ import { Tabs, Tab } from 'material-ui/Tabs';
 import { Editor } from './editor';
 import * as SvgIcons from 'material-ui/svg-icons';
 import { FloatingAction } from './FloatingAction';
-import { JobDefinition } from '../actions/jobRunner';
+import { JobDefinition, LibraryReference } from '../actions/jobRunner';
 
 interface State {
   cron?: string;
@@ -28,6 +28,7 @@ export interface Props extends RouteComponentProps<any> {
   result?: Object;
   title: string;
   scriptError?: Object;
+  libraries: Array<LibraryReference>
 }
 
 export class JobRunner extends React.Component<Props, State> {
@@ -113,12 +114,16 @@ export class JobRunner extends React.Component<Props, State> {
                       script: this.state.script,
                       input: this.getInput(),
                       cron: this.state.cron,
-                      title: this.state.title
+                      title: this.state.title,
+                      libraries: this.props.libraries
                     })
                   }}
                 />
               }
             </Editor>
+          </Tab>
+          <Tab
+            icon={<SvgIcons.ActionNoteAdd />}>            
           </Tab>
           <Tab
             icon={<SvgIcons.ActionInput />}>
@@ -161,7 +166,8 @@ export class JobRunner extends React.Component<Props, State> {
         script: this.state.script,
         title: this.state.title,
         cron: this.state.cron,
-        input: this.getInput()
+        input: this.getInput(),
+        libraries: this.props.libraries
       };
       this.props.save(job);
     } else {

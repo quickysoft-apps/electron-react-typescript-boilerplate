@@ -1,7 +1,10 @@
 import { ipcRenderer } from 'electron';
+const { dialog } = require('electron').remote;
+import * as fs from 'fs';
 import * as uuid from 'uuid';
 import { IAction } from '../actions/helpers';
 import { Actions } from '../actions';
+import { LibraryReference } from '../actions/jobRunner';
 
 export interface JobRunnerState {
   jobId: string;
@@ -9,7 +12,8 @@ export interface JobRunnerState {
   script?: string;
   title?: string;
   input?: Object;
-  result?: Object;
+  libraries: Array<LibraryReference>;
+  result?: Object;    
   scriptError?: Object;
   isRunning: boolean;
 }
@@ -17,7 +21,8 @@ export interface JobRunnerState {
 const initialState = {
   jobId: uuid.v4(),
   isRunning: false,
-  input: undefined
+  input: undefined,
+  libraries: new Array<LibraryReference>()
 }
 
 export function jobRunner(state: JobRunnerState = initialState, action: IAction) {
@@ -74,6 +79,31 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
     return {
       ...state
     };
+  }
+
+  if (Actions.JobRunner.addLibrary.test(action)) {    
+    const openDialogOptions: Electron.OpenDialogOptions = {
+      title: 'Sélectionnez les fichiers à référencer',
+      filters: [{ extensions: ['.dll'], name: '.Net Assemblies' }],
+      properties: ['openFile', 'multiSelections']
+    }
+    
+    dialog.showOpenDialog(openDialogOptions, (filePaths: string[]) => {
+      if (filePaths === undefined) {        
+        return;
+      }
+      filePaths.map((filepath) => {
+        fs.readFile(filepath, 'utf-8', (err, data) => {
+          if (err) {
+            console.warn("An error ocurred reading the file :" + err.message);
+            return;
+          }
+          //console.log("The jobId  is : " + action.payload);
+          console.log("The file content is : " + data);
+        });
+      })
+
+    });
   }
 
   return state;
