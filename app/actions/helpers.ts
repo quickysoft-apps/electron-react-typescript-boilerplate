@@ -5,14 +5,14 @@ export interface IActionWithPayload<T> extends IAction {
   readonly payload: T;
 }
 
-interface IActionCreator<T> {
+export interface IActionCreator<T> {
   readonly type: string;
   (payload: T): IActionWithPayload<T>;
 
   test(action: IAction): action is IActionWithPayload<T>;
 }
 
-interface IActionCreatorVoid {
+export interface IActionCreatorVoid {
   readonly type: string;
   (): IAction;
 

@@ -6,7 +6,7 @@ import { Tabs, Tab } from "material-ui/Tabs";
 import { Editor } from "./editor";
 import * as SvgIcons from "material-ui/svg-icons";
 import { FloatingAction } from "./FloatingAction";
-import { JobDefinition, LibraryReference } from "../actions/jobRunner";
+import { IJobDefinition, ILibraryReference } from "../actions/jobRunner";
 
 interface IState {
   cron?: string;
@@ -17,8 +17,8 @@ interface IState {
 }
 
 export interface IProps extends RouteComponentProps<any> {
-  start: (job: JobDefinition) => void;
-  save: (job: JobDefinition) => void;
+  start: (job: IJobDefinition) => void;
+  save: (job: IJobDefinition) => void;
   stop: VoidFunction;
   jobId: string;
   cron: string;
@@ -28,7 +28,7 @@ export interface IProps extends RouteComponentProps<any> {
   result?: Object;
   title: string;
   scriptError?: Object;
-  libraries: Array<LibraryReference>;
+  libraries: Array<ILibraryReference>;
 }
 
 export class JobRunner extends React.Component<IProps, IState> {
@@ -161,7 +161,7 @@ export class JobRunner extends React.Component<IProps, IState> {
   componentWillUnmount():void {
 
     if (!this.state.inputError) {
-      const job: JobDefinition = {
+      const job: IJobDefinition = {
         jobId: this.props.jobId,
         script: this.state.script,
         title: this.state.title,
