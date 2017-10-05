@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { List, ListItem } from 'material-ui/List';
 import { Avatar } from 'material-ui';
 import * as SvgIcons from 'material-ui/svg-icons';
@@ -7,9 +6,8 @@ import * as Colors from 'material-ui/styles/colors';
 import { FloatingAction } from './FloatingAction';
 import { LibraryReference } from '../actions/jobRunner';
 
-export interface Props extends RouteComponentProps<any> {
-  addReference(jobId: string): void;
-  jobId: string;
+export interface Props {
+  onAdd: () => void;
   libraries: Array<LibraryReference>;
 }
 
@@ -19,10 +17,6 @@ export class LibrariesManager extends React.Component<Props> {
     super(props)
   }
 
-  public add() {
-    this.props.addReference(this.props.jobId);
-  }
-
   public render() {
 
     const renderEmpty = () => {
@@ -30,7 +24,10 @@ export class LibrariesManager extends React.Component<Props> {
         <div
           style={{
             textAlign: 'left',
-            margin: 16
+            margin: 16,
+            height: 460,
+            position: "absolute",
+            width: '100%'
           }}>
           <p style={{
             color: Colors.grey700
@@ -48,7 +45,7 @@ export class LibrariesManager extends React.Component<Props> {
       return (
         <ListItem
           leftAvatar={<Avatar icon={<SvgIcons.ContentLink />} />}
-          primaryText={reference.name}          
+          primaryText={reference.name}
           key={reference.name}
         />
       )
@@ -56,8 +53,18 @@ export class LibrariesManager extends React.Component<Props> {
 
     return (
       <div>
-        {this.props.libraries.length === 0 ? renderEmpty() : <List>{listItems}</List>}
-        <FloatingAction actionclick={this.add} actionIcon={<SvgIcons.ContentAdd />} />
+        {this.props.libraries.length === 0
+          ? renderEmpty()
+          : <List
+            style={{
+              height: 460,
+              position: "absolute",
+              width: '100%'
+            }}>
+            {listItems}
+          </List>
+        }
+        <FloatingAction actionclick={this.props.onAdd} actionIcon={<SvgIcons.ContentAdd />} />
       </div>
     );
 

@@ -7,6 +7,7 @@ import { Editor } from './editor';
 import * as SvgIcons from 'material-ui/svg-icons';
 import { FloatingAction } from './FloatingAction';
 import { JobDefinition, LibraryReference } from '../actions/jobRunner';
+import { LibrariesManager } from './LibrariesManager';
 
 interface State {
   cron?: string;
@@ -17,6 +18,7 @@ interface State {
 }
 
 export interface Props extends RouteComponentProps<any> {
+  addLibrary: (jobId: string) => void;
   start: (job: JobDefinition) => void;
   save: (job: JobDefinition) => void;
   stop: VoidFunction;
@@ -52,7 +54,7 @@ export class JobRunner extends React.Component<Props, State> {
     try {
       return JSON.parse(this.state.input);
     } catch (error) {
-      console.warn('Cannot use invalid input for script execution:', error);      
+      console.warn('Cannot use invalid input for script execution:', error);
       return undefined;
     }
   }
@@ -106,9 +108,9 @@ export class JobRunner extends React.Component<Props, State> {
                   actionclick={this.props.stop}
                   secondary={true} /> :
                 <FloatingAction
-                  actionIcon={<SvgIcons.AvPlayArrow />}      
-                  disabled={!!this.state.inputError}            
-                  actionclick={() => {                                           
+                  actionIcon={<SvgIcons.AvPlayArrow />}
+                  disabled={!!this.state.inputError}
+                  actionclick={() => {
                     this.props.start({
                       jobId: this.props.jobId,
                       script: this.state.script,
@@ -123,7 +125,10 @@ export class JobRunner extends React.Component<Props, State> {
             </Editor>
           </Tab>
           <Tab
-            icon={<SvgIcons.ActionNoteAdd />}>            
+            icon={<SvgIcons.ActionNoteAdd />}>
+            <LibrariesManager
+              onAdd={() => this.props.addLibrary(this.props.jobId)}
+              libraries={this.props.libraries} />
           </Tab>
           <Tab
             icon={<SvgIcons.ActionInput />}>

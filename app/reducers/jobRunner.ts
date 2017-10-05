@@ -6,7 +6,7 @@ import { IAction } from '../actions/helpers';
 import { Actions } from '../actions';
 import { LibraryReference } from '../actions/jobRunner';
 
-export interface JobRunnerState {
+export interface JobRunnerState {  
   jobId: string;
   cron?: any;
   script?: string;
@@ -98,7 +98,6 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
             console.warn("An error ocurred reading the file :" + err.message);
             return;
           }
-          //console.log("The jobId  is : " + action.payload);
           console.log("The file content is : " + data);
         });
       })

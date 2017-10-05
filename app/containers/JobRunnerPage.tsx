@@ -13,7 +13,8 @@ function mapStateToProps(state: State): Partial<Props> {
     result: state.jobRunner.result,
     scriptError: state.jobRunner.scriptError,
     title: state.jobRunner.title,
-    input: state.jobRunner.input
+    input: state.jobRunner.input,
+    libraries: state.jobRunner.libraries
   };
 }
 
