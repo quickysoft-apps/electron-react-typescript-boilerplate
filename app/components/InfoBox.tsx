@@ -1,10 +1,10 @@
-import * as React from 'react';
-import { Avatar, ListItem, Paper } from 'material-ui';
-import * as Colors from 'material-ui/styles/colors';
-import { fade } from 'material-ui/utils/colorManipulator'
-import * as SvgIcons from 'material-ui/svg-icons'
+import * as React from "react";
+import { Avatar, ListItem, Paper } from "material-ui";
+import * as Colors from "material-ui/styles/colors";
+import { fade } from "material-ui/utils/colorManipulator";
+import * as SvgIcons from "material-ui/svg-icons";
 
-interface Props {
+interface IProps {
   primaryText: string;
   secondaryText: string;
   leftIcon: React.ReactElement<any>;
@@ -15,7 +15,7 @@ interface Props {
   style?: React.CSSProperties;
 }
 
-export class InfoBox extends React.Component<Props> {
+export class InfoBox extends React.Component<IProps> {
 
   static defaultProps = {
     backgroundColor: Colors.grey800,
@@ -29,13 +29,13 @@ export class InfoBox extends React.Component<Props> {
       right: 0,
       top: 10
     }} />
-  }
+  };
 
-  public render() {
+  public render():JSX.Element {
 
-    let textBackgroundColor = this.props.backgroundColor ? this.props.backgroundColor : Colors.grey800;
-    let color1 = this.props.disabled ? fade(textBackgroundColor, 0.8) : fade(textBackgroundColor, 0.2);
-    let color2 = this.props.disabled ? fade(textBackgroundColor, 0.2) : fade(textBackgroundColor, 0.8);
+    let textBackgroundColor:string = this.props.backgroundColor ? this.props.backgroundColor : Colors.grey800;
+    let color1:string = this.props.disabled ? fade(textBackgroundColor, 0.8) : fade(textBackgroundColor, 0.2);
+    let color2:string = this.props.disabled ? fade(textBackgroundColor, 0.2) : fade(textBackgroundColor, 0.8);
 
     return (
       <Paper
@@ -49,7 +49,7 @@ export class InfoBox extends React.Component<Props> {
         zDepth={1}>
         <ListItem
           innerDivStyle={{
-            padding: '0px 0px 0px 52px'
+            padding: "0px 0px 0px 52px"
           }}
           hoverColor={color2}
           containerElement={this.props.containerElement}
@@ -71,7 +71,7 @@ export class InfoBox extends React.Component<Props> {
           />}
           primaryText={<div style={{
             backgroundColor: color1,
-            padding: '6px 0px 4px 4px',
+            padding: "6px 0px 4px 4px",
             borderTopRightRadius: 2
           }}>
             {this.props.primaryText}
@@ -80,7 +80,7 @@ export class InfoBox extends React.Component<Props> {
             backgroundColor: color1,
             padding: 5,
             marginTop: 0,
-            lineHeight: '14px',
+            lineHeight: "14px",
             borderBottomRightRadius: 2
           }}>
             {this.props.secondaryText}

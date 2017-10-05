@@ -1,4 +1,4 @@
-import { Action } from 'redux';
+import { Action } from "redux";
 
 export interface IAction extends Action {}
 export interface IActionWithPayload<T> extends IAction {
@@ -19,6 +19,7 @@ interface IActionCreatorVoid {
   test(action: IAction): action is IAction;
 }
 
+// tslint:disable-next-line:typedef
 export const actionCreator = <T>(type: string): IActionCreator<T> =>
   Object.assign((payload: T): any => ({ type, payload }), {
     type,
@@ -27,6 +28,7 @@ export const actionCreator = <T>(type: string): IActionCreator<T> =>
     }
   });
 
+// tslint:disable-next-line:typedef
 export const actionCreatorVoid = (type: string): IActionCreatorVoid =>
   Object.assign((): any => ({ type }), {
     type,

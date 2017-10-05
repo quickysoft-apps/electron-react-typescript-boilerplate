@@ -1,50 +1,50 @@
-import { IAction } from '../actions/helpers';
-import { Actions } from '../actions';
-import * as settings from 'electron-settings';
-import { JobStatus } from '../actions/jobManager';
+import { IAction } from "../actions/helpers";
+import { Actions } from "../actions";
+import * as settings from "electron-settings";
+import { IJobStatus } from "../actions/jobManager";
 
-export interface JobManagerState {
-  statuses: Array<JobStatus>;
+export interface IJobManagerState {
+  statuses: Array<IJobStatus>;
 }
 
-const initialState: JobManagerState = {
-  statuses: new Array<JobStatus>()
-}
+const initialState: IJobManagerState = {
+  statuses: new Array<IJobStatus>()
+};
 
-function saveToSettings(status: JobStatus) {
-  const key = `jobs.${status.jobDefinition.jobId}`;
+function saveToSettings(status: IJobStatus):void {
+  const key:string = `jobs.${status.jobDefinition.jobId}`;
   settings.delete(key).set(key, status as any);
 }
 
-function setStatus(statuses: Array<JobStatus>, status: JobStatus) {
-  const filteredStatuses = statuses.filter(x => x.jobDefinition.jobId !== status.jobDefinition.jobId);
+function setStatus(statuses: Array<IJobStatus>, status: IJobStatus):  Array<IJobStatus> {
+  const filteredStatuses: Array<IJobStatus> = statuses.filter(x => x.jobDefinition.jobId !== status.jobDefinition.jobId);
   filteredStatuses.push(status);
   return filteredStatuses;
 }
 
-export function jobManager(state = initialState, action: IAction) {
+export function jobManager(state:IJobManagerState = initialState, action: IAction):any {
 
   if (Actions.JobManager.add.test(action)) {
-    const status: JobStatus = {
+    const status: IJobStatus = {
       jobDefinition: action.payload,
       isRunning: false,
       hasError: false
     };
     saveToSettings(status);
-    const newState: JobManagerState = {      
+    const newState: IJobManagerState = {
       statuses: setStatus(state.statuses, status)
-    }
+    };
     return newState;
   }
 
   if (Actions.JobRunner.resultChanged.test(action)) {
-    let status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    let status:IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
       status.hasError = false;
-      
-      const newState: JobManagerState = {        
+
+      const newState: IJobManagerState = {
         statuses: setStatus(state.statuses, status)
-      }
+      };
       saveToSettings(status);
       return newState;
     } else {
@@ -53,13 +53,13 @@ export function jobManager(state = initialState, action: IAction) {
   }
 
   if (Actions.JobRunner.started.test(action)) {
-    let status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    let status:IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
       status.isRunning = true;
-      
-      const newState: JobManagerState = {        
+
+      const newState: IJobManagerState = {
         statuses: setStatus(state.statuses, status)
-      }
+      };
       saveToSettings(status);
       return newState;
     } else {
@@ -68,12 +68,12 @@ export function jobManager(state = initialState, action: IAction) {
   }
 
   if (Actions.JobRunner.stopped.test(action)) {
-    let status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    let status:IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
       status.isRunning = false;
-      const newState: JobManagerState = {        
+      const newState: IJobManagerState = {
         statuses: setStatus(state.statuses, status)
-      }
+      };
       saveToSettings(status);
       return newState;
     } else {
@@ -82,14 +82,14 @@ export function jobManager(state = initialState, action: IAction) {
   }
 
   if (Actions.JobRunner.error.test(action)) {
-    let status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
-    if (status) {      
+    let status:IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    if (status) {
       status.hasError = !!action.payload.error;
-      const newState: JobManagerState = {        
+      const newState: IJobManagerState = {
         statuses: setStatus(state.statuses, status)
-      }
-      console.log('newState', newState);
-      
+      };
+      console.log("newState", newState);
+
       saveToSettings(status);
       return newState;
     } else {
@@ -98,12 +98,12 @@ export function jobManager(state = initialState, action: IAction) {
   }
 
   if (Actions.JobRunner.completed.test(action)) {
-    let status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    let status:IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
       status.isRunning = false;
-      const newState: JobManagerState = {        
+      const newState: IJobManagerState = {
         statuses: setStatus(state.statuses, status)
-      }
+      };
       saveToSettings(status);
       return newState;
     } else {
@@ -112,13 +112,13 @@ export function jobManager(state = initialState, action: IAction) {
   }
 
   if (Actions.JobRunner.save.test(action)) {
-    const status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    const status:IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
-      const newStatus: JobStatus = {
+      const newStatus: IJobStatus = {
         ...status,
         jobDefinition: action.payload
       };
-      const newState: JobManagerState = {        
+      const newState: IJobManagerState = {
         statuses: setStatus(state.statuses, newStatus)
       };
       saveToSettings(newStatus);

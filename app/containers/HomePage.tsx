@@ -1,16 +1,17 @@
-import { connect, Dispatch } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import * as moment from 'moment';
-import { Home, Props } from '../components/Home';
-import { AgentStatus } from '../reducers/home';
-import { State } from '../reducers';
-import { Actions } from '../actions';
+import { connect, Dispatch } from "react-redux";
+import { bindActionCreators } from "redux";
+import * as moment from "moment";
+import { Home, IProps } from "../components/Home";
+import { AgentStatus } from "../reducers/home";
+import { IState } from "../reducers";
+import { Actions } from "../actions";
+const {app} = require("electron").remote;
 
-function mapStateToProps(state: State): Partial<Props> {
+function mapStateToProps(state: IState): Partial<IProps> {
 
-  moment.locale('fr');
+  moment.locale("fr");
 
-  let status = AgentStatus.Connecting;
+  let status:AgentStatus = AgentStatus.Connecting;
 
   if (state.agent.connected === true) {
     status = AgentStatus.Connected;
@@ -28,11 +29,12 @@ function mapStateToProps(state: State): Partial<Props> {
     connectedSince: moment(state.agent.connectionDate).fromNow(),
     isConfigured: !!state.configuration.email,
     nickname: state.configuration.nickname,
-    email: state.configuration.email
+    email: state.configuration.email,
+    version: app.getVersion()
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<State>): Partial<Props> {
+function mapDispatchToProps(dispatch: Dispatch<IState>): Partial<IProps> {
   return bindActionCreators(Actions.Agent as any, dispatch);
 }
 

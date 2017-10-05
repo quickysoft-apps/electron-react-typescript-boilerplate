@@ -9,7 +9,7 @@ import { FloatingAction } from './FloatingAction';
 import { JobDefinition, LibraryReference } from '../actions/jobRunner';
 import { LibrariesManager } from './LibrariesManager';
 
-interface State {
+interface IState {
   cron?: string;
   script: string;
   title: string;
@@ -17,7 +17,7 @@ interface State {
   inputError: Object | undefined;
 }
 
-export interface Props extends RouteComponentProps<any> {
+export interface IProps extends RouteComponentProps<any> {
   addLibrary: (jobId: string) => void;
   start: (job: JobDefinition) => void;
   save: (job: JobDefinition) => void;
@@ -30,40 +30,40 @@ export interface Props extends RouteComponentProps<any> {
   result?: Object;
   title: string;
   scriptError?: Object;
-  libraries: Array<LibraryReference>
+  libraries: Array<LibraryReference>;
 }
 
-export class JobRunner extends React.Component<Props, State> {
+export class JobRunner extends React.Component<IProps, IState> {
 
-  constructor(props: Props) {
-    super(props)
+  constructor(props: IProps) {
+    super(props);
     this.state = {
       script: props.script,
       cron: props.cron,
       title: props.title,
       input: this.toJsonString(props.input),
       inputError: undefined
-    }
+    };
   }
 
-  toJsonString(value: Object | undefined) {
-    return JSON.stringify(value, null, '  ');
+  toJsonString(value: Object | undefined):string {
+    return JSON.stringify(value, null, "  ");
   }
 
-  getInput() {
+  getInput():any {
     try {
       return JSON.parse(this.state.input);
     } catch (error) {
-      console.warn('Cannot use invalid input for script execution:', error);
+      console.warn("Cannot use invalid input for script execution:", error);
       return undefined;
     }
   }
 
-  checkInput() {
+  checkInput():boolean {
     return !!this.getInput();
   }
 
-  public render() {
+  public render():JSX.Element {
 
     return (
       <div>
@@ -83,7 +83,7 @@ export class JobRunner extends React.Component<Props, State> {
                 />
                 <TextField
                   style={{
-                    width: '100%'
+                    width: "100%"
                   }}
                   name="scriptTitle"
                   floatingLabelFixed={true}
@@ -118,7 +118,7 @@ export class JobRunner extends React.Component<Props, State> {
                       cron: this.state.cron,
                       title: this.state.title,
                       libraries: this.props.libraries
-                    })
+                    });
                   }}
                 />
               }
@@ -163,7 +163,7 @@ export class JobRunner extends React.Component<Props, State> {
     );
   }
 
-  componentWillUnmount() {
+  componentWillUnmount():void {
 
     if (!this.state.inputError) {
       const job: JobDefinition = {
@@ -176,8 +176,8 @@ export class JobRunner extends React.Component<Props, State> {
       };
       this.props.save(job);
     } else {
-      //do not save invalid inputs
-      console.warn('Cannot save invalid input:', this.state.inputError);
+      // do not save invalid inputs
+      console.warn("Cannot save invalid input:", this.state.inputError);
     }
 
   }
