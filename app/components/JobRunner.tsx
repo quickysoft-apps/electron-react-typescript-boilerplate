@@ -14,11 +14,13 @@ interface IState {
   script: string;
   title: string;
   input: string;
-  inputError: Object | undefined;
+  inputError: Object | undefined;  
 }
 
 export interface IProps extends RouteComponentProps<any> {
   addLibrary: (jobId: string) => void;
+  selectLibrary: (name: string) => void;
+  removeLibrary: (name: string) => void;
   start: (job: JobDefinition) => void;
   save: (job: JobDefinition) => void;
   stop: VoidFunction;
@@ -128,6 +130,7 @@ export class JobRunner extends React.Component<IProps, IState> {
             icon={<SvgIcons.ActionNoteAdd />}>
             <LibrariesManager
               onAdd={() => this.props.addLibrary(this.props.jobId)}
+              onDelete={(name: string) => this.props.removeLibrary(name) }
               libraries={this.props.libraries} />
           </Tab>
           <Tab

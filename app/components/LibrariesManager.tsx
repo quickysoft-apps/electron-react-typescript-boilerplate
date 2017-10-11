@@ -8,6 +8,7 @@ import { LibraryReference } from '../actions/jobRunner';
 
 export interface Props {
   onAdd: () => void;
+  onDelete: (name: string) => void;
   libraries: Array<LibraryReference>;
 }
 
@@ -25,10 +26,8 @@ export class LibrariesManager extends React.Component<Props> {
           style={{
             textAlign: 'left',
             margin: 16,
-            height: 460,
-            position: "absolute",
-            width: '100%'
-          }}>
+          }}
+        >
           <p style={{
             color: Colors.grey700
           }}>
@@ -45,6 +44,7 @@ export class LibrariesManager extends React.Component<Props> {
       return (
         <ListItem
           leftAvatar={<Avatar icon={<SvgIcons.ContentLink />} />}
+          rightIconButton={<SvgIcons.ActionDelete onClick={() => this.props.onDelete(reference.name)} />}
           primaryText={reference.name}
           key={reference.name}
         />
@@ -52,15 +52,16 @@ export class LibrariesManager extends React.Component<Props> {
     })
 
     return (
-      <div>
+      <div
+        style={{
+          height: 460,
+          position: "absolute",
+          width: '100%'
+        }}
+      >
         {this.props.libraries.length === 0
           ? renderEmpty()
-          : <List
-            style={{
-              height: 460,
-              position: "absolute",
-              width: '100%'
-            }}>
+          : <List>
             {listItems}
           </List>
         }

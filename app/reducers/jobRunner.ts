@@ -1,19 +1,17 @@
 import { ipcRenderer } from 'electron';
-const { dialog } = require('electron').remote;
-import * as fs from 'fs';
 import * as uuid from 'uuid';
-import { IAction } from '../actions/helpers';
+import { IAction, IActionWithPayload } from '../actions/helpers';
 import { Actions } from '../actions';
 import { LibraryReference } from '../actions/jobRunner';
 
-export interface JobRunnerState {  
+export interface JobRunnerState {
   jobId: string;
   cron?: any;
   script?: string;
   title?: string;
   input?: Object;
   libraries: Array<LibraryReference>;
-  result?: Object;    
+  result?: Object;
   scriptError?: Object;
   isRunning: boolean;
 }
@@ -29,7 +27,6 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
 
   if (Actions.JobManager.select.test(action)) {
     return {
-      ...state,
       ...action.payload.jobDefinition,
       isRunning: action.payload.isRunning
     };
@@ -37,7 +34,6 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
 
   if (Actions.JobRunner.started.test(action)) {
     return {
-      ...state,
       jobId: action.payload.jobId,
       isRunning: true
     };
@@ -45,7 +41,6 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
 
   if (Actions.JobRunner.resultChanged.test(action) && action.payload.jobId === state.jobId) {
     return {
-      ...state,
       result: action.payload.result,
       scriptError: undefined
     };
@@ -62,47 +57,36 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
 
   if (Actions.JobRunner.completed.test(action) && action.payload.jobId === state.jobId) {
     return {
-      ...state,
       isRunning: false
     };
   }
 
   if (Actions.JobRunner.stopped.test(action) && action.payload.jobId === state.jobId) {
     return {
-      ...state,
       isRunning: false
     };
   }
 
   if (Actions.JobRunner.stop.test(action)) {
     ipcRenderer.send('ipc/JOB_STOP', { jobId: state.jobId })
-    return {
-      ...state
+    return state;    
+  }
+
+  if (Actions.JobRunner.removeLibrary.test(action)) {
+    const libraryName = (action as IActionWithPayload<string>).payload;
+    const libraries: Array<LibraryReference> = state.libraries.filter(x => x.name !== libraryName);
+    return {   
+      libraries
     };
   }
 
-  if (Actions.JobRunner.addLibrary.test(action)) {    
-    const openDialogOptions: Electron.OpenDialogOptions = {
-      title: 'Sélectionnez les fichiers à référencer',
-      filters: [{ extensions: ['.dll'], name: '.Net Assemblies' }],
-      properties: ['openFile', 'multiSelections']
-    }
-    
-    dialog.showOpenDialog(openDialogOptions, (filePaths: string[]) => {
-      if (filePaths === undefined) {        
-        return;
-      }
-      filePaths.map((filepath) => {
-        fs.readFile(filepath, 'utf-8', (err, data) => {
-          if (err) {
-            console.warn("An error ocurred reading the file :" + err.message);
-            return;
-          }
-          console.log("The file content is : " + data);
-        });
-      })
-
-    });
+  if (Actions.JobRunner.libraryAdded.test(action)) {
+    const libraries = new Array<LibraryReference>(...state.libraries);
+    const libraryReference = (action as IActionWithPayload<LibraryReference>).payload;
+    libraries.push(libraryReference);
+    return {   
+      libraries
+    };
   }
 
   return state;
