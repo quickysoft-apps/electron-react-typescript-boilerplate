@@ -27,6 +27,7 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
 
   if (Actions.JobManager.select.test(action)) {
     return {
+      ...state,
       ...action.payload.jobDefinition,
       isRunning: action.payload.isRunning
     };
@@ -34,6 +35,7 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
 
   if (Actions.JobRunner.started.test(action)) {
     return {
+      ...state,
       jobId: action.payload.jobId,
       isRunning: true
     };
@@ -41,6 +43,7 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
 
   if (Actions.JobRunner.resultChanged.test(action) && action.payload.jobId === state.jobId) {
     return {
+      ...state,
       result: action.payload.result,
       scriptError: undefined
     };
@@ -57,12 +60,14 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
 
   if (Actions.JobRunner.completed.test(action) && action.payload.jobId === state.jobId) {
     return {
+      ...state,
       isRunning: false
     };
   }
 
   if (Actions.JobRunner.stopped.test(action) && action.payload.jobId === state.jobId) {
     return {
+      ...state,
       isRunning: false
     };
   }
@@ -76,6 +81,7 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
     const libraryName = (action as IActionWithPayload<string>).payload;
     const libraries: Array<LibraryReference> = state.libraries.filter(x => x.name !== libraryName);
     return {   
+      ...state,
       libraries
     };
   }
@@ -85,6 +91,7 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
     const libraryReference = (action as IActionWithPayload<LibraryReference>).payload;
     libraries.push(libraryReference);
     return {   
+      ...state,
       libraries
     };
   }
