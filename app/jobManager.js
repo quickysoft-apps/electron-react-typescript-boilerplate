@@ -29,7 +29,7 @@ const createJobWindow = function () {
   const jobWindow = new BrowserWindow({ show: false });
   jobWindow.loadURL(`file://${__dirname}/job.html`);
   if (process.env.NODE_ENV === 'development') {
-    //jobWindow.openDevTools();
+    jobWindow.openDevTools();
   }
   return jobWindow
 }

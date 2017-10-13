@@ -64,7 +64,8 @@ export const start = function (job: JobDefinition) {
       jobId: job.jobId,
       cron: job.cron,
       script: job.script,
-      input: job.input
+      input: job.input,
+      libraries: job.libraries
     }
     ipc.send('ipc/JOB_START', arg);
 
