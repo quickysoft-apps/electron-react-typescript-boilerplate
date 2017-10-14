@@ -44,9 +44,15 @@ export class LibrariesManager extends React.Component<Props> {
       return (
         <ListItem
           leftAvatar={<Avatar icon={<SvgIcons.ContentLink />} />}
-          rightIconButton={<SvgIcons.ActionDelete onClick={() => this.props.onDelete(reference.name)} />}
+          rightIconButton={<SvgIcons.ActionDelete
+            style={{
+              top: 16
+            }}
+            onClick={() => this.props.onDelete(reference.name)} />
+          }
           primaryText={reference.name}
           key={reference.name}
+          disabled={true}
         />
       )
     })

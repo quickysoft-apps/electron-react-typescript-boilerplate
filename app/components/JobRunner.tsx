@@ -127,7 +127,7 @@ export class JobRunner extends React.Component<IProps, IState> {
             </Editor>
           </Tab>
           <Tab
-            icon={<SvgIcons.ActionNoteAdd />}>
+            icon={<SvgIcons.ContentLink />}>
             <LibrariesManager
               onAdd={() => this.props.addLibrary(this.props.jobId)}
               onDelete={(name: string) => this.props.removeLibrary(name) }
