@@ -15,9 +15,9 @@
     }
 
     const startScript = function (input, script, cron, libraries, callback, onCompleted) {
-      try {
-        console.log(libraries.map(x => x.path));        
-        const func = libraries.length > 0 ? edge.func(script, libraries.map(x => x.path)) : edge.func(script);
+      try {        
+        libraries.map(x => script = `#r "${x.path}"\r\n${script}`);        
+        const func = libraries.length > 0 ? edge.func(script) : edge.func(script);
         if ((cron && cron.length === 0) || !cron) {
           callEdgeFunction(func, input, callback);          
           return null;
