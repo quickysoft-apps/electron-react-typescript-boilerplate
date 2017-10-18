@@ -1,6 +1,6 @@
-import { actionCreator, actionCreatorVoid, IActionCreator, IActionCreatorVoid } from "./helpers";
+import { actionCreator, actionCreatorVoid, IAction } from './helpers';
 
-const { dialog, app } = require('electron').remote;
+import { dialog, app } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -11,7 +11,7 @@ const ipc = new Ipc(ipcRenderer);
 export interface IpcEventArg {
   jobId: string;
   result?: any;
-  error?: Object;
+  error?: object;
 }
 
 export interface ILibraryReference {
@@ -23,9 +23,9 @@ export interface IJobDefinition {
   jobId: string;
   cron?: string;
   script: string;
-  input?: Object;
+  input?: object;
   title: string;
-  libraries: Array<ILibraryReference>;
+  libraries: ILibraryReference[];
 }
 
 export const started = actionCreator<IpcEventArg>('jobRunner/STARTED');
@@ -34,40 +34,38 @@ export const error = actionCreator<IpcEventArg>('jobRunner/ERROR');
 export const completed = actionCreator<IpcEventArg>('jobRunner/COMPLETED');
 export const stopped = actionCreator<IpcEventArg>('jobRunner/STOPPED');
 export const stop = actionCreatorVoid('jobRunner/STOP');
-export const save = actionCreator<JobDefinition>('jobRunner/SAVE');
-export const start = function (job: JobDefinition) {
-  return (dispatch: Function, getState: Function) => {
+export const save = actionCreator<IJobDefinition>('jobRunner/SAVE');
+export const start = (job: IJobDefinition) => {
+  return (dispatch: <A extends IAction>(a: A) => A, getState: () => void) => {
 
-    ipc.addListener(job.jobId, "ipc/JOB_RESULT", (event: any, arg: any) => {
-      dispatch(resultChanged(arg));
+    ipc.addListener(job.jobId, 'ipc/JOB_RESULT', (event: any, eventArg: any) => {
+      dispatch(resultChanged(eventArg));
     });
 
-    ipc.addListener(job.jobId, "ipc/JOB_ERROR", (event: any, arg: any) => {
-      console.log("ipc/JOB_ERROR", arg);
-      dispatch(error(arg));
+    ipc.addListener(job.jobId, 'ipc/JOB_ERROR', (event: any, eventArg: any) => {
+      dispatch(error(eventArg));
     });
 
-    ipc.addListener(job.jobId, "ipc/JOB_STARTED", (event: any, arg: any) => {
-      dispatch(started(arg));
+    ipc.addListener(job.jobId, 'ipc/JOB_STARTED', (event: any, eventArg: any) => {
+      dispatch(started(eventArg));
     });
 
-    ipc.addListener(job.jobId, "ipc/JOB_COMPLETED", (event: any, arg: any) => {
-      dispatch(completed(arg));
+    ipc.addListener(job.jobId, 'ipc/JOB_COMPLETED', (event: any, eventArg: any) => {
+      dispatch(completed(eventArg));
     });
 
-    ipc.addListener(job.jobId, "ipc/JOB_STOPPED", (event: any, arg: any) => {
+    ipc.addListener(job.jobId, 'ipc/JOB_STOPPED', (event: any, eventArg: any) => {
       ipc.clearListeners(job.jobId);
-      dispatch(stopped(arg));
+      dispatch(stopped(eventArg));
     });
 
-    // tslint:disable-next-line:typedef
     const arg = {
       jobId: job.jobId,
       cron: job.cron,
       script: job.script,
       input: job.input,
       libraries: job.libraries
-    }
+    };
     ipc.send('ipc/JOB_START', arg);
 
   };
@@ -75,17 +73,17 @@ export const start = function (job: JobDefinition) {
 };
 
 export const removeLibrary = actionCreator<string>('jobRunner/REMOVE_LIBRARY');
-export const libraryAdded = actionCreator<LibraryReference>('jobRunner/LIBRARY_ADDED');
-export const addLibrary = function (jobId: string)  {
-  return (dispatch: Function, getState: Function) => {
-    
+export const libraryAdded = actionCreator<ILibraryReference>('jobRunner/LIBRARY_ADDED');
+export const addLibrary = (jobId: string) =>  {
+  return (dispatch: <A extends IAction>(a: A) => A, getState: () => void) => {
+
     const openDialogOptions: Electron.OpenDialogOptions = {
       title: 'Sélectionnez les fichiers à référencer',
       filters: [{ extensions: ['dll'], name: '.Net Assemblies' }],
       properties: ['openFile', 'multiSelections']
-    }
-    
-    //Ensure libraries destination folder exists
+    };
+
+    // Ensure libraries destination folder exists
     const librariesPath = path.join(app.getPath('userData'), 'libraries', jobId);
     if (!fs.existsSync(librariesPath)) {
       fs.mkdirSync(librariesPath);
@@ -99,15 +97,12 @@ export const addLibrary = function (jobId: string)  {
         const libraryName = path.basename(filepath);
         const destination = path.join(librariesPath, libraryName);
         fs.createReadStream(filepath).pipe(fs.createWriteStream(destination));
-        const libraryReference: LibraryReference = {
+        const libraryReference: ILibraryReference = {
           name: path.basename(filepath),
           path: destination
-        }        
+        };
         dispatch(libraryAdded(libraryReference));
-      })
+      });
     });
-  }
-}
-
-
-
+  };
+};

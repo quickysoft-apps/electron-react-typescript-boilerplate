@@ -1,11 +1,11 @@
 import { IAction, IActionWithPayload } from '../actions/helpers';
 import { Actions } from '../actions';
-import { AgentError } from '../actions/agent';
+import { IAgentError } from '../actions/agent';
 
 export interface AgentState {
   connected?: boolean;
-  connectionError?: AgentError;
-  socketError?: AgentError;
+  connectionError?: IAgentError;
+  socketError?: IAgentError;
   trusted?: boolean;
   pongMs?: number;
   connectionDate?: Date;
@@ -44,7 +44,7 @@ export function agent(state: AgentState = {}, action: IAction) {
   }
 
   if (Actions.Agent.notifySocketError.test(action)) {
-    const actionWithPayload = action as IActionWithPayload<AgentError>;
+    const actionWithPayload = action as IActionWithPayload<IAgentError>;
     return {
       ...state,
       connected: actionWithPayload.payload.type === 'DiscoverError' ? false : true,
@@ -55,7 +55,7 @@ export function agent(state: AgentState = {}, action: IAction) {
   }
 
   if (Actions.Agent.notifyConnectionError.test(action)) {
-    const actionWithPayload = action as IActionWithPayload<AgentError>;
+    const actionWithPayload = action as IActionWithPayload<IAgentError>;
     return {
       ...state,
       connected: actionWithPayload.payload.type === 'TransportError' ? false : true,

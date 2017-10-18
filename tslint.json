@@ -1,23 +1,10 @@
 {
+    "extends": [
+        "tslint:recommended",
+        "tslint-react"
+    ],
     "rules": {
-
-        "semicolon": [true, "always"],
-
-        "no-var-keyword": true,
-        "no-unused-variable": [
-            true,
-            {
-                "ignore-pattern": "^_"
-            }
-        ],
-
-        "trailing-comma": [
-            true,
-            {
-                "multiline": "always",
-                "singleline": "never"
-            }
-        ],
+        "arrow-parens": false,
         "class-name": true,
         "comment-format": [
             true,
@@ -27,22 +14,50 @@
             true,
             "spaces"
         ],
+        "interface-name": [
+            true
+        ],
+        "jsx-alignment": false,
+        "jsx-no-lambda": true,
+        "jsx-wrap-multiline": false,
+        "jsx-no-multiline-js": false,
+        "jsx-no-string-ref": true,
+        "jsx-self-close": true,
+        "jsx-curly-spacing": "always",
+        "jsx-boolean-value": false,
+        "max-classes-per-file": false,
+        "max-line-length": [
+            false
+        ],
+        "member-access": false,
+        "no-duplicate-variable": true,
+        "no-empty": false,
+        "no-empty-interface": false,
         "no-eval": true,
         "no-internal-module": true,
         "no-trailing-whitespace": true,
-
+        "no-var-keyword": true,
+        "object-literal-sort-keys": false,
         "one-line": [
             true,
             "check-open-brace",
             "check-whitespace"
         ],
+        "ordered-imports": false,
+        "radix": false,
         "quotemark": [
             true,
-            "double"
+            "single",
+            "avoid-escape",
+            "jsx-double"
         ],
         "semicolon": [
             true,
             "always"
+        ],
+        "switch-default": false,
+        "trailing-comma": [
+            false
         ],
         "triple-equals": [
             true,
@@ -70,12 +85,5 @@
             "check-separator",
             "check-type"
         ]
-    },
-    "jsRules": {
-        "triple-equals": [
-            true,
-            "allow-null-check"
-        ]
-    },
-    "defaultSeverity": "warning"
+    }
 }
