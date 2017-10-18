@@ -1,8 +1,12 @@
 import { actionCreator, actionCreatorVoid, IActionCreator, IActionCreatorVoid } from "./helpers";
 
-import { Ipc } from "../api/ipc";
-import { ipcRenderer } from "electron";
-const ipc:Ipc = new Ipc(ipcRenderer);
+const { dialog, app } = require('electron').remote;
+import * as fs from 'fs';
+import * as path from 'path';
+
+import { Ipc } from '../api/ipc';
+import { ipcRenderer } from 'electron';
+const ipc = new Ipc(ipcRenderer);
 
 export interface IpcEventArg {
   jobId: string;
@@ -12,7 +16,7 @@ export interface IpcEventArg {
 
 export interface ILibraryReference {
   name: string;
-  content: Uint8Array;
+  path: string;
 }
 
 export interface IJobDefinition {
@@ -24,18 +28,14 @@ export interface IJobDefinition {
   libraries: Array<ILibraryReference>;
 }
 
-export const started:IActionCreator<IpcEventArg> = actionCreator<IpcEventArg>("jobRunner/STARTED");
-export const resultChanged:IActionCreator<IpcEventArg> = actionCreator<IpcEventArg>("jobRunner/RESULT_CHANGED");
-export const error:IActionCreator<IpcEventArg> = actionCreator<IpcEventArg>("jobRunner/ERROR");
-export const completed:IActionCreator<IpcEventArg> = actionCreator<IpcEventArg>("jobRunner/COMPLETED");
-export const stopped:IActionCreator<IpcEventArg> = actionCreator<IpcEventArg>("jobRunner/STOPPED");
-export const stop:IActionCreatorVoid = actionCreatorVoid("jobRunner/STOP");
-export const save:IActionCreator<IJobDefinition> = actionCreator<IJobDefinition>("jobRunner/SAVE");
-
-export const addLibrary:IActionCreator<number> = actionCreator<number>("jobRunner/ADD_LIBRARY");
-
-// tslint:disable-next-line:typedef
-export const start = function (job: IJobDefinition) {
+export const started = actionCreator<IpcEventArg>('jobRunner/STARTED');
+export const resultChanged = actionCreator<IpcEventArg>('jobRunner/RESULT_CHANGED');
+export const error = actionCreator<IpcEventArg>('jobRunner/ERROR');
+export const completed = actionCreator<IpcEventArg>('jobRunner/COMPLETED');
+export const stopped = actionCreator<IpcEventArg>('jobRunner/STOPPED');
+export const stop = actionCreatorVoid('jobRunner/STOP');
+export const save = actionCreator<JobDefinition>('jobRunner/SAVE');
+export const start = function (job: JobDefinition) {
   return (dispatch: Function, getState: Function) => {
 
     ipc.addListener(job.jobId, "ipc/JOB_RESULT", (event: any, arg: any) => {
@@ -65,11 +65,49 @@ export const start = function (job: IJobDefinition) {
       jobId: job.jobId,
       cron: job.cron,
       script: job.script,
-      input: job.input
-    };
-    ipc.send("ipc/JOB_START", arg);
+      input: job.input,
+      libraries: job.libraries
+    }
+    ipc.send('ipc/JOB_START', arg);
 
   };
 
 };
+
+export const removeLibrary = actionCreator<string>('jobRunner/REMOVE_LIBRARY');
+export const libraryAdded = actionCreator<LibraryReference>('jobRunner/LIBRARY_ADDED');
+export const addLibrary = function (jobId: string)  {
+  return (dispatch: Function, getState: Function) => {
+    
+    const openDialogOptions: Electron.OpenDialogOptions = {
+      title: 'Sélectionnez les fichiers à référencer',
+      filters: [{ extensions: ['dll'], name: '.Net Assemblies' }],
+      properties: ['openFile', 'multiSelections']
+    }
+    
+    //Ensure libraries destination folder exists
+    const librariesPath = path.join(app.getPath('userData'), 'libraries', jobId);
+    if (!fs.existsSync(librariesPath)) {
+      fs.mkdirSync(librariesPath);
+    }
+
+    dialog.showOpenDialog(openDialogOptions, (filePaths: string[]) => {
+      if (filePaths === undefined) {
+        return;
+      }
+      filePaths.map((filepath) => {
+        const libraryName = path.basename(filepath);
+        const destination = path.join(librariesPath, libraryName);
+        fs.createReadStream(filepath).pipe(fs.createWriteStream(destination));
+        const libraryReference: LibraryReference = {
+          name: path.basename(filepath),
+          path: destination
+        }        
+        dispatch(libraryAdded(libraryReference));
+      })
+    });
+  }
+}
+
+
 

@@ -1,18 +1,16 @@
-import { ipcRenderer } from "electron";
-const { dialog } = require("electron").remote;
-import * as fs from "fs";
-import * as uuid from "uuid";
-import { IAction } from "../actions/helpers";
-import { Actions } from "../actions";
-import { ILibraryReference } from "../actions/jobRunner";
+import { ipcRenderer } from 'electron';
+import * as uuid from 'uuid';
+import { IAction, IActionWithPayload } from '../actions/helpers';
+import { Actions } from '../actions';
+import { LibraryReference } from '../actions/jobRunner';
 
-export interface IJobRunnerState {
+export interface JobRunnerState {
   jobId: string;
   cron?: any;
   script?: string;
   title?: string;
   input?: Object;
-  libraries: Array<ILibraryReference>;
+  libraries: Array<LibraryReference>;
   result?: Object;
   scriptError?: Object;
   isRunning: boolean;
@@ -81,34 +79,27 @@ export function jobRunner(state: IJobRunnerState = initialState, action: IAction
   }
 
   if (Actions.JobRunner.stop.test(action)) {
-    ipcRenderer.send("ipc/JOB_STOP", { jobId: state.jobId });
-    return {
-      ...state
+    ipcRenderer.send('ipc/JOB_STOP', { jobId: state.jobId })
+    return state;    
+  }
+
+  if (Actions.JobRunner.removeLibrary.test(action)) {
+    const libraryName = (action as IActionWithPayload<string>).payload;
+    const libraries: Array<LibraryReference> = state.libraries.filter(x => x.name !== libraryName);
+    return {   
+      ...state,
+      libraries
     };
   }
 
-  if (Actions.JobRunner.addLibrary.test(action)) {
-    const openDialogOptions: Electron.OpenDialogOptions = {
-      title: "Sélectionnez les fichiers à référencer",
-      filters: [{ extensions: [".dll"], name: ".Net Assemblies" }],
-      properties: ["openFile", "multiSelections"]
+  if (Actions.JobRunner.libraryAdded.test(action)) {
+    const libraries = new Array<LibraryReference>(...state.libraries);
+    const libraryReference = (action as IActionWithPayload<LibraryReference>).payload;
+    libraries.push(libraryReference);
+    return {   
+      ...state,
+      libraries
     };
-
-    dialog.showOpenDialog(openDialogOptions, (filePaths: string[]) => {
-      if (filePaths === undefined) {
-        return;
-      }
-      filePaths.map((filepath) => {
-        fs.readFile(filepath, "utf-8", (err, data) => {
-          if (err) {
-            console.warn("An error ocurred reading the file :" + err.message);
-            return;
-          }
-          console.log("The file content is : " + data);
-        });
-      });
-
-    });
   }
 
   return state;

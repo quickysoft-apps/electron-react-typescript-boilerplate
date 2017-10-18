@@ -13,12 +13,15 @@ interface IState {
   script: string;
   title: string;
   input: string;
-  inputError: Object | undefined;
+  inputError: Object | undefined;  
 }
 
 export interface IProps extends RouteComponentProps<any> {
-  start: (job: IJobDefinition) => void;
-  save: (job: IJobDefinition) => void;
+  addLibrary: (jobId: string) => void;
+  selectLibrary: (name: string) => void;
+  removeLibrary: (name: string) => void;
+  start: (job: JobDefinition) => void;
+  save: (job: JobDefinition) => void;
   stop: VoidFunction;
   jobId: string;
   cron: string;
@@ -123,7 +126,11 @@ export class JobRunner extends React.Component<IProps, IState> {
             </Editor>
           </Tab>
           <Tab
-            icon={<SvgIcons.ActionNoteAdd />}>
+            icon={<SvgIcons.ContentLink />}>
+            <LibrariesManager
+              onAdd={() => this.props.addLibrary(this.props.jobId)}
+              onDelete={(name: string) => this.props.removeLibrary(name) }
+              libraries={this.props.libraries} />
           </Tab>
           <Tab
             icon={<SvgIcons.ActionInput />}>

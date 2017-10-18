@@ -14,9 +14,10 @@
       callback(result, null);
     }
 
-    const startScript = function (input, script, cron, callback, onCompleted) {
-      try {
-        const func = edge.func(script);
+    const startScript = function (input, script, cron, libraries, callback, onCompleted) {
+      try {        
+        libraries.map(x => script = `#r "${x.path}"\r\n${script}`);        
+        const func = libraries.length > 0 ? edge.func(script) : edge.func(script);
         if ((cron && cron.length === 0) || !cron) {
           callEdgeFunction(func, input, callback);          
           return null;
@@ -36,8 +37,8 @@
 
     window.onload = () => {
       ipcRenderer.on('ipc/JOB_START', (event, arg) => {
-        const { jobId, input, script, cron, title } = arg;
-        window.cronJob = startScript(input, script, cron, (result, error) => {
+        const { jobId, input, script, cron, title, libraries } = arg;
+        window.cronJob = startScript(input, script, cron, libraries, (result, error) => {
           if (error) {
             event.sender.send('ipc/JOB_ERROR', { jobId, error: error.message })
           } else {

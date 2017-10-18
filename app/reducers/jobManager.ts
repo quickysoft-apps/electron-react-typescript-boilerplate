@@ -11,18 +11,18 @@ const initialState: IJobManagerState = {
   statuses: new Array<IJobStatus>()
 };
 
-function saveToSettings(status: IJobStatus):void {
-  const key:string = `jobs.${status.jobDefinition.jobId}`;
+function saveToSettings(status: IJobStatus): void {
+  const key: string = `jobs.${status.jobDefinition.jobId}`;
   settings.delete(key).set(key, status as any);
 }
 
-function setStatus(statuses: Array<IJobStatus>, status: IJobStatus):  Array<IJobStatus> {
+function setStatus(statuses: Array<IJobStatus>, status: IJobStatus): Array<IJobStatus> {
   const filteredStatuses: Array<IJobStatus> = statuses.filter(x => x.jobDefinition.jobId !== status.jobDefinition.jobId);
   filteredStatuses.push(status);
   return filteredStatuses;
 }
 
-export function jobManager(state:IJobManagerState = initialState, action: IAction):any {
+export function jobManager(state: IJobManagerState = initialState, action: IAction): any {
 
   if (Actions.JobManager.add.test(action)) {
     const status: IJobStatus = {
@@ -38,7 +38,7 @@ export function jobManager(state:IJobManagerState = initialState, action: IActio
   }
 
   if (Actions.JobRunner.resultChanged.test(action)) {
-    let status:IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    let status: IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
       status.hasError = false;
 
@@ -53,7 +53,7 @@ export function jobManager(state:IJobManagerState = initialState, action: IActio
   }
 
   if (Actions.JobRunner.started.test(action)) {
-    let status:IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    let status: IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
       status.isRunning = true;
 
@@ -68,7 +68,7 @@ export function jobManager(state:IJobManagerState = initialState, action: IActio
   }
 
   if (Actions.JobRunner.stopped.test(action)) {
-    let status:IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    let status: IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
       status.isRunning = false;
       const newState: IJobManagerState = {
@@ -82,7 +82,7 @@ export function jobManager(state:IJobManagerState = initialState, action: IActio
   }
 
   if (Actions.JobRunner.error.test(action)) {
-    let status:IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    let status: IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
       status.hasError = !!action.payload.error;
       const newState: IJobManagerState = {
@@ -98,7 +98,7 @@ export function jobManager(state:IJobManagerState = initialState, action: IActio
   }
 
   if (Actions.JobRunner.completed.test(action)) {
-    let status:IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    let status: IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
       status.isRunning = false;
       const newState: IJobManagerState = {
@@ -112,7 +112,7 @@ export function jobManager(state:IJobManagerState = initialState, action: IActio
   }
 
   if (Actions.JobRunner.save.test(action)) {
-    const status:IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    const status: IJobStatus | undefined = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
     if (status) {
       const newStatus: IJobStatus = {
         ...status,
