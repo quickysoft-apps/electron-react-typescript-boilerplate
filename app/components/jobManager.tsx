@@ -6,12 +6,12 @@ import { Avatar } from "material-ui";
 import * as SvgIcons from "material-ui/svg-icons";
 import * as Colors from "material-ui/styles/colors";
 import { FloatingAction } from "./FloatingAction";
-import { JobDefinition, LibraryReference } from "../actions/jobRunner";
+import { IJobDefinition, ILibraryReference } from "../actions/jobRunner";
 import { IJobStatus } from "../actions/jobManager";
 import { green500, red500, grey500 } from "material-ui/styles/colors";
 
 export interface IProps extends RouteComponentProps<any> {
-  add: (job: JobDefinition) => void;
+  add: (job: IJobDefinition) => void;
   select: (status: IJobStatus) => void;
   statuses: Array<IJobStatus>;
 }
@@ -23,12 +23,12 @@ export class JobManager extends React.Component<IProps> {
   }
 
   addJob = () => {
-    const jobDefinition: JobDefinition = {
+    const jobDefinition: IJobDefinition = {
       jobId: uuid.v4(),
       title: "exemple de script",
       cron: "*/5 * * * * *",
       input: undefined,
-      libraries: new Array<LibraryReference>(),
+      libraries: new Array<ILibraryReference>(),
       script: `
       //Ceci est un exemple simple de script.
       //la méthode doit respecter la signature ci-dessous :

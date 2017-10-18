@@ -1,4 +1,4 @@
-import { actionCreator, actionCreatorVoid } from './helpers';
+import { actionCreator, actionCreatorVoid, IActionCreator, IActionCreatorVoid } from "./helpers";
 
 const { dialog, app } = require('electron').remote;
 import * as fs from 'fs';
@@ -14,18 +14,18 @@ export interface IpcEventArg {
   error?: Object;
 }
 
-export interface LibraryReference {
+export interface ILibraryReference {
   name: string;
   path: string;
 }
 
-export interface JobDefinition {
+export interface IJobDefinition {
   jobId: string;
   cron?: string;
   script: string;
   input?: Object;
-  title: string;  
-  libraries: Array<LibraryReference>;
+  title: string;
+  libraries: Array<ILibraryReference>;
 }
 
 export const started = actionCreator<IpcEventArg>('jobRunner/STARTED');
@@ -38,28 +38,29 @@ export const save = actionCreator<JobDefinition>('jobRunner/SAVE');
 export const start = function (job: JobDefinition) {
   return (dispatch: Function, getState: Function) => {
 
-    ipc.addListener(job.jobId, 'ipc/JOB_RESULT', (event: any, arg: any) => {
+    ipc.addListener(job.jobId, "ipc/JOB_RESULT", (event: any, arg: any) => {
       dispatch(resultChanged(arg));
     });
 
-    ipc.addListener(job.jobId, 'ipc/JOB_ERROR', (event: any, arg: any) => {
-      console.log('ipc/JOB_ERROR', arg)
+    ipc.addListener(job.jobId, "ipc/JOB_ERROR", (event: any, arg: any) => {
+      console.log("ipc/JOB_ERROR", arg);
       dispatch(error(arg));
     });
 
-    ipc.addListener(job.jobId, 'ipc/JOB_STARTED', (event: any, arg: any) => {
+    ipc.addListener(job.jobId, "ipc/JOB_STARTED", (event: any, arg: any) => {
       dispatch(started(arg));
     });
 
-    ipc.addListener(job.jobId, 'ipc/JOB_COMPLETED', (event: any, arg: any) => {
+    ipc.addListener(job.jobId, "ipc/JOB_COMPLETED", (event: any, arg: any) => {
       dispatch(completed(arg));
     });
 
-    ipc.addListener(job.jobId, 'ipc/JOB_STOPPED', (event: any, arg: any) => {
+    ipc.addListener(job.jobId, "ipc/JOB_STOPPED", (event: any, arg: any) => {
       ipc.clearListeners(job.jobId);
       dispatch(stopped(arg));
     });
 
+    // tslint:disable-next-line:typedef
     const arg = {
       jobId: job.jobId,
       cron: job.cron,
@@ -69,9 +70,9 @@ export const start = function (job: JobDefinition) {
     }
     ipc.send('ipc/JOB_START', arg);
 
-  }
+  };
 
-}
+};
 
 export const removeLibrary = actionCreator<string>('jobRunner/REMOVE_LIBRARY');
 export const libraryAdded = actionCreator<LibraryReference>('jobRunner/LIBRARY_ADDED');

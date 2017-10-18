@@ -38,8 +38,7 @@ export class Editor extends React.Component<Props> {
           showPrintMargin={false}
           showGutter={true}
           highlightActiveLine={true}
-          wrapEnabled={true}       
-          editorProps={{$blockScrolling: true}}             
+          wrapEnabled={true}                    
           setOptions={{
             showLineNumbers: this.props.showLineNumbers,
             hScrollBarAlwaysVisible: false,

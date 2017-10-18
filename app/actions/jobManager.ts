@@ -1,13 +1,13 @@
 import { actionCreator } from "./helpers";
-import { JobDefinition } from "./jobRunner";
+import { IJobDefinition } from "./jobRunner";
 
 export interface IJobStatus {
-  jobDefinition: JobDefinition;
+  jobDefinition: IJobDefinition;
   isRunning: boolean;
   hasError: boolean;
 }
 
 // tslint:disable-next-line:typedef
-export const add = actionCreator<JobDefinition>("jobManager/ADD");
+export const add = actionCreator<IJobDefinition>("jobManager/ADD");
 // tslint:disable-next-line:typedef
 export const select = actionCreator<IJobStatus>("jobManager/SELECT");

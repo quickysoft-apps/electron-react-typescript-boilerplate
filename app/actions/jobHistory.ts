@@ -1,12 +1,12 @@
-import { actionCreator } from "./helpers";
-import { JobDefinition } from "./jobRunner";
+/*import { actionCreator } from "./helpers";*/
 import { IJobStatus } from "./jobManager";
 
 export interface IJobHistory {
-  jobDefinition: JobDefinition;
-  scheduleTime?: Date;
+  scheduledTime?: Date;
   status: IJobStatus;
 }
 
 // tslint:disable-next-line:typedef
-export const add = actionCreator<JobDefinition>("jobHistory/ADD");
+/*
+export const add = actionCreator<IJobStatus>("jobHistory/ADD");
+*/

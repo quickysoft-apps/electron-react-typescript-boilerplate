@@ -1,10 +1,11 @@
-import * as React from 'react';
-import { List, ListItem } from 'material-ui/List';
-import { Avatar } from 'material-ui';
-import * as SvgIcons from 'material-ui/svg-icons';
-import * as Colors from 'material-ui/styles/colors';
-import { FloatingAction } from './FloatingAction';
-import { LibraryReference } from '../actions/jobRunner';
+import * as React from "react";
+import { RouteComponentProps } from "react-router";
+import { List, ListItem } from "material-ui/List";
+import { Avatar } from "material-ui";
+import * as SvgIcons from "material-ui/svg-icons";
+import * as Colors from "material-ui/styles/colors";
+import { FloatingAction } from "./FloatingAction";
+import { ILibraryReference } from "../actions/jobRunner";
 
 export interface Props {
   onAdd: () => void;
@@ -12,14 +13,19 @@ export interface Props {
   libraries: Array<LibraryReference>;
 }
 
-export class LibrariesManager extends React.Component<Props> {
+export class LibrariesManager extends React.Component<IProps> {
 
-  constructor(props: Props) {
-    super(props)
+  constructor(props: IProps) {
+    super(props);
   }
 
-  public render() {
+  public add():void {
+    this.props.addReference(this.props.jobId);
+  }
 
+  public render():JSX.Element {
+
+    // tslint:disable-next-line:typedef
     const renderEmpty = () => {
       return (
         <div
@@ -34,13 +40,13 @@ export class LibrariesManager extends React.Component<Props> {
             (Aucune référence)
           </p>
         </div>
-      )
-    }
+      );
+    };
 
-    const listSortedItems = this.props.libraries.sort((a: LibraryReference, b: LibraryReference) => {
+    const listSortedItems:ILibraryReference[] = this.props.libraries.sort((a: ILibraryReference, b: ILibraryReference) => {
       return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
     });
-    const listItems = listSortedItems.map(reference => {
+    const listItems:JSX.Element[] = listSortedItems.map(reference => {
       return (
         <ListItem
           leftAvatar={<Avatar icon={<SvgIcons.ContentLink />} />}
@@ -54,8 +60,8 @@ export class LibrariesManager extends React.Component<Props> {
           key={reference.name}
           disabled={true}
         />
-      )
-    })
+      );
+    });
 
     return (
       <div

@@ -16,14 +16,20 @@ export interface JobRunnerState {
   isRunning: boolean;
 }
 
-const initialState = {
+const initialState: {
+  jobId: string,
+  isRunning: boolean,
+  input: undefined,
+  libraries: Array<ILibraryReference>
+} = {
   jobId: uuid.v4(),
   isRunning: false,
   input: undefined,
-  libraries: new Array<LibraryReference>()
-}
+  libraries: new Array<ILibraryReference>()
+};
 
-export function jobRunner(state: JobRunnerState = initialState, action: IAction) {
+// tslint:disable-next-line:typedef
+export function jobRunner(state: IJobRunnerState = initialState, action: IAction) {
 
   if (Actions.JobManager.select.test(action)) {
     return {
@@ -50,7 +56,7 @@ export function jobRunner(state: JobRunnerState = initialState, action: IAction)
   }
 
   if (Actions.JobRunner.error.test(action) && action.payload.jobId === state.jobId) {
-    console.log('action.payload.error', action.payload.error)
+    console.log("action.payload.error", action.payload.error);
     return {
       ...state,
       result: {},
