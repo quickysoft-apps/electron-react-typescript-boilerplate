@@ -65,7 +65,7 @@ export class JobRunner extends React.Component<IProps, IState> {
     return !!this.getInput();
   }
 
-  public render():JSX.Element {
+  public render():JSX.Element { 
 
     return (
       <div>

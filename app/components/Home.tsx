@@ -18,7 +18,7 @@ export interface IProps extends RouteComponentProps<any> {
   connectedSince: string;
   email: string;
   nickname: string;
-  version:string;
+  version: string;
 }
 
 // tslint:disable-next-line:typedef
@@ -41,9 +41,9 @@ const styles = {
 
 export class Home extends React.Component<IProps> {
 
-  public render():JSX.Element {
+  public render(): JSX.Element {
 
-    let statusText:string = "Prêt";
+    let statusText: string = "Prêt";
 
     if (!this.props.isConfigured) {
       statusText = "Configuration requise";
@@ -57,7 +57,7 @@ export class Home extends React.Component<IProps> {
       statusText = "Connexion au serveur";
     }
 
-    let statusDetails:JSX.Element = <List>
+    let statusDetails: JSX.Element = <List>
       <ListItem
         leftAvatar={<Avatar icon={<Heart status={this.props.status} />} />}
         primaryText="Statut de la connexion"
@@ -67,12 +67,12 @@ export class Home extends React.Component<IProps> {
         leftAvatar={<Avatar icon={<SvgIcons.DeviceAccessTime />} />}
         primaryText="Dernière connexion effective"
         secondaryText={this.props.connectedSince} />
-        <ListItem
+      <ListItem
         disabled={true}
         leftAvatar={<Avatar icon={<SvgIcons.NotificationNetworkCheck />} />}
         primaryText="Réponse au ping"
         secondaryText={`${this.props.pongMs} ms.`} />
-        <ListItem
+      <ListItem
         disabled={true}
         leftAvatar={<Avatar icon={<SvgIcons.ActionInfo />} />}
         primaryText="Version"

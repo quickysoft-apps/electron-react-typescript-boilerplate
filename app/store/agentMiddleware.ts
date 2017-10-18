@@ -16,8 +16,8 @@ export function agentMiddleware(): Redux.Middleware {
       client.emit(AgentEvent.CONFIGURED);
     }
 
-    if (Actions.Chat.send.test(action)) {
-      client.emit(AgentEvent.CHAT, action.payload.message, action.payload.from);
+    if (Actions.JobRunner.resultChanged.test(action)) {
+      client.emit(AgentEvent.RESULT, action.payload, '');
     }
 
     return result;
