@@ -104,7 +104,6 @@ export function jobRunner(state: IJobRunnerState = initialState, action: IAction
             console.warn("An error ocurred reading the file :" + err.message);
             return;
           }
-          // console.log("The jobId  is : " + action.payload);
           console.log("The file content is : " + data);
         });
       });

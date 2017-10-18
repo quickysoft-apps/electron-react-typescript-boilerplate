@@ -23,9 +23,7 @@ function setHistories(histories: Array<IJobHistory>, history: IJobHistory): Arra
 }
 
 export function jobHistory(state: IJobHistoryState = initialState, action: IAction): any {
-
-  if (Actions.JobManager.add.test(action)) {
-
+  if (Actions.JobRunner.start.test(action)) {
     const history: IJobHistory = {
       status: {
         jobDefinition: action.payload,
