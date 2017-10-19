@@ -2,17 +2,17 @@ import { ipcRenderer } from 'electron';
 import * as uuid from 'uuid';
 import { IAction, IActionWithPayload } from '../actions/helpers';
 import { Actions } from '../actions';
-import { LibraryReference } from '../actions/jobRunner';
+import { ILibraryReference } from '../actions/jobRunner';
 
-export interface JobRunnerState {
+export interface IJobRunnerState {
   jobId: string;
   cron?: any;
   script?: string;
   title?: string;
-  input?: Object;
-  libraries: Array<LibraryReference>;
-  result?: Object;
-  scriptError?: Object;
+  input?: object;
+  libraries: ILibraryReference[];
+  result?: object;
+  scriptError?: object;
   isRunning: boolean;
 }
 
@@ -20,13 +20,13 @@ const initialState: {
   jobId: string,
   isRunning: boolean,
   input: undefined,
-  libraries: Array<ILibraryReference>
+  libraries: ILibraryReference[]
 } = {
-  jobId: uuid.v4(),
-  isRunning: false,
-  input: undefined,
-  libraries: new Array<ILibraryReference>()
-};
+    jobId: uuid.v4(),
+    isRunning: false,
+    input: undefined,
+    libraries: new Array<ILibraryReference>()
+  };
 
 // tslint:disable-next-line:typedef
 export function jobRunner(state: IJobRunnerState = initialState, action: IAction) {
@@ -56,7 +56,6 @@ export function jobRunner(state: IJobRunnerState = initialState, action: IAction
   }
 
   if (Actions.JobRunner.error.test(action) && action.payload.jobId === state.jobId) {
-    console.log("action.payload.error", action.payload.error);
     return {
       ...state,
       result: {},
@@ -79,24 +78,24 @@ export function jobRunner(state: IJobRunnerState = initialState, action: IAction
   }
 
   if (Actions.JobRunner.stop.test(action)) {
-    ipcRenderer.send('ipc/JOB_STOP', { jobId: state.jobId })
-    return state;    
+    ipcRenderer.send('ipc/JOB_STOP', { jobId: state.jobId });
+    return state;
   }
 
   if (Actions.JobRunner.removeLibrary.test(action)) {
     const libraryName = (action as IActionWithPayload<string>).payload;
-    const libraries: Array<LibraryReference> = state.libraries.filter(x => x.name !== libraryName);
-    return {   
+    const libraries: ILibraryReference[] = state.libraries.filter(x => x.name !== libraryName);
+    return {
       ...state,
       libraries
     };
   }
 
   if (Actions.JobRunner.libraryAdded.test(action)) {
-    const libraries = new Array<LibraryReference>(...state.libraries);
-    const libraryReference = (action as IActionWithPayload<LibraryReference>).payload;
+    const libraries = new Array<ILibraryReference>(...state.libraries);
+    const libraryReference = (action as IActionWithPayload<ILibraryReference>).payload;
     libraries.push(libraryReference);
-    return {   
+    return {
       ...state,
       libraries
     };
@@ -104,4 +103,3 @@ export function jobRunner(state: IJobRunnerState = initialState, action: IAction
 
   return state;
 }
-

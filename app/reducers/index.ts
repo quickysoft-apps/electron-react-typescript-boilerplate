@@ -1,15 +1,15 @@
-import { combineReducers, Reducer } from "redux";
-import { routerReducer as routing, RouterState } from "react-router-redux";
-import { counter, CounterState } from "./counter";
-import { app, AppState } from "./app";
-import { agent, AgentState } from "./agent";
-import { chat, ChatState } from "./chat";
-import { configuration, ConfigurationState } from "./configuration";
-import { jobRunner, IJobRunnerState } from "./jobRunner";
-import { jobManager, IJobManagerState } from "./jobManager";
-import { jobHistory, IJobHistoryState } from "./jobHistory";
+import { combineReducers, Reducer } from 'redux';
+import { routerReducer as routing, RouterState } from 'react-router-redux';
+import { counter, CounterState } from './counter';
+import { app, AppState } from './app';
+import { agent, IAgentState } from './agent';
+import { chat, ChatState } from './chat';
+import { configuration, ConfigurationState } from './configuration';
+import { jobRunner, IJobRunnerState } from './jobRunner';
+import { jobManager, IJobManagerState } from './jobManager';
+import { jobHistory, IJobHistoryState } from './jobHistory';
 
-const rootReducer:Reducer<{}> = combineReducers({
+const rootReducer: Reducer<{}> = combineReducers({
   app,
   agent,
   chat,
@@ -24,7 +24,7 @@ const rootReducer:Reducer<{}> = combineReducers({
 export interface IState {
   counter: CounterState;
   app: AppState;
-  agent: AgentState;
+  agent: IAgentState;
   chat: ChatState;
   configuration: ConfigurationState;
   jobRunner: IJobRunnerState;

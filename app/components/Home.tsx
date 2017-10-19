@@ -1,12 +1,12 @@
-import * as React from "react";
-import { RouteComponentProps } from "react-router";
-import { Link } from "react-router-dom";
-import { Avatar, Dialog, FlatButton } from "material-ui";
-import { List, ListItem } from "material-ui/List";
-import * as SvgIcons from "material-ui/svg-icons";
+import * as React from 'react';
+import { RouteComponentProps } from 'react-router';
+import { Link } from 'react-router-dom';
+import { Avatar, Dialog, FlatButton } from 'material-ui';
+import { List, ListItem } from 'material-ui/List';
+import * as SvgIcons from 'material-ui/svg-icons';
 
-import { AgentStatus } from "../reducers/home";
-import { Heart } from "./Heart";
+import { AgentStatus } from '../reducers/home';
+import { Heart } from './Heart';
 
 export interface IProps extends RouteComponentProps<any> {
   loadFromSettings: VoidFunction;
@@ -21,14 +21,13 @@ export interface IProps extends RouteComponentProps<any> {
   version: string;
 }
 
-// tslint:disable-next-line:typedef
 const styles = {
   container: {
-    textAlign: "center"
+    textAlign: 'center'
   },
   statusTitle: {
     paddingBottom: 0,
-    textAlign: "center"
+    textAlign: 'center'
   },
   rowColumn: {
     paddingLeft: 0,
@@ -43,10 +42,10 @@ export class Home extends React.Component<IProps> {
 
   public render(): JSX.Element {
 
-    let statusText: string = "Prêt";
+    let statusText: string = 'Prêt';
 
     if (!this.props.isConfigured) {
-      statusText = "Configuration requise";
+      statusText = 'Configuration requise';
     }
 
     if (!this.props.isTrusted) {
@@ -54,7 +53,7 @@ export class Home extends React.Component<IProps> {
     }
 
     if (!this.props.isConnected) {
-      statusText = "Connexion au serveur";
+      statusText = 'Connexion au serveur';
     }
 
     let statusDetails: JSX.Element = <List>
@@ -83,7 +82,9 @@ export class Home extends React.Component<IProps> {
       statusDetails = <Dialog
         title="Configuration initiale requise"
         actions={[
-          <Link to="/configuration">
+          <Link
+            key="/configuration"
+            to="/configuration">
             <FlatButton
               label="Configurer"
               primary={true} />
@@ -99,9 +100,7 @@ export class Home extends React.Component<IProps> {
 
     return (
       <div>
-        <div style={styles.container}>
-
-        </div>
+        <div style={styles.container} />
         {statusDetails}
       </div >
     );

@@ -1,17 +1,17 @@
-import { connect, Dispatch } from "react-redux";
-import { bindActionCreators } from "redux";
-import * as moment from "moment";
-import { Home, IProps } from "../components/Home";
-import { AgentStatus } from "../reducers/home";
-import { IState } from "../reducers";
-import { Actions } from "../actions";
-const {app} = require("electron").remote;
+import { connect, Dispatch } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import * as moment from 'moment';
+import { Home, IProps } from '../components/Home';
+import { AgentStatus } from '../reducers/home';
+import { IState } from '../reducers';
+import { Actions } from '../actions';
+import { app } from 'electron';
 
 function mapStateToProps(state: IState): Partial<IProps> {
 
-  moment.locale("fr");
+  moment.locale('fr');
 
-  let status:AgentStatus = AgentStatus.Connecting;
+  let status: AgentStatus = AgentStatus.Connecting;
 
   if (state.agent.connected === true) {
     status = AgentStatus.Connected;

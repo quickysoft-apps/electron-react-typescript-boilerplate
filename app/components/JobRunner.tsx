@@ -14,25 +14,25 @@ interface IState {
   script: string;
   title: string;
   input: string;
-  inputError: Object | undefined;  
+  inputError: object | undefined;
 }
 
 export interface IProps extends RouteComponentProps<any> {
   addLibrary: (jobId: string) => void;
   selectLibrary: (name: string) => void;
   removeLibrary: (name: string) => void;
-  start: (job: JobDefinition) => void;
-  save: (job: JobDefinition) => void;
+  start: (job: IJobDefinition) => void;
+  save: (job: IJobDefinition) => void;
   stop: VoidFunction;
   jobId: string;
   cron: string;
-  input: Object;
+  input: object;
   isRunning: boolean;
   script: string;
-  result?: Object;
+  result?: object;
   title: string;
-  scriptError?: Object;
-  libraries: Array<ILibraryReference>;
+  scriptError?: object;
+  libraries: ILibraryReference[];
 }
 
 export class JobRunner extends React.Component<IProps, IState> {
@@ -48,24 +48,68 @@ export class JobRunner extends React.Component<IProps, IState> {
     };
   }
 
-  toJsonString(value: Object | undefined):string {
-    return JSON.stringify(value, null, "  ");
+  toJsonString(value: object | undefined): string {
+    return JSON.stringify(value, null, '  ');
   }
 
-  getInput():any {
+  getInput(): any {
     try {
       return JSON.parse(this.state.input);
     } catch (error) {
-      console.warn("Cannot use invalid input for script execution:", error);
       return undefined;
     }
   }
 
-  checkInput():boolean {
+  checkInput(): boolean {
     return !!this.getInput();
   }
 
-  public render():JSX.Element { 
+  cronChanged(e: React.FormEvent<{}>, newValue: string) {
+    this.setState({ cron: newValue });
+  }
+
+  scriptTitleChanged(e: React.FormEvent<{}>, newValue: string) {
+    this.setState({ title: newValue });
+  }
+
+  scriptEditorChanged(value: string, event?: any) {
+    this.setState({ script: value });
+  }
+
+  libraryAdded() {
+    this.props.addLibrary(this.props.jobId);
+  }
+
+  libraryDeleted(name: string) {
+    this.props.removeLibrary(name);
+  }
+
+  inputEditorChanged(value: string, event?: any) {
+    try {
+      JSON.parse(value);
+      this.setState({ inputError: undefined });
+    } catch (error) {
+      this.setState({ inputError: error });
+    }
+    this.setState({ input: value });
+  }
+
+  startClicked() {
+    this.props.start({
+      jobId: this.props.jobId,
+      script: this.state.script,
+      input: this.getInput(),
+      cron: this.state.cron,
+      title: this.state.title,
+      libraries: this.props.libraries
+    });
+  }
+
+  resultEditorChanged(value: string, event?: any) {
+    this.setState({ input: value });
+  }
+
+  public render(): JSX.Element {
 
     return (
       <div>
@@ -81,26 +125,24 @@ export class JobRunner extends React.Component<IProps, IState> {
                   floatingLabelText="Fréquence"
                   hintText="*/5 * * * * *"
                   value={this.state.cron}
-                  onChange={(e: React.FormEvent<{}>, newValue: string) => this.setState({ cron: newValue })}
+                  onChange={this.cronChanged}
                 />
                 <TextField
-                  style={{
-                    width: "100%"
-                  }}
+                  style={{ width: '100%' }}
                   name="scriptTitle"
                   floatingLabelFixed={true}
                   underlineShow={false}
                   floatingLabelText="Nom du Script"
                   hintText="exemple de script"
                   value={this.state.title}
-                  onChange={(e: React.FormEvent<{}>, newValue: string) => this.setState({ title: newValue })}
+                  onChange={this.scriptTitleChanged}
                 />
               </ToolbarGroup>
             </Toolbar>
             <Editor
               mode="csharp"
               name="script-editor"
-              onChange={(value: string, event?: any) => this.setState({ script: value })}
+              onChange={this.scriptEditorChanged}
               value={this.state.script}
               showLineNumbers={true}
             >
@@ -112,16 +154,7 @@ export class JobRunner extends React.Component<IProps, IState> {
                 <FloatingAction
                   actionIcon={<SvgIcons.AvPlayArrow />}
                   disabled={!!this.state.inputError}
-                  actionclick={() => {
-                    this.props.start({
-                      jobId: this.props.jobId,
-                      script: this.state.script,
-                      input: this.getInput(),
-                      cron: this.state.cron,
-                      title: this.state.title,
-                      libraries: this.props.libraries
-                    });
-                  }}
+                  actionclick={this.startClicked}
                 />
               }
             </Editor>
@@ -129,8 +162,8 @@ export class JobRunner extends React.Component<IProps, IState> {
           <Tab
             icon={<SvgIcons.ContentLink />}>
             <LibrariesManager
-              onAdd={() => this.props.addLibrary(this.props.jobId)}
-              onDelete={(name: string) => this.props.removeLibrary(name) }
+              onAdd={this.libraryAdded}
+              onDelete={this.libraryDeleted}
               libraries={this.props.libraries} />
           </Tab>
           <Tab
@@ -138,15 +171,7 @@ export class JobRunner extends React.Component<IProps, IState> {
             <Editor
               mode="json"
               name="input-editor"
-              onChange={(value: string, event?: any) => {
-                try {
-                  JSON.parse(value);
-                  this.setState({ inputError: undefined });
-                } catch (error) {
-                  this.setState({ inputError: error });
-                }
-                this.setState({ input: value });
-              }}
+              onChange={this.inputEditorChanged}
               value={this.state.input}
             />
           </Tab>
@@ -157,7 +182,7 @@ export class JobRunner extends React.Component<IProps, IState> {
               mode="json"
               name="result-editor"
               readOnly={true}
-              onChange={(value: string, event?: any) => this.setState({ input: value })}
+              onChange={this.resultEditorChanged}
               value={this.props.scriptError ? this.toJsonString(this.props.scriptError) : this.toJsonString(this.props.result)}
             />
           </Tab>
@@ -166,7 +191,7 @@ export class JobRunner extends React.Component<IProps, IState> {
     );
   }
 
-  componentWillUnmount():void {
+  componentWillUnmount(): void {
 
     if (!this.state.inputError) {
       const job: IJobDefinition = {
@@ -178,11 +203,7 @@ export class JobRunner extends React.Component<IProps, IState> {
         libraries: this.props.libraries
       };
       this.props.save(job);
-    } else {
-      // do not save invalid inputs
-      console.warn("Cannot save invalid input:", this.state.inputError);
     }
-
   }
 
 }

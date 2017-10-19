@@ -2,7 +2,7 @@ import { IAction, IActionWithPayload } from '../actions/helpers';
 import { Actions } from '../actions';
 import { IAgentError } from '../actions/agent';
 
-export interface AgentState {
+export interface IAgentState {
   connected?: boolean;
   connectionError?: IAgentError;
   socketError?: IAgentError;
@@ -11,7 +11,7 @@ export interface AgentState {
   connectionDate?: Date;
 }
 
-export function agent(state: AgentState = {}, action: IAction) {
+export function agent(state: IAgentState = {}, action: IAction) {
 
   if (Actions.Agent.pong.test(action)) {
     return {
@@ -37,7 +37,7 @@ export function agent(state: AgentState = {}, action: IAction) {
     return {
       ...state,
       connected: true,
-      trusted: true,      
+      trusted: true,
       socketError: undefined,
       connectionError: undefined
     };
@@ -67,4 +67,3 @@ export function agent(state: AgentState = {}, action: IAction) {
 
   return state;
 }
-

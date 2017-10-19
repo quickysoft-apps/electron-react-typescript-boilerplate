@@ -1,16 +1,15 @@
-import * as React from "react";
-import { RouteComponentProps } from "react-router";
-import { List, ListItem } from "material-ui/List";
-import { Avatar } from "material-ui";
-import * as SvgIcons from "material-ui/svg-icons";
-import * as Colors from "material-ui/styles/colors";
-import { FloatingAction } from "./FloatingAction";
-import { ILibraryReference } from "../actions/jobRunner";
+import * as React from 'react';
+import { List, ListItem } from 'material-ui/List';
+import { Avatar } from 'material-ui';
+import * as SvgIcons from 'material-ui/svg-icons';
+import * as Colors from 'material-ui/styles/colors';
+import { FloatingAction } from './FloatingAction';
+import { ILibraryReference } from '../actions/jobRunner';
 
-export interface Props {
+export interface IProps {
   onAdd: () => void;
   onDelete: (name: string) => void;
-  libraries: Array<LibraryReference>;
+  libraries: ILibraryReference[];
 }
 
 export class LibrariesManager extends React.Component<IProps> {
@@ -19,13 +18,12 @@ export class LibrariesManager extends React.Component<IProps> {
     super(props);
   }
 
-  public add():void {
-    this.props.addReference(this.props.jobId);
+  libraryItemClick(event: React.SyntheticEvent<HTMLElement>, reference: ILibraryReference) {
+    this.props.onDelete(reference.name);
   }
 
-  public render():JSX.Element {
+  public render() {
 
-    // tslint:disable-next-line:typedef
     const renderEmpty = () => {
       return (
         <div
@@ -43,18 +41,16 @@ export class LibrariesManager extends React.Component<IProps> {
       );
     };
 
-    const listSortedItems:ILibraryReference[] = this.props.libraries.sort((a: ILibraryReference, b: ILibraryReference) => {
+    const listSortedItems = this.props.libraries.sort((a: ILibraryReference, b: ILibraryReference) => {
       return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
     });
-    const listItems:JSX.Element[] = listSortedItems.map(reference => {
+    const listItems = listSortedItems.map(reference => {
       return (
         <ListItem
           leftAvatar={<Avatar icon={<SvgIcons.ContentLink />} />}
           rightIconButton={<SvgIcons.ActionDelete
-            style={{
-              top: 16
-            }}
-            onClick={() => this.props.onDelete(reference.name)} />
+            style={{ top: 16 }}
+            onClick={this.libraryItemClick.bind(this, reference)} />
           }
           primaryText={reference.name}
           key={reference.name}
@@ -67,7 +63,7 @@ export class LibrariesManager extends React.Component<IProps> {
       <div
         style={{
           height: 460,
-          position: "absolute",
+          position: 'absolute',
           width: '100%'
         }}
       >
