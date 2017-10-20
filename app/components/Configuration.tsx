@@ -1,4 +1,5 @@
 import * as React from 'react';
+import autobind from 'autobind-decorator';
 import { RouteComponentProps } from 'react-router';
 import { RaisedButton } from 'material-ui';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
@@ -42,6 +43,26 @@ export class Configuration extends React.Component<IProps, IState> {
       (value: string): boolean => value.length === 0 || !!value.match(/^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/));
   }
 
+  @autobind
+  emailChanged(e: React.FormEvent<any>, newValue: string): void {
+    this.setState({ email: newValue });
+  }
+
+  @autobind
+  nicknameChanged(e: React.FormEvent<{}>, newValue: string): void {
+    this.setState({ nickname: newValue });
+  }
+
+  @autobind
+  submit(): void {
+    const nickname = this.state.nickname ? this.state.nickname.trim() : '';
+    this.props.save({
+      email: this.state.email,
+      nickname: nickname.length === 0 ? this.state.initialNickName : nickname
+    });
+    this.props.history.goBack();
+  }
+
   public render(): JSX.Element {
 
     return (
@@ -55,15 +76,7 @@ export class Configuration extends React.Component<IProps, IState> {
         <ValidatorForm
           // tslint:disable-next-line:jsx-no-string-ref
           ref="form"
-          // tslint:disable-next-line:jsx-no-lambda
-          onSubmit={(): void => {
-            const nickname = this.state.nickname ? this.state.nickname.trim() : '';
-            this.props.save({
-              email: this.state.email,
-              nickname: nickname.length === 0 ? this.state.initialNickName : nickname
-            });
-            this.props.history.goBack();
-          }}>
+          onSubmit={this.submit}>
           <TextValidator
             style={{ textAlign: 'left' }}
             name="email"
@@ -72,8 +85,8 @@ export class Configuration extends React.Component<IProps, IState> {
             value={this.state.email}
             validators={['required', 'isEmail']}
             errorMessages={['Ce champ est obligatoire', 'Ça ne ressemble pas à une adresse email :/']}
-            // tslint:disable-next-line:jsx-no-lambda
-            onChange={(e: React.FormEvent<any>, newValue: string): void => this.setState({ email: newValue })}
+            // tslint:disable-next-line:jsx-no-bind
+            onChange={this.emailChanged}
           />
           <TextValidator
             style={{ textAlign: 'left' }}
@@ -84,8 +97,8 @@ export class Configuration extends React.Component<IProps, IState> {
             value={this.state.nickname}
             validators={['isValidNickname']}
             errorMessages={['Pas de caractères spéciaux et moins 20 caractères !']}
-            // tslint:disable-next-line:jsx-no-lambda
-            onChange={(e: React.FormEvent<{}>, newValue: string): void => this.setState({ nickname: newValue })}
+            // tslint:disable-next-line:jsx-no-bind
+            onChange={this.nicknameChanged}
           />
           <br />
           <RaisedButton
