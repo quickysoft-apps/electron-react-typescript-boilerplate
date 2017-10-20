@@ -5,7 +5,7 @@ import { Home, IProps } from '../components/Home';
 import { AgentStatus } from '../reducers/home';
 import { IState } from '../reducers';
 import { Actions } from '../actions';
-import { app } from 'electron';
+import { remote } from 'electron';
 
 function mapStateToProps(state: IState): Partial<IProps> {
 
@@ -30,7 +30,7 @@ function mapStateToProps(state: IState): Partial<IProps> {
     isConfigured: !!state.configuration.email,
     nickname: state.configuration.nickname,
     email: state.configuration.email,
-    version: app.getVersion()
+    version: remote.app.getVersion()
   };
 }
 

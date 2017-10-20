@@ -25,17 +25,17 @@ export class Heart extends React.Component<IProps, IState> {
     };
   }
 
-  onClick(): void {
+  onClick = (): void => {
     if (this.props.onClick) {
       this.props.onClick();
     }
   }
 
-  onMouseEnter(): void {
+  onMouseEnter = (): void => {
     this.toggleHover();
   }
 
-  onMouseLeave(): void {
+  onMouseLeave = (): void => {
     this.toggleHover();
   }
 

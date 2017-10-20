@@ -46,14 +46,6 @@ export class Configuration extends React.Component<IProps, IState> {
     this.props.history.goBack();
   }
 
-  emailChanged(e: React.FormEvent<any>, newValue: string): void {
-    this.setState({ email: newValue });
-  }
-
-  nicknameChanged(e: React.FormEvent<{}>, newValue: string): void {
-    this.setState({ nickname: newValue });
-  }
-
   componentWillMount(): void {
     ValidatorForm.addValidationRule('isValidNickname',
       (value: string): boolean => value.length === 0 || !!value.match(/^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/));
@@ -81,7 +73,8 @@ export class Configuration extends React.Component<IProps, IState> {
             value={this.state.email}
             validators={['required', 'isEmail']}
             errorMessages={['Ce champ est obligatoire', 'Ça ne ressemble pas à une adresse email :/']}
-            onChange={this.emailChanged}
+            // tslint:disable-next-line:jsx-no-lambda
+            onChange={(e: React.FormEvent<any>, newValue: string): void => this.setState({ email: newValue })}
           />
           <TextValidator
             style={{ textAlign: 'left' }}
@@ -92,7 +85,8 @@ export class Configuration extends React.Component<IProps, IState> {
             value={this.state.nickname}
             validators={['isValidNickname']}
             errorMessages={['Pas de caractères spéciaux et moins 20 caractères !']}
-            onChange={this.nicknameChanged}
+            // tslint:disable-next-line:jsx-no-lambda
+            onChange={(e: React.FormEvent<{}>, newValue: string): void => this.setState({ nickname: newValue })}
           />
           <br />
           <RaisedButton

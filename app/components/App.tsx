@@ -29,25 +29,25 @@ export class App extends React.Component<IProps> {
     }
   }
 
-  navigationMenuClick(event: React.SyntheticEvent<any>): void {
+  navigationMenuClick = (event: React.SyntheticEvent<any>): void => {
     this.props.toggleMenu(!this.props.isMenuActive);
   }
 
-  drawerRequestChanged(open: boolean, reason: string): void {
+  drawerRequestChanged = (open: boolean, reason: string): void => {
     this.props.toggleMenu(open);
   }
 
-  configurationMenuItemClick(event: React.SyntheticEvent<any>): void {
+  configurationMenuItemClick = (event: React.SyntheticEvent<any>): void => {
     this.props.toggleMenu(false);
     this.props.push('/configuration');
   }
 
-  tasksMenuItemClick(event: React.SyntheticEvent<any>): void {
+  tasksMenuItemClick = (event: React.SyntheticEvent<any>): void => {
     this.props.toggleMenu(false);
     this.props.push('/jobManager');
   }
 
-  taskHistoryMenuItemClick(event: React.SyntheticEvent<any>): void {
+  taskHistoryMenuItemClick = (event: React.SyntheticEvent<any>): void => {
     this.props.toggleMenu(false);
     this.props.push('/jobHistory');
   }

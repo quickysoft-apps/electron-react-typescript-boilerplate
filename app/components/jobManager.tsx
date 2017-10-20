@@ -80,10 +80,10 @@ export class JobManager extends React.Component<IProps> {
       );
     };
 
-    const listSortedItems: IJobStatus[] = this.props.statuses.sort((a: IJobStatus, b: IJobStatus) => {
+    const listSortedItems = this.props.statuses.sort((a: IJobStatus, b: IJobStatus) => {
       return (a.jobDefinition.title > b.jobDefinition.title) ? 1 : ((b.jobDefinition.title > a.jobDefinition.title) ? -1 : 0);
     });
-    const listItems: JSX.Element[] = listSortedItems.map(status => {
+    const listItems = listSortedItems.map(status => {
       return (
         <ListItem
           leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm />} color={status.hasError ? red500 : status.isRunning ? green500 : grey500} />}
