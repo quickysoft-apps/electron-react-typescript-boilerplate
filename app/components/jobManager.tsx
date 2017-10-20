@@ -90,7 +90,7 @@ export class JobManager extends React.Component<IProps> {
           primaryText={status.jobDefinition.title ? status.jobDefinition.title : status.jobDefinition.jobId}
           secondaryText={status.jobDefinition.cron}
           key={status.jobDefinition.jobId}
-          onClick={this.jobItemClick(this, status)} />
+          onClick={this.jobItemClick.bind(this, status)} />
       );
     });
 
