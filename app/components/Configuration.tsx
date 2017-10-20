@@ -37,15 +37,6 @@ export class Configuration extends React.Component<IProps, IState> {
     };
   }
 
-  submit(): void {
-    const nickname: string = this.state.nickname.trim();
-    this.props.save({
-      email: this.state.email,
-      nickname: nickname.length === 0 ? this.state.initialNickName : nickname
-    });
-    this.props.history.goBack();
-  }
-
   componentWillMount(): void {
     ValidatorForm.addValidationRule('isValidNickname',
       (value: string): boolean => value.length === 0 || !!value.match(/^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/));
@@ -64,7 +55,15 @@ export class Configuration extends React.Component<IProps, IState> {
         <ValidatorForm
           // tslint:disable-next-line:jsx-no-string-ref
           ref="form"
-          onSubmit={this.submit}>
+          // tslint:disable-next-line:jsx-no-lambda
+          onSubmit={(): void => {
+            const nickname = this.state.nickname ? this.state.nickname.trim() : '';
+            this.props.save({
+              email: this.state.email,
+              nickname: nickname.length === 0 ? this.state.initialNickName : nickname
+            });
+            this.props.history.goBack();
+          }}>
           <TextValidator
             style={{ textAlign: 'left' }}
             name="email"
