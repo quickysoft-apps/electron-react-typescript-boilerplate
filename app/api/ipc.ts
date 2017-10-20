@@ -1,19 +1,19 @@
-
+export type ListenerHandler = (event: any, eventArg: any) => void;
 
 export class Ipc {
 
-  private _listeners: Map<string, Function> = new Map<string, Function>();
+  private _listeners: Map<string, ListenerHandler> = new Map<string, ListenerHandler>();
   private _ipc: Electron.IpcRenderer;
 
   constructor(ipc: Electron.IpcRenderer) {
     this._ipc = ipc;
   }
 
-  addListener(jobId: string, event: string, listener: Function): void {
+  addListener(jobId: string, event: string, listener: ListenerHandler): void {
     const key = `${jobId}_${event}`;
     if (!this._listeners.has(key)) {
       this._listeners.set(key, listener);
-      this._ipc.on(event, listener)
+      this._ipc.on(event, listener);
     }
   }
 

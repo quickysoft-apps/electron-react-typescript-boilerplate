@@ -1,48 +1,65 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import { RaisedButton } from 'material-ui'
+import { RaisedButton } from 'material-ui';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
-import { AgentConfiguration } from '../actions/configuration';
+import { IAgentConfiguration } from '../actions/configuration';
 
-interface State {
+interface IState {
   email: string;
   nickname: string;
   initialNickName: string;
 }
 
-export interface Props extends RouteComponentProps<any> {
-  save: (configuration: AgentConfiguration) => void;
+export interface IProps extends RouteComponentProps<any> {
+  save: (configuration: IAgentConfiguration) => void;
   email: string;
   nickname: string;
 }
 
-export class Configuration extends React.Component<Props, State> {
+export class Configuration extends React.Component<IProps, IState> {
 
-  static styles = {
+  static styles: React.CSSProperties = {
     container: {
-      textAlign: "center",
+      textAlign: 'center',
       margin: 28
     },
     paragraph: {
-      textAlign: "left"
+      textAlign: 'left'
     }
   };
 
-  constructor(props: Props) {
-    super(props)
+  constructor(props: IProps) {
+    super(props);
     this.state = {
       email: props.email,
       nickname: props.nickname,
       initialNickName: props.nickname
-    }
+    };
   }
 
-  componentWillMount() {
+  submit(): void {
+    const nickname: string = this.state.nickname.trim();
+    this.props.save({
+      email: this.state.email,
+      nickname: nickname.length === 0 ? this.state.initialNickName : nickname
+    });
+    this.props.history.goBack();
+  }
+
+  emailChanged(e: React.FormEvent<any>, newValue: string): void {
+    this.setState({ email: newValue });
+  }
+
+  nicknameChanged(e: React.FormEvent<{}>, newValue: string): void {
+    this.setState({ nickname: newValue });
+  }
+
+  componentWillMount(): void {
     ValidatorForm.addValidationRule('isValidNickname',
       (value: string): boolean => value.length === 0 || !!value.match(/^[^±!@£$%^&*_+§¡€#¢§¶•ªº«\\/<>?:;|=.,]{1,20}$/));
   }
 
-  public render() {
+  public render(): JSX.Element {
 
     return (
       <div style={Configuration.styles.container}>
@@ -53,15 +70,9 @@ export class Configuration extends React.Component<Props, State> {
         <p style={Configuration.styles.paragraph}>Si vous le souhaitez, vous pouvez identifier
           cet agent avec un nom particulier pour le distinguer des autres agents que vous possédez déjà.</p>
         <ValidatorForm
+          // tslint:disable-next-line:jsx-no-string-ref
           ref="form"
-          onSubmit={() => {
-            const nickname: string = this.state.nickname.trim();
-            this.props.save({
-              email: this.state.email,
-              nickname: nickname.length === 0 ? this.state.initialNickName : nickname
-            })
-            this.props.history.goBack();
-          }}>
+          onSubmit={this.submit}>
           <TextValidator
             style={{ textAlign: 'left' }}
             name="email"
@@ -69,8 +80,8 @@ export class Configuration extends React.Component<Props, State> {
             floatingLabelText="Email de contact"
             value={this.state.email}
             validators={['required', 'isEmail']}
-            errorMessages={['Ce champ est obligatoire', "Ça ne ressemble pas à une adresse email :/"]}
-            onChange={(e: React.FormEvent<{}>, newValue: string) => this.setState({ email: newValue })}
+            errorMessages={['Ce champ est obligatoire', 'Ça ne ressemble pas à une adresse email :/']}
+            onChange={this.emailChanged}
           />
           <TextValidator
             style={{ textAlign: 'left' }}
@@ -80,8 +91,8 @@ export class Configuration extends React.Component<Props, State> {
             floatingLabelFixed={true}
             value={this.state.nickname}
             validators={['isValidNickname']}
-            errorMessages={["Pas de caractères spéciaux et moins 20 caractères !"]}
-            onChange={(e: React.FormEvent<{}>, newValue: string) => this.setState({ nickname: newValue })}
+            errorMessages={['Pas de caractères spéciaux et moins 20 caractères !']}
+            onChange={this.nicknameChanged}
           />
           <br />
           <RaisedButton

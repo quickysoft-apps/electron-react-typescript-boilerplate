@@ -1,14 +1,14 @@
 import { IAction } from '../actions/helpers';
 import { Actions } from '../actions';
-import { AgentMessage } from '../api/agent'
+import { IAgentMessage } from '../api/agent';
 
 export class ChatHistory {
 
-  readonly history: Set<AgentMessage> = new Set<AgentMessage>();
+  readonly history: Set<IAgentMessage> = new Set<IAgentMessage>();
 
-  constructor(chatHistory?: ChatHistory, chatMessage?: AgentMessage) {
+  constructor(chatHistory?: ChatHistory, chatMessage?: IAgentMessage) {
     if (chatHistory !== undefined) {
-      this.history = new Set<AgentMessage>(chatHistory.history);
+      this.history = new Set<IAgentMessage>(chatHistory.history);
     }
     if (chatMessage !== undefined) {
       this.history.add(chatMessage);
@@ -17,20 +17,21 @@ export class ChatHistory {
 
 }
 
-interface State {  
+interface IState {
   chat: ChatHistory;
 }
 
-export interface ChatState extends Partial<State> { }
+export interface IChatState extends Partial<IState> { }
 
-export function chat(state: ChatState = {}, action: IAction) {
-  
-  if (Actions.Chat.receive.test(action)) {    
-    const chatMessage: AgentMessage = {      
+export function chat(state: IChatState = {}, action: IAction): IChatState {
+
+  if (Actions.Chat.receive.test(action)) {
+    const chatMessage: IAgentMessage = {
       date: new Date(Date.now()),
       nickname: action.payload.nickname,
       from: action.payload.from,
       to: action.payload.to,
+      email: action.payload.email,
       message: action.payload.message
     };
 
@@ -40,4 +41,3 @@ export function chat(state: ChatState = {}, action: IAction) {
 
   return state;
 }
-

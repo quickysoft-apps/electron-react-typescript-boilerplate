@@ -1,8 +1,8 @@
-import { bindActionCreators } from "redux";
-import { connect, Dispatch } from "react-redux";
-import { JobHistory, IProps } from "../components/JobHistory";
-import { Actions } from "../actions";
-import { IState } from "../reducers";
+import { bindActionCreators } from 'redux';
+import { connect, Dispatch } from 'react-redux';
+import { JobHistory, IProps } from '../components/JobHistory';
+import { Actions } from '../actions';
+import { IState } from '../reducers';
 
 function mapStateToProps(state: IState): Partial<IProps> {
   return {

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FloatingActionButton } from 'material-ui';
 
-export interface Props {
+export interface IProps {
   actionIcon: JSX.Element;
   actionclick: VoidFunction;
   secondary?: boolean;
@@ -9,9 +9,15 @@ export interface Props {
   disabled?: boolean;
 }
 
-export class FloatingAction extends React.Component<Props> {
+export class FloatingAction extends React.Component<IProps> {
 
-  public render() {
+  buttonClick(): void {
+    if (this.props.actionclick) {
+      this.props.actionclick();
+    }
+  }
+
+  public render(): JSX.Element {
     return (
       <div
         style={{
@@ -19,13 +25,13 @@ export class FloatingAction extends React.Component<Props> {
           left: '83%',
           bottom: 24,
           textAlign: 'right'
-        }}>        
+        }}>
         {this.props.actionIcon ?
-          <FloatingActionButton    
-            type={this.props.type}  
-            disabled={this.props.disabled}      
-            secondary={this.props.secondary}            
-            onClick={() => this.props.actionclick ? this.props.actionclick() : () => { }}>
+          <FloatingActionButton
+            type={this.props.type}
+            disabled={this.props.disabled}
+            secondary={this.props.secondary}
+            onClick={this.buttonClick}>
             {this.props.actionIcon}
           </FloatingActionButton> : undefined}
       </div>

@@ -2,13 +2,13 @@ import { IAction, IActionWithPayload } from '../actions/helpers';
 import { Actions } from '../actions';
 import { LOCATION_CHANGE, LocationChangeAction } from 'react-router-redux';
 
-interface State {
+interface IState {
   isVisible: boolean;
   isMenuActive: boolean;
   navigationHistory: string[];
 }
 
-export interface AppState extends State { }
+export interface IAppState extends IState { }
 
 const initialState = {
   isVisible: false,
@@ -16,7 +16,7 @@ const initialState = {
   navigationHistory: ['/']
 };
 
-export function app(state: AppState = initialState, action: IAction) {
+export function app(state: IAppState = initialState, action: IAction): IAppState {
 
   if (action.type === LOCATION_CHANGE) {
     const locationChangeAction = action as LocationChangeAction;
@@ -27,7 +27,7 @@ export function app(state: AppState = initialState, action: IAction) {
       return {
         ...state,
         navigationHistory
-      }
+      };
     }
   }
 
@@ -37,7 +37,7 @@ export function app(state: AppState = initialState, action: IAction) {
       return {
         ...state,
         navigationHistory
-      }
+      };
     }
   }
 
@@ -67,4 +67,3 @@ export function app(state: AppState = initialState, action: IAction) {
 
   return state;
 }
-

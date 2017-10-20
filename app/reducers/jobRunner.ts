@@ -83,8 +83,8 @@ export function jobRunner(state: IJobRunnerState = initialState, action: IAction
   }
 
   if (Actions.JobRunner.removeLibrary.test(action)) {
-    const libraryName = (action as IActionWithPayload<string>).payload;
-    const libraries: ILibraryReference[] = state.libraries.filter(x => x.name !== libraryName);
+    const libraryName: string = (action as IActionWithPayload<string>).payload;
+    const libraries = state.libraries.filter(x => x.name !== libraryName);
     return {
       ...state,
       libraries

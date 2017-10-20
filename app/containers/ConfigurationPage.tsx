@@ -1,17 +1,17 @@
-import { connect, Dispatch } from "react-redux";
-import { bindActionCreators } from "redux";
-import { Configuration, Props } from "../components/Configuration";
-import { IState } from "../reducers";
-import { Actions } from "../actions";
+import { connect, Dispatch } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Configuration, IProps } from '../components/Configuration';
+import { IState } from '../reducers';
+import { Actions } from '../actions';
 
-function mapStateToProps(state: IState): Partial<Props> {
+function mapStateToProps(state: IState): Partial<IProps> {
   return {
     email: state.configuration.email,
     nickname: state.configuration.nickname
   };
 }
 
-function mapDispatchToProps(dispatch: Dispatch<IState>): Partial<Props> {
+function mapDispatchToProps(dispatch: Dispatch<IState>): Partial<IProps> {
   return bindActionCreators(Actions.Configuration as any, dispatch);
 }
 

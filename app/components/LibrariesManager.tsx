@@ -18,13 +18,13 @@ export class LibrariesManager extends React.Component<IProps> {
     super(props);
   }
 
-  libraryItemClick(event: React.SyntheticEvent<HTMLElement>, reference: ILibraryReference) {
+  libraryItemClick(event: React.SyntheticEvent<any>, reference: ILibraryReference): void {
     this.props.onDelete(reference.name);
   }
 
-  public render() {
+  public render(): JSX.Element {
 
-    const renderEmpty = () => {
+    const renderEmpty = (): JSX.Element => {
       return (
         <div
           style={{
@@ -44,7 +44,7 @@ export class LibrariesManager extends React.Component<IProps> {
     const listSortedItems = this.props.libraries.sort((a: ILibraryReference, b: ILibraryReference) => {
       return (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0);
     });
-    const listItems = listSortedItems.map(reference => {
+    const listItems: JSX.Element[] = listSortedItems.map((reference: ILibraryReference) => {
       return (
         <ListItem
           leftAvatar={<Avatar icon={<SvgIcons.ContentLink />} />}

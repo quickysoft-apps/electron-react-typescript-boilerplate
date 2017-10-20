@@ -1,16 +1,12 @@
-import * as Counter from "./counter";
-import * as App from "./app";
-import * as Agent from "./agent";
-import * as Chat from "./chat";
-import * as Configuration from "./configuration";
-import * as JobRunner from "./jobRunner";
-import * as JobManager from "./jobManager";
-import * as JobHistory from "./jobHistory";
+import * as App from './app';
+import * as Agent from './agent';
+import * as Chat from './chat';
+import * as Configuration from './configuration';
+import * as JobRunner from './jobRunner';
+import * as JobManager from './jobManager';
+import * as JobHistory from './jobHistory';
 
-
-// tslint:disable-next-line:typedef
 export const Actions = {
-  Counter,
   App,
   Agent,
   Chat,

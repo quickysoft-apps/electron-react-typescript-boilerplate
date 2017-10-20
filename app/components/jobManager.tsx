@@ -1,19 +1,19 @@
-import * as React from "react";
-import { RouteComponentProps } from "react-router";
-import * as uuid from "uuid";
-import { List, ListItem } from "material-ui/List";
-import { Avatar } from "material-ui";
-import * as SvgIcons from "material-ui/svg-icons";
-import * as Colors from "material-ui/styles/colors";
-import { FloatingAction } from "./FloatingAction";
-import { IJobDefinition, ILibraryReference } from "../actions/jobRunner";
-import { IJobStatus } from "../actions/jobManager";
-import { green500, red500, grey500 } from "material-ui/styles/colors";
+import * as React from 'react';
+import { RouteComponentProps } from 'react-router';
+import * as uuid from 'uuid';
+import { List, ListItem } from 'material-ui/List';
+import { Avatar } from 'material-ui';
+import * as SvgIcons from 'material-ui/svg-icons';
+import * as Colors from 'material-ui/styles/colors';
+import { FloatingAction } from './FloatingAction';
+import { IJobDefinition, ILibraryReference } from '../actions/jobRunner';
+import { IJobStatus } from '../actions/jobManager';
+import { green500, red500, grey500 } from 'material-ui/styles/colors';
 
 export interface IProps extends RouteComponentProps<any> {
   add: (job: IJobDefinition) => void;
   select: (status: IJobStatus) => void;
-  statuses: Array<IJobStatus>;
+  statuses: IJobStatus[];
 }
 
 export class JobManager extends React.Component<IProps> {
@@ -22,11 +22,16 @@ export class JobManager extends React.Component<IProps> {
     super(props);
   }
 
-  addJob = () => {
+  jobItemClick(status: IJobStatus): void {
+    this.props.select(status);
+    this.props.history.push('/jobRunner');
+  }
+
+  addJob = (): void => {
     const jobDefinition: IJobDefinition = {
       jobId: uuid.v4(),
-      title: "exemple de script",
-      cron: "*/5 * * * * *",
+      title: 'exemple de script',
+      cron: '*/5 * * * * *',
       input: undefined,
       libraries: new Array<ILibraryReference>(),
       script: `
@@ -54,17 +59,16 @@ export class JobManager extends React.Component<IProps> {
     };
     this.props.add(jobDefinition);
     this.props.select({ jobDefinition, isRunning: false, hasError: false });
-    this.props.history.push("/jobRunner");
+    this.props.history.push('/jobRunner');
   }
 
-  public render():JSX.Element {
+  public render(): JSX.Element {
 
-    // tslint:disable-next-line:typedef
-    const renderEmpty = () => {
+    const renderEmpty = (): JSX.Element => {
       return (
         <div
           style={{
-            textAlign: "left",
+            textAlign: 'left',
             margin: 16
           }}>
           <p style={{
@@ -76,20 +80,17 @@ export class JobManager extends React.Component<IProps> {
       );
     };
 
-    const listSortedItems:IJobStatus[] = this.props.statuses.sort((a: IJobStatus, b: IJobStatus) => {
+    const listSortedItems: IJobStatus[] = this.props.statuses.sort((a: IJobStatus, b: IJobStatus) => {
       return (a.jobDefinition.title > b.jobDefinition.title) ? 1 : ((b.jobDefinition.title > a.jobDefinition.title) ? -1 : 0);
     });
-    const listItems:JSX.Element[] = listSortedItems.map(status => {
+    const listItems: JSX.Element[] = listSortedItems.map(status => {
       return (
         <ListItem
           leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm />} color={status.hasError ? red500 : status.isRunning ? green500 : grey500} />}
           primaryText={status.jobDefinition.title ? status.jobDefinition.title : status.jobDefinition.jobId}
           secondaryText={status.jobDefinition.cron}
           key={status.jobDefinition.jobId}
-          onClick={() => {
-            this.props.select(status);
-            this.props.history.push("/jobRunner");
-          }} />
+          onClick={this.jobItemClick(this, status)} />
       );
     });
 

@@ -6,7 +6,9 @@ import { agentMiddleware, listenAgentServer } from './agentMiddleware';
 import { createLogger } from 'redux-logger';
 import rootReducer from '../reducers';
 
-import * as counterActions from '../actions/counter';
+import { Actions } from '../actions';
+
+import { Store } from 'redux';
 
 declare const window: Window & {
   __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?(a: any): void;
@@ -18,11 +20,18 @@ declare const module: NodeModule & {
   }
 };
 
-const actionCreators = Object.assign({}, counterActions, {
-  push
-});
+const actionCreators = Object.assign({},
+  Actions.Agent,
+  Actions.App,
+  Actions.Chat,
+  Actions.Configuration,
+  Actions.JobHistory,
+  Actions.JobManager,
+  Actions.JobRunner, {
+    push
+  });
 
-const logger = (<any>createLogger)({
+const logger = (createLogger as any)({
   level: 'info',
   collapsed: true
 });
@@ -41,12 +50,12 @@ const composeEnhancers: typeof compose = window.__REDUX_DEVTOOLS_EXTENSION_COMPO
   compose;
 /* eslint-enable no-underscore-dangle */
 const enhancer = composeEnhancers(
-  applyMiddleware(thunk, router, logger, agent)  
+  applyMiddleware(thunk, router, logger, agent)
 );
 
 export = {
   history,
-  configureStore(initialState: Object | void) {
+  configureStore(initialState: object | void): Store<void | object> {
     const store = createStore(rootReducer, initialState, enhancer);
 
     listenAgentServer(store);

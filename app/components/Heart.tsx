@@ -1,35 +1,49 @@
 import * as React from 'react';
 import * as Colors from 'material-ui/styles/colors';
-//import * as Snap from 'snapsvg';
+// tslint:disable-next-line:no-var-requires
 const Snap = require(`imports-loader?this=>window,fix=>module.exports=0!snapsvg/dist/snap.svg.js`);
 
-import { AgentStatus } from '../reducers/home'
+import { AgentStatus } from '../reducers/home';
 
-interface Props {
-  onClick?: VoidFunction,
-  status: AgentStatus,  
+interface IProps {
+  onClick?: VoidFunction;
+  status: AgentStatus;
   width?: number;
   height?: number;
 }
 
-interface State {
+interface IState {
   hover: boolean;
 }
 
-export class Heart extends React.Component<Props, State> {
+export class Heart extends React.Component<IProps, IState> {
 
-  public constructor(props: Props) {
+  public constructor(props: IProps) {
     super(props);
-    this.state = { 
-      hover: false 
+    this.state = {
+      hover: false
     };
   }
 
-  public componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
+  onClick(): void {
+    if (this.props.onClick) {
+      this.props.onClick();
+    }
+  }
+
+  onMouseEnter(): void {
+    this.toggleHover();
+  }
+
+  onMouseLeave(): void {
+    this.toggleHover();
+  }
+
+  public componentDidUpdate(prevProps: Readonly<IProps>, prevState: Readonly<IState>): void {
     this.beat();
   }
 
-  public render() {
+  public render(): JSX.Element {
 
     const styles = {
       connecting: {
@@ -50,7 +64,7 @@ export class Heart extends React.Component<Props, State> {
       icon: {
         width: this.props.width ? this.props.width : 24,
         height: this.props.height ? this.props.height : 24,
-        transition: "fill 0.5s ease",
+        transition: 'fill 0.5s ease',
         zIndex: 9999
       }
     };
@@ -72,16 +86,16 @@ export class Heart extends React.Component<Props, State> {
         break;
     }
 
-    const iconStyle = { ...styles.icon, ...statusStyle }
+    const iconStyle = { ...styles.icon, ...statusStyle };
 
     return (
       <div>
         <svg
-          id='svg'
+          id="svg"
           style={iconStyle}
-          onClick={e => this.props.onClick ? this.props.onClick() : console.log(e)}
-          onMouseEnter={e => this.toggleHover()}
-          onMouseLeave={e => this.toggleHover()}
+          onClick={this.onClick}
+          onMouseEnter={this.onMouseEnter}
+          onMouseLeave={this.onMouseLeave}
           viewBox="0 0 24 24" >
           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
         </svg>
@@ -90,13 +104,13 @@ export class Heart extends React.Component<Props, State> {
     );
   }
 
-  private toggleHover() {
+  private toggleHover(): void {
     if (this.props.status === AgentStatus.Configured) {
-      this.setState({ hover: !this.state.hover })
+      this.setState({ hover: !this.state.hover });
     }
   }
 
-  private beat() {
+  private beat(): void {
     const svg = Snap('#svg');
     const path = svg.select('path');
     const fullScale = new Snap.Matrix();

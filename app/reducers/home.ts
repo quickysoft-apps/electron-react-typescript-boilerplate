@@ -7,10 +7,10 @@ export enum AgentStatus {
   Configured
 }
 
-export interface HomeState {
+export interface IHomeState {
   status: AgentStatus;
 }
 
-export function home(state: HomeState = { status: AgentStatus.Connecting }, action: IAction) {
+export function home(state: IHomeState = { status: AgentStatus.Connecting }, action: IAction): IHomeState {
   return state;
 }

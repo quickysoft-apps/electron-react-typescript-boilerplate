@@ -1,14 +1,17 @@
 import * as Redux from 'redux';
 import { IActionWithPayload } from '../actions/helpers';
-import { Agent, AgentMessage, AgentEvent } from '../api/agent';
+import { Agent, IAgentMessage, AgentEvent } from '../api/agent';
 import { Actions } from '../actions';
 
 const client: Agent = new Agent();
 
-export function agentMiddleware(): Redux.Middleware {
-  return (api: Redux.MiddlewareAPI<any>) => (next: Redux.Dispatch<any>) => <A extends IActionWithPayload<any>>(action: A) => {
+type DispatchWithPayloadFunction<P> = <A extends IActionWithPayload<P>>(actionWithPayload: A) => A;
+type DispatchFunction<P> = (next: Redux.Dispatch<P>) => DispatchWithPayloadFunction<P>;
 
-    const result = next(action);
+export function agentMiddleware(): Redux.Middleware {
+  return <P>(api: Redux.MiddlewareAPI<P>): DispatchFunction<P> => (next: Redux.Dispatch<any>): DispatchWithPayloadFunction<P> => <A extends IActionWithPayload<any>>(action: A): A => {
+
+    const result: A = next(action);
 
     if (Actions.Configuration.save.test(action)) {
       client.configuration.nickname = action.payload.nickname;
@@ -24,7 +27,7 @@ export function agentMiddleware(): Redux.Middleware {
   };
 }
 
-export function listenAgentServer(store: any) {
+export function listenAgentServer(store: any): void {
 
   client.onConnected.subscribe(() => {
     store.dispatch(Actions.Agent.notifySuccessfulConnection());
@@ -42,7 +45,7 @@ export function listenAgentServer(store: any) {
     store.dispatch(Actions.Agent.pong(ms));
   });
 
-  client.onReady.subscribe((agent: Agent, message: AgentMessage) => {
+  client.onReady.subscribe((agent: Agent, message: IAgentMessage) => {
     store.dispatch(Actions.Agent.notifyReadiness(message));
     store.dispatch(Actions.Configuration.save({
       ...store.getState().configuration,

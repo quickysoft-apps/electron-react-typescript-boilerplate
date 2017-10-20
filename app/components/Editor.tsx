@@ -4,7 +4,7 @@ import 'brace/mode/csharp';
 import 'brace/mode/json';
 import 'brace/theme/monokai';
 
-export interface Props {
+export interface IProps {
   name?: string;
   onChange?: (value: string, event?: any) => void;
   mode?: string;
@@ -16,13 +16,13 @@ export interface Props {
 
 const style: React.CSSProperties = {
   height: 404,
-  position: "absolute",
+  position: 'absolute',
   width: '100%'
 };
 
-export class Editor extends React.Component<Props> {
+export class Editor extends React.Component<IProps> {
 
-  public render() {
+  public render(): JSX.Element {
     return (
       <div
         style={style}>
@@ -33,12 +33,12 @@ export class Editor extends React.Component<Props> {
           defaultValue={this.props.defaultValue}
           onChange={this.props.onChange}
           theme="monokai"
-          height="100%"          
+          height="100%"
           fontSize={14}
           showPrintMargin={false}
           showGutter={true}
           highlightActiveLine={true}
-          wrapEnabled={true}                    
+          wrapEnabled={true}
           setOptions={{
             showLineNumbers: this.props.showLineNumbers,
             hScrollBarAlwaysVisible: false,

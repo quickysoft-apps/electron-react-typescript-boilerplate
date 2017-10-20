@@ -11,7 +11,7 @@ export interface IAgentState {
   connectionDate?: Date;
 }
 
-export function agent(state: IAgentState = {}, action: IAction) {
+export function agent(state: IAgentState = {}, action: IAction): IAgentState {
 
   if (Actions.Agent.pong.test(action)) {
     return {
@@ -44,7 +44,7 @@ export function agent(state: IAgentState = {}, action: IAction) {
   }
 
   if (Actions.Agent.notifySocketError.test(action)) {
-    const actionWithPayload = action as IActionWithPayload<IAgentError>;
+    const actionWithPayload: IActionWithPayload<IAgentError> = action as IActionWithPayload<IAgentError>;
     return {
       ...state,
       connected: actionWithPayload.payload.type === 'DiscoverError' ? false : true,
@@ -55,7 +55,7 @@ export function agent(state: IAgentState = {}, action: IAction) {
   }
 
   if (Actions.Agent.notifyConnectionError.test(action)) {
-    const actionWithPayload = action as IActionWithPayload<IAgentError>;
+    const actionWithPayload: IActionWithPayload<IAgentError> = action as IActionWithPayload<IAgentError>;
     return {
       ...state,
       connected: actionWithPayload.payload.type === 'TransportError' ? false : true,

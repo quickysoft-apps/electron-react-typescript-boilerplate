@@ -64,27 +64,27 @@ export class JobRunner extends React.Component<IProps, IState> {
     return !!this.getInput();
   }
 
-  cronChanged(e: React.FormEvent<{}>, newValue: string) {
+  cronChanged(e: React.FormEvent<{}>, newValue: string): void {
     this.setState({ cron: newValue });
   }
 
-  scriptTitleChanged(e: React.FormEvent<{}>, newValue: string) {
+  scriptTitleChanged(e: React.FormEvent<{}>, newValue: string): void {
     this.setState({ title: newValue });
   }
 
-  scriptEditorChanged(value: string, event?: any) {
+  scriptEditorChanged(value: string, event?: any): void {
     this.setState({ script: value });
   }
 
-  libraryAdded() {
+  libraryAdded(): void {
     this.props.addLibrary(this.props.jobId);
   }
 
-  libraryDeleted(name: string) {
+  libraryDeleted(name: string): void {
     this.props.removeLibrary(name);
   }
 
-  inputEditorChanged(value: string, event?: any) {
+  inputEditorChanged(value: string, event?: any): void {
     try {
       JSON.parse(value);
       this.setState({ inputError: undefined });
@@ -94,7 +94,7 @@ export class JobRunner extends React.Component<IProps, IState> {
     this.setState({ input: value });
   }
 
-  startClicked() {
+  startClicked(): void {
     this.props.start({
       jobId: this.props.jobId,
       script: this.state.script,
@@ -105,7 +105,7 @@ export class JobRunner extends React.Component<IProps, IState> {
     });
   }
 
-  resultEditorChanged(value: string, event?: any) {
+  resultEditorChanged(value: string, event?: any): void {
     this.setState({ input: value });
   }
 
