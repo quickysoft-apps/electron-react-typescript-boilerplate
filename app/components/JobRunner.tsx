@@ -1,4 +1,5 @@
 import * as React from 'react';
+import autobind from 'autobind-decorator';
 import { RouteComponentProps } from 'react-router';
 import { TextField } from 'material-ui';
 import { Toolbar, ToolbarGroup } from 'material-ui/Toolbar';
@@ -64,14 +65,17 @@ export class JobRunner extends React.Component<IProps, IState> {
     return !!this.getInput();
   }
 
+  @autobind
   cronChanged(e: React.FormEvent<{}>, newValue: string): void {
     this.setState({ cron: newValue });
   }
 
+  @autobind
   scriptTitleChanged(e: React.FormEvent<{}>, newValue: string): void {
     this.setState({ title: newValue });
   }
 
+  @autobind
   scriptEditorChanged(value: string, event?: any): void {
     this.setState({ script: value });
   }
@@ -84,6 +88,7 @@ export class JobRunner extends React.Component<IProps, IState> {
     this.props.removeLibrary(name);
   }
 
+  @autobind
   inputEditorChanged(value: string, event?: any): void {
     try {
       JSON.parse(value);
@@ -94,6 +99,7 @@ export class JobRunner extends React.Component<IProps, IState> {
     this.setState({ input: value });
   }
 
+  @autobind
   startClicked(): void {
     this.props.start({
       jobId: this.props.jobId,
@@ -105,6 +111,7 @@ export class JobRunner extends React.Component<IProps, IState> {
     });
   }
 
+  @autobind
   resultEditorChanged(value: string, event?: any): void {
     this.setState({ input: value });
   }
@@ -149,12 +156,12 @@ export class JobRunner extends React.Component<IProps, IState> {
               {this.props.isRunning ?
                 <FloatingAction
                   actionIcon={<SvgIcons.AvStop />}
-                  actionclick={this.props.stop}
+                  onClick={this.props.stop}
                   secondary={true} /> :
                 <FloatingAction
                   actionIcon={<SvgIcons.AvPlayArrow />}
                   disabled={!!this.state.inputError}
-                  actionclick={this.startClicked}
+                  onClick={this.startClicked}
                 />
               }
             </Editor>

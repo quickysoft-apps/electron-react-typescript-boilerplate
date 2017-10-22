@@ -16,20 +16,14 @@ export interface IJobRunnerState {
   isRunning: boolean;
 }
 
-const initialState: {
-  jobId: string,
-  isRunning: boolean,
-  input: undefined,
-  libraries: ILibraryReference[]
-} = {
+const initialState: IJobRunnerState = {
     jobId: uuid.v4(),
     isRunning: false,
     input: undefined,
     libraries: new Array<ILibraryReference>()
   };
 
-// tslint:disable-next-line:typedef
-export function jobRunner(state: IJobRunnerState = initialState, action: IAction) {
+export function jobRunner(state: IJobRunnerState = initialState, action: IAction): IJobRunnerState {
 
   if (Actions.JobManager.select.test(action)) {
     return {
@@ -83,7 +77,7 @@ export function jobRunner(state: IJobRunnerState = initialState, action: IAction
   }
 
   if (Actions.JobRunner.removeLibrary.test(action)) {
-    const libraryName: string = (action as IActionWithPayload<string>).payload;
+    const libraryName = (action as IActionWithPayload<string>).payload;
     const libraries = state.libraries.filter(x => x.name !== libraryName);
     return {
       ...state,

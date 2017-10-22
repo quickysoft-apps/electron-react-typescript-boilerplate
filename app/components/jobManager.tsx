@@ -97,7 +97,7 @@ export class JobManager extends React.Component<IProps> {
     return (
       <div>
         {this.props.statuses.length === 0 ? renderEmpty() : <List>{listItems}</List>}
-        <FloatingAction actionclick={this.addJob} actionIcon={<SvgIcons.ContentAdd />} />
+        <FloatingAction onClick={this.addJob} actionIcon={<SvgIcons.ContentAdd />} />
       </div>
     );
 

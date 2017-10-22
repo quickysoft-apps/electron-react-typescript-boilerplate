@@ -73,7 +73,7 @@ export class LibrariesManager extends React.Component<IProps> {
             {listItems}
           </List>
         }
-        <FloatingAction actionclick={this.props.onAdd} actionIcon={<SvgIcons.ContentAdd />} />
+        <FloatingAction onClick={this.props.onAdd} actionIcon={<SvgIcons.ContentAdd />} />
       </div>
     );
 

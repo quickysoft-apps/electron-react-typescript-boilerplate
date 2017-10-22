@@ -1,9 +1,10 @@
 import * as React from 'react';
+import autobind from 'autobind-decorator';
 import { FloatingActionButton } from 'material-ui';
 
 export interface IProps {
   actionIcon: JSX.Element;
-  actionclick: VoidFunction;
+  onClick: VoidFunction;
   secondary?: boolean;
   type?: string;
   disabled?: boolean;
@@ -11,9 +12,10 @@ export interface IProps {
 
 export class FloatingAction extends React.Component<IProps> {
 
-  buttonClick(): void {
-    if (this.props.actionclick) {
-      this.props.actionclick();
+  @autobind
+  buttonClicked(): void {
+    if (this.props.onClick) {
+      this.props.onClick();
     }
   }
 
@@ -31,7 +33,7 @@ export class FloatingAction extends React.Component<IProps> {
             type={this.props.type}
             disabled={this.props.disabled}
             secondary={this.props.secondary}
-            onClick={this.buttonClick}>
+            onClick={this.buttonClicked}>
             {this.props.actionIcon}
           </FloatingActionButton> : undefined}
       </div>
