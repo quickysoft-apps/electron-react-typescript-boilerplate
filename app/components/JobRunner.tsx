@@ -19,7 +19,7 @@ interface IState {
 }
 
 export interface IProps extends RouteComponentProps<any> {
-  addLibrary: (jobId: string) => void;
+  openLibraryFromDisk: (jobId: string) => void;
   selectLibrary: (name: string) => void;
   removeLibrary: (name: string) => void;
   start: (job: IJobDefinition) => void;
@@ -80,10 +80,12 @@ export class JobRunner extends React.Component<IProps, IState> {
     this.setState({ script: value });
   }
 
-  libraryAdded(): void {
-    this.props.addLibrary(this.props.jobId);
+  @autobind
+  addLibrary(): void {
+    this.props.openLibraryFromDisk(this.props.jobId);
   }
 
+  @autobind
   libraryDeleted(name: string): void {
     this.props.removeLibrary(name);
   }
@@ -169,7 +171,7 @@ export class JobRunner extends React.Component<IProps, IState> {
           <Tab
             icon={<SvgIcons.ContentLink />}>
             <LibrariesManager
-              onAdd={this.libraryAdded}
+              onAdd={this.addLibrary}
               onDelete={this.libraryDeleted}
               libraries={this.props.libraries} />
           </Tab>

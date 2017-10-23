@@ -18,7 +18,7 @@ export class LibrariesManager extends React.Component<IProps> {
     super(props);
   }
 
-  libraryItemClick(event: React.SyntheticEvent<any>, reference: ILibraryReference): void {
+  libraryItemClick(reference: ILibraryReference): void {
     this.props.onDelete(reference.name);
   }
 

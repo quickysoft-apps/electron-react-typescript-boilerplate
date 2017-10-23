@@ -1,6 +1,6 @@
 import { actionCreator, actionCreatorVoid, IDispatch, IThunkAction } from './helpers';
 
-import { dialog, app } from 'electron';
+import { remote } from 'electron';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -71,9 +71,9 @@ export const start = (job: IJobDefinition): IThunkAction => (dispatch: IDispatch
 };
 
 export const removeLibrary = actionCreator<string>('jobRunner/REMOVE_LIBRARY');
-export const libraryAdded = actionCreator<ILibraryReference>('jobRunner/LIBRARY_ADDED');
+export const addLibrary = actionCreator<ILibraryReference>('jobRunner/LIBRARY_ADDED');
 
-export const addLibrary = (jobId: string): IThunkAction => (dispatch: IDispatch): void => {
+export const openLibraryFromDisk = (jobId: string): IThunkAction => (dispatch: IDispatch): void => {
 
   const openDialogOptions: Electron.OpenDialogOptions = {
     title: 'Sélectionnez les fichiers à référencer',
@@ -82,24 +82,24 @@ export const addLibrary = (jobId: string): IThunkAction => (dispatch: IDispatch)
   };
 
   // Ensure libraries destination folder exists
-  const librariesPath: string = path.join(app.getPath('userData'), 'libraries', jobId);
+  const librariesPath = path.join(remote.app.getPath('userData'), 'libraries', jobId);
   if (!fs.existsSync(librariesPath)) {
     fs.mkdirSync(librariesPath);
   }
 
-  dialog.showOpenDialog(openDialogOptions, (filePaths: string[]) => {
+  remote.dialog.showOpenDialog(openDialogOptions, (filePaths: string[]) => {
     if (filePaths === undefined) {
       return;
     }
-    filePaths.map((filepath: string) => {
-      const libraryName: string = path.basename(filepath);
-      const destination: string = path.join(librariesPath, libraryName);
+    filePaths.map(filepath => {
+      const libraryName = path.basename(filepath);
+      const destination = path.join(librariesPath, libraryName);
       fs.createReadStream(filepath).pipe(fs.createWriteStream(destination));
       const libraryReference: ILibraryReference = {
         name: path.basename(filepath),
         path: destination
       };
-      dispatch(libraryAdded(libraryReference));
+      dispatch(addLibrary(libraryReference));
     });
   });
 };

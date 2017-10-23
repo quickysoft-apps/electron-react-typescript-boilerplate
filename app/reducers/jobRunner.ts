@@ -85,7 +85,7 @@ export function jobRunner(state: IJobRunnerState = initialState, action: IAction
     };
   }
 
-  if (Actions.JobRunner.libraryAdded.test(action)) {
+  if (Actions.JobRunner.addLibrary.test(action)) {
     const libraries = new Array<ILibraryReference>(...state.libraries);
     const libraryReference = (action as IActionWithPayload<ILibraryReference>).payload;
     libraries.push(libraryReference);
