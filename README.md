@@ -1,8 +1,8 @@
 # Yakapa Electron Agent
 
-**The agent of Yakapa.**
+**Agent for live developement driven supervisor**
 
-This is the agent of yakapa solution for software monitoring. Made with electron and edge.
+This is the agent of yakapa solution for software supervision. Made with electron and edge.
 
 ## License
 
