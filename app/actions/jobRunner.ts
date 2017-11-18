@@ -10,6 +10,7 @@ const ipc: Ipc = new Ipc(ipcRenderer);
 
 export interface IpcEventArg {
   jobId: string;
+  jobName: string;
   result?: any;
   error?: object;
 }
@@ -24,7 +25,7 @@ export interface IJobDefinition {
   cron?: string;
   script: string;
   input?: object;
-  title: string;
+  name: string;
   libraries: ILibraryReference[];
 }
 
@@ -39,7 +40,11 @@ export const save = actionCreator<IJobDefinition>('jobRunner/SAVE');
 export const start = (job: IJobDefinition): IThunkAction => (dispatch: IDispatch): void => {
 
   ipc.addListener(job.jobId, 'ipc/JOB_RESULT', (event: any, eventArg: any) => {
-    dispatch(resultChanged(eventArg));
+    dispatch(resultChanged({
+      jobId: eventArg.jobId,
+      jobName: job.name,
+      result: eventArg.result
+    }));
   });
 
   ipc.addListener(job.jobId, 'ipc/JOB_ERROR', (event: any, eventArg: any) => {

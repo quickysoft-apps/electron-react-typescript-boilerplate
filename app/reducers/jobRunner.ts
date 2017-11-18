@@ -8,7 +8,7 @@ export interface IJobRunnerState {
   jobId: string;
   cron?: any;
   script?: string;
-  title?: string;
+  name?: string;
   input?: object;
   libraries: ILibraryReference[];
   result?: object;
@@ -17,11 +17,11 @@ export interface IJobRunnerState {
 }
 
 const initialState: IJobRunnerState = {
-    jobId: uuid.v4(),
-    isRunning: false,
-    input: undefined,
-    libraries: new Array<ILibraryReference>()
-  };
+  jobId: uuid.v4(),
+  isRunning: false,
+  input: undefined,
+  libraries: new Array<ILibraryReference>()
+};
 
 export function jobRunner(state: IJobRunnerState = initialState, action: IAction): IJobRunnerState {
 

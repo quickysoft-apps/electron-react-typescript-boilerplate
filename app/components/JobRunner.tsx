@@ -13,7 +13,7 @@ import { LibrariesManager } from './LibrariesManager';
 interface IState {
   cron?: string;
   script: string;
-  title: string;
+  name: string;
   input: string;
   inputError: object | undefined;
 }
@@ -31,7 +31,7 @@ export interface IProps extends RouteComponentProps<any> {
   isRunning: boolean;
   script: string;
   result?: object;
-  title: string;
+  name: string;
   scriptError?: object;
   libraries: ILibraryReference[];
 }
@@ -43,7 +43,7 @@ export class JobRunner extends React.Component<IProps, IState> {
     this.state = {
       script: props.script,
       cron: props.cron,
-      title: props.title,
+      name: props.name,
       input: this.toJsonString(props.input),
       inputError: undefined
     };
@@ -71,8 +71,8 @@ export class JobRunner extends React.Component<IProps, IState> {
   }
 
   @autobind
-  scriptTitleChanged(e: React.FormEvent<{}>, newValue: string): void {
-    this.setState({ title: newValue });
+  scriptNameChanged(e: React.FormEvent<{}>, newValue: string): void {
+    this.setState({ name: newValue });
   }
 
   @autobind
@@ -108,14 +108,9 @@ export class JobRunner extends React.Component<IProps, IState> {
       script: this.state.script,
       input: this.getInput(),
       cron: this.state.cron,
-      title: this.state.title,
+      name: this.state.name,
       libraries: this.props.libraries
     });
-  }
-
-  @autobind
-  resultEditorChanged(value: string, event?: any): void {
-    this.setState({ input: value });
   }
 
   public render(): JSX.Element {
@@ -143,8 +138,8 @@ export class JobRunner extends React.Component<IProps, IState> {
                   underlineShow={false}
                   floatingLabelText="Nom du Script"
                   hintText="exemple de script"
-                  value={this.state.title}
-                  onChange={this.scriptTitleChanged}
+                  value={this.state.name}
+                  onChange={this.scriptNameChanged}
                 />
               </ToolbarGroup>
             </Toolbar>
@@ -191,7 +186,6 @@ export class JobRunner extends React.Component<IProps, IState> {
               mode="json"
               name="result-editor"
               readOnly={true}
-              onChange={this.resultEditorChanged}
               value={this.props.scriptError ? this.toJsonString(this.props.scriptError) : this.toJsonString(this.props.result)}
             />
           </Tab>
@@ -206,7 +200,7 @@ export class JobRunner extends React.Component<IProps, IState> {
       const job: IJobDefinition = {
         jobId: this.props.jobId,
         script: this.state.script,
-        title: this.state.title,
+        name: this.state.name,
         cron: this.state.cron,
         input: this.getInput(),
         libraries: this.props.libraries

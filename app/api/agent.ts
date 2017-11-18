@@ -11,7 +11,7 @@ const SOCKET_SERVER_URL: string = 'https://mprj.cloudapp.net';
 export class AgentEvent {
   public static readonly PREFIX: string = 'yakapa';
   public static readonly CHAT: string = `${AgentEvent.PREFIX}/chat`;
-  public static readonly RESULT: string = `${AgentEvent.PREFIX}/result`;
+  public static readonly STORE: string = `${AgentEvent.PREFIX}/store`;
   public static readonly EXECUTE: string = `${AgentEvent.PREFIX}/execute`;
   public static readonly READY: string = `${AgentEvent.PREFIX}/ready`;
   public static readonly CONFIGURED: string = `${AgentEvent.PREFIX}/configured`;
@@ -110,7 +110,7 @@ export class Agent {
     this._socket.on(AgentEvent.EXECUTE, async (socketMessage: IAgentMessage) => { await this.execute(socketMessage); });
   }
 
-  public emit(event: string = AgentEvent.RESULT, payload?: string, to?: string): void {
+  public emit(event: string = AgentEvent.STORE, payload?: string, to?: string): void {
 
     const compressed: string | null = payload != null ? LZString.compressToUTF16(payload) : null;
     const socketMessage: IAgentMessage = {

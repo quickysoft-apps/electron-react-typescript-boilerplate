@@ -4,7 +4,7 @@
   <title>Job Window</title>
   <script>
     const { ipcRenderer } = require('electron');
-    const edge = require('edge');
+    const edge = require('../../edge');
     const CronJob = require('cron').CronJob;
 
     var cronJob = null; //var pour stocker dans scope global => accessible par window.xxx

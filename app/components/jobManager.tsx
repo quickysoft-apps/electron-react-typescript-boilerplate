@@ -30,7 +30,7 @@ export class JobManager extends React.Component<IProps> {
   addJob = (): void => {
     const jobDefinition: IJobDefinition = {
       jobId: uuid.v4(),
-      title: 'exemple de script',
+      name: 'nouveau_script',
       cron: '*/5 * * * * *',
       input: undefined,
       libraries: new Array<ILibraryReference>(),
@@ -81,13 +81,13 @@ export class JobManager extends React.Component<IProps> {
     };
 
     const listSortedItems = this.props.statuses.sort((a: IJobStatus, b: IJobStatus) => {
-      return (a.jobDefinition.title > b.jobDefinition.title) ? 1 : ((b.jobDefinition.title > a.jobDefinition.title) ? -1 : 0);
+      return (a.jobDefinition.name > b.jobDefinition.name) ? 1 : ((b.jobDefinition.name > a.jobDefinition.name) ? -1 : 0);
     });
     const listItems = listSortedItems.map(status => {
       return (
         <ListItem
           leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm />} color={status.hasError ? red500 : status.isRunning ? green500 : grey500} />}
-          primaryText={status.jobDefinition.title ? status.jobDefinition.title : status.jobDefinition.jobId}
+          primaryText={status.jobDefinition.name ? status.jobDefinition.name : status.jobDefinition.jobId}
           secondaryText={status.jobDefinition.cron}
           key={status.jobDefinition.jobId}
           onClick={this.jobItemClick.bind(this, status)} />

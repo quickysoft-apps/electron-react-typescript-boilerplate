@@ -12,7 +12,7 @@ function mapStateToProps(state: IState): Partial<IProps> {
     script: state.jobRunner.script,
     result: state.jobRunner.result,
     scriptError: state.jobRunner.scriptError,
-    title: state.jobRunner.title,
+    name: state.jobRunner.name,
     input: state.jobRunner.input,
     libraries: state.jobRunner.libraries
   };

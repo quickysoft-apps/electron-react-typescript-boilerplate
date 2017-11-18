@@ -20,7 +20,25 @@ export function agentMiddleware(): Redux.Middleware {
     }
 
     if (Actions.JobRunner.resultChanged.test(action)) {
-      client.emit(AgentEvent.RESULT, action.payload, '');
+
+      const payload = {
+        job: action.payload.jobName,
+        value: action.payload.result
+      };
+
+      client.emit(AgentEvent.STORE, JSON.stringify(payload));
+    }
+
+    if (Actions.Agent.pong.test(action)) {
+
+      const payload = {
+        job: '__yakapa_agent_status__',
+        value: {
+          ping: action.payload
+        }
+      };
+
+      client.emit(AgentEvent.STORE, JSON.stringify(payload));
     }
 
     return result;

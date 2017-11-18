@@ -46,7 +46,7 @@ export class JobHistory extends React.Component<IProps> {
       return (
         <ListItem
           leftAvatar={<Avatar icon={<SvgIcons.ActionHistory />} color={jobHistory.status.hasError ? red500 : green500} />}
-          primaryText={jobHistory.status.jobDefinition.title}
+          primaryText={jobHistory.status.jobDefinition.name}
           key={jobHistory.status.jobDefinition.jobId}
         />
       );
