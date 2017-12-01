@@ -43,7 +43,7 @@ export function jobManager(state: IJobManagerState = initialState, action: IActi
   }
 
   if (Actions.JobRunner.resultChanged.test(action)) {
-    status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    status = state.statuses.find(x => x.jobId === action.payload.jobId);
     if (status) {
       status.hasError = false;
 
@@ -58,7 +58,7 @@ export function jobManager(state: IJobManagerState = initialState, action: IActi
   }
 
   if (Actions.JobRunner.started.test(action)) {
-    status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    status = state.statuses.find(x => x.jobId === action.payload.jobId);
     if (status) {
       status.isRunning = true;
 
@@ -73,7 +73,7 @@ export function jobManager(state: IJobManagerState = initialState, action: IActi
   }
 
   if (Actions.JobRunner.stopped.test(action)) {
-    status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    status = state.statuses.find(x => x.jobId === action.payload.jobId);
     if (status) {
       status.isRunning = false;
       const newState: IJobManagerState = {
@@ -87,7 +87,7 @@ export function jobManager(state: IJobManagerState = initialState, action: IActi
   }
 
   if (Actions.JobRunner.error.test(action)) {
-    status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    status = state.statuses.find(x => x.jobId === action.payload.jobId);
     if (status) {
       status.hasError = !!action.payload.error;
       const newState: IJobManagerState = {
@@ -102,7 +102,7 @@ export function jobManager(state: IJobManagerState = initialState, action: IActi
   }
 
   if (Actions.JobRunner.completed.test(action)) {
-    status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    status = state.statuses.find(x => x.jobId === action.payload.jobId);
     if (status) {
       status.isRunning = false;
       const newState: IJobManagerState = {
@@ -116,11 +116,12 @@ export function jobManager(state: IJobManagerState = initialState, action: IActi
   }
 
   if (Actions.JobRunner.save.test(action)) {
-    status = state.statuses.find(x => x.jobDefinition.jobId === action.payload.jobId);
+    status = state.statuses.find(x => x.jobId === action.payload.jobId);
     if (status) {
       const newStatus: IJobStatus = {
         ...status,
-        jobDefinition: action.payload
+        jobId: action.payload.jobId,
+        jobName: action.payload.name
       };
       const newState: IJobManagerState = {
         statuses: setStatus(state.statuses, newStatus)

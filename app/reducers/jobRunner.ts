@@ -28,8 +28,7 @@ export function jobRunner(state: IJobRunnerState = initialState, action: IAction
   if (Actions.JobManager.select.test(action)) {
     return {
       ...state,
-      ...action.payload.jobDefinition,
-      isRunning: action.payload.isRunning
+      ...action.payload
     };
   }
 

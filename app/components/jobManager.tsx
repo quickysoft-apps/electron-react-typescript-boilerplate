@@ -12,7 +12,7 @@ import { green500, red500, grey500 } from 'material-ui/styles/colors';
 
 export interface IProps extends RouteComponentProps<any> {
   add: (job: IJobDefinition) => void;
-  select: (status: IJobStatus) => void;
+  select: (jobDefinition: IJobDefinition) => void;
   statuses: IJobStatus[];
 }
 
@@ -22,8 +22,8 @@ export class JobManager extends React.Component<IProps> {
     super(props);
   }
 
-  jobItemClick(status: IJobStatus): void {
-    this.props.select(status);
+  jobItemClick(jobDefinition: IJobDefinition): void {
+    this.props.select(jobDefinition);
     this.props.history.push('/jobRunner');
   }
 
@@ -58,7 +58,7 @@ export class JobManager extends React.Component<IProps> {
       }`
     };
     this.props.add(jobDefinition);
-    this.props.select({ jobDefinition, isRunning: false, hasError: false });
+    this.props.select(jobDefinition);
     this.props.history.push('/jobRunner');
   }
 
@@ -81,15 +81,15 @@ export class JobManager extends React.Component<IProps> {
     };
 
     const listSortedItems = this.props.statuses.sort((a: IJobStatus, b: IJobStatus) => {
-      return (a.jobDefinition.name > b.jobDefinition.name) ? 1 : ((b.jobDefinition.name > a.jobDefinition.name) ? -1 : 0);
+      return (a.jobName > b.jobName) ? 1 : ((b.jobName > a.jobName) ? -1 : 0);
     });
     const listItems = listSortedItems.map(status => {
       return (
         <ListItem
           leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm />} color={status.hasError ? red500 : status.isRunning ? green500 : grey500} />}
-          primaryText={status.jobDefinition.name ? status.jobDefinition.name : status.jobDefinition.jobId}
-          secondaryText={status.jobDefinition.cron}
-          key={status.jobDefinition.jobId}
+          primaryText={status.jobName ? status.jobName : status.jobId}
+          secondaryText={status.jobId}
+          key={status.jobId}
           onClick={this.jobItemClick.bind(this, status)} />
       );
     });

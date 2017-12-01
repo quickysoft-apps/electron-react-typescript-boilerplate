@@ -2,7 +2,6 @@ import { actionCreator } from './helpers';
 import { IJobDefinition } from './jobRunner';
 
 export interface IJobStatus {
-  //jobDefinition: IJobDefinition;
   jobId: string;
   jobName: string;
   isRunning: boolean;
@@ -10,4 +9,4 @@ export interface IJobStatus {
 }
 
 export const add = actionCreator<IJobDefinition>('jobManager/ADD');
-export const select = actionCreator<IJobStatus>('jobManager/SELECT');
+export const select = actionCreator<IJobDefinition>('jobManager/SELECT');
