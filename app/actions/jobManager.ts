@@ -2,7 +2,9 @@ import { actionCreator } from './helpers';
 import { IJobDefinition } from './jobRunner';
 
 export interface IJobStatus {
-  jobDefinition: IJobDefinition;
+  //jobDefinition: IJobDefinition;
+  jobId: string;
+  jobName: string;
   isRunning: boolean;
   hasError: boolean;
 }

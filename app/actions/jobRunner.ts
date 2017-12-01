@@ -52,16 +52,26 @@ export const start = (job: IJobDefinition): IThunkAction => (dispatch: IDispatch
   });
 
   ipc.addListener(job.jobId, 'ipc/JOB_STARTED', (event: any, eventArg: any) => {
-    dispatch(started(eventArg));
+    dispatch(started({
+      jobId: eventArg.jobId,
+      jobName: job.name
+    }));
   });
 
   ipc.addListener(job.jobId, 'ipc/JOB_COMPLETED', (event: any, eventArg: any) => {
-    dispatch(completed(eventArg));
+    dispatch(completed({
+      jobId: eventArg.jobId,
+      jobName: job.name
+    }));
   });
 
   ipc.addListener(job.jobId, 'ipc/JOB_STOPPED', (event: any, eventArg: any) => {
     ipc.clearListeners(job.jobId);
-    dispatch(stopped(eventArg));
+    dispatch(stopped({
+      jobId: eventArg.jobId,
+      jobName: job.name
+    }));
+
   });
 
   const arg = {

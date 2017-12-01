@@ -3,7 +3,7 @@ import { IActionWithPayload } from '../actions/helpers';
 import { Agent, IAgentMessage, AgentEvent } from '../api/agent';
 import { Actions } from '../actions';
 
-const AGENT_STATUS_JOB = '__yakapa_agent_status__';
+const AGENT_STATUS_JOB = 'b3db8784-b773-4c53-a9a1-98a6cca1e7ca';
 const client: Agent = new Agent();
 
 type DispatchWithPayloadFunction<P> = <A extends IActionWithPayload<P>>(actionWithPayload: A) => A;
@@ -55,6 +55,7 @@ export function agentMiddleware(): Redux.Middleware {
       const payload = {
         job: AGENT_STATUS_JOB,
         value: {
+          ...agentStats,
           connectionDate: new Date(Date.now()).toJSON(),
           trusted: false
         }

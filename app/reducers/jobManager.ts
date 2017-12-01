@@ -14,12 +14,12 @@ const initialState: IJobManagerState = {
 };
 
 function saveToSettings(status: IJobStatus): void {
-  const key: string = `jobs.${status.jobDefinition.jobId}`;
+  const key: string = `jobs.${status.jobId}`;
   settings.delete(key).set(key, status as any);
 }
 
 function setStatus(statuses: IJobStatus[], status: IJobStatus): JobStatuses {
-  const filteredStatuses: JobStatuses = statuses.filter(x => x.jobDefinition.jobId !== status.jobDefinition.jobId);
+  const filteredStatuses: JobStatuses = statuses.filter(x => x.jobId !== status.jobId);
   filteredStatuses.push(status);
   return filteredStatuses;
 }
@@ -30,7 +30,8 @@ export function jobManager(state: IJobManagerState = initialState, action: IActi
 
   if (Actions.JobManager.add.test(action)) {
     status = {
-      jobDefinition: action.payload,
+      jobId: action.payload.jobId,
+      jobName: action.payload.name,
       isRunning: false,
       hasError: false
     };

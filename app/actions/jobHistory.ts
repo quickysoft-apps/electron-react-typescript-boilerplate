@@ -2,7 +2,7 @@ import { actionCreator } from './helpers';
 import { IJobStatus } from './jobManager';
 
 export interface IJobHistory {
-  scheduledTime?: Date;
+  scheduledTime: Date;
   status: IJobStatus;
 }
 
