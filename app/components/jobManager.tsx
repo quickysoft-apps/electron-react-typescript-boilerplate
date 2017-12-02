@@ -56,11 +56,12 @@ export class JobManager extends React.Component<IProps> {
     const listItems = listSortedItems.map(job => {
       return (
         <ListItem
-          leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm />} color={job.status.hasError ? red500 : job.status.isRunning ? green500 : grey500} />}
+          leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm />}
+          color={job.status.hasError ? red500 : job.status.isRunning ? green500 : grey500} />}
           primaryText={job.definition.name ? job.definition.name : job.id}
           secondaryText={job.definition.cron}
           key={job.id}
-          onClick={this.jobItemClick.bind(this, status)} />
+          onClick={this.jobItemClick.bind(this, job)} />
       );
     });
 

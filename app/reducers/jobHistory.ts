@@ -15,7 +15,7 @@ const initialState: IJobHistoryState = {
 export function jobHistory(state: IJobHistoryState = initialState, action: IAction): any {
 
   if (Actions.JobRunner.started.test(action)) {
-    const maxHistory = Math.max(state.jobHistories.length - 99, 1);
+    const maxHistory = Math.max(state.jobHistories.length - 100, 0);
     const jobHistories = new Array<IJobHistory>(...state.jobHistories).slice(maxHistory);
     const item: IJobHistory = {
       timestamp: new Date(),

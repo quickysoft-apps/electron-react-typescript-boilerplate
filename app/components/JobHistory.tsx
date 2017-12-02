@@ -38,17 +38,17 @@ export class JobHistory extends React.Component<IProps> {
     };
 
     const listSortedItems: IJobHistory[] = this.props.jobHistories.sort((a: IJobHistory, b: IJobHistory) => {
-      return (b.scheduledTime && a.scheduledTime ?
-        ((a.scheduledTime > b.scheduledTime) ? 1 : ((b.scheduledTime > a.scheduledTime) ? -1 : 0)) : 0);
+      return (b.timestamp && a.timestamp ?
+        ((a.timestamp > b.timestamp) ? 1 : ((b.timestamp > a.timestamp) ? -1 : 0)) : 0);
     });
 
     const listItems: JSX.Element[] = listSortedItems.map(jobHistory => {
       return (
         <ListItem
           leftAvatar={<Avatar icon={<SvgIcons.ActionHistory />}
-          color={jobHistory.job.status.hasError ? red500 : green500} />}
-          primaryText={jobHistory.job.definition.name}
-          key={jobHistory.job.id}
+          color={jobHistory.status.hasError ? red500 : green500} />}
+          primaryText={jobHistory.jobName}
+          key={jobHistory.jobId}
         />
       );
     });

@@ -1,7 +1,7 @@
 import { actionCreatorVoid, actionCreator, IThunkAction, IDispatch } from './helpers';
 import settings = require('electron-settings');
 import { start } from './jobRunner';
-import { add, IJobStatus } from './jobManager';
+import { add, IJob } from './jobManager';
 
 export const hide = actionCreatorVoid('app/HIDE');
 export const show = actionCreatorVoid('app/SHOW');
@@ -12,10 +12,10 @@ export const loadFromSettings = (): IThunkAction => (dispatch: IDispatch): void 
   const jobsSettings: any = settings.get('jobs');
   if (jobsSettings) {
     Object.keys(jobsSettings).forEach(key => {
-      const status: IJobStatus = jobsSettings[key];
-      dispatch(add(status.jobDefinition));
-      if (status.isRunning) {
-        dispatch(start(status.jobDefinition));
+      const job: IJob = jobsSettings[key];
+      dispatch(add(job));
+      if (job.status.isRunning) {
+        dispatch(start(job));
       }
     });
   }

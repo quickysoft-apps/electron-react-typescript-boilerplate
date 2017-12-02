@@ -21,7 +21,7 @@ public class Startup
 
         foreach (Process process in processes)
         {
-            if (process.PrivateMemorySize > 100000000000/*input.threshold*/)
+            if (process.PrivateMemorySize64 > 100000000000/*input.threshold*/)
             {
               result.Add(new ProcessInfo()
               {

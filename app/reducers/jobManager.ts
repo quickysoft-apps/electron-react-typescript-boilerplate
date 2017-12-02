@@ -88,7 +88,7 @@ export function jobManager(state: IJobManagerState = initialState, action: IActi
     job = state.jobs.find(x => x.id === action.payload.id);
     if (job) {
       saveToSettings(action.payload);
-      return { jobs: updateJob(state, job) };
+      return { jobs: updateJob(state, action.payload) };
     }
   }
 

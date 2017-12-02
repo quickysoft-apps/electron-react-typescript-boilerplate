@@ -4,7 +4,7 @@ import { Avatar } from 'material-ui';
 import * as SvgIcons from 'material-ui/svg-icons';
 import * as Colors from 'material-ui/styles/colors';
 import { FloatingAction } from './FloatingAction';
-import { ILibraryReference } from '../actions/jobRunner';
+import { ILibraryReference } from '../actions/jobManager';
 
 export interface IProps {
   onAdd: () => void;
