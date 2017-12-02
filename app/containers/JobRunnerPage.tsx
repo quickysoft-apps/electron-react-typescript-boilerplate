@@ -6,15 +6,9 @@ import { IState } from '../reducers';
 
 function mapStateToProps(state: IState): Partial<IProps> {
   return {
-    jobId: state.jobRunner.jobId,
-    isRunning: state.jobRunner.isRunning,
-    cron: state.jobRunner.cron,
-    script: state.jobRunner.script,
+    job: state.jobRunner.job,
     result: state.jobRunner.result,
-    scriptError: state.jobRunner.scriptError,
-    name: state.jobRunner.name,
-    input: state.jobRunner.input,
-    libraries: state.jobRunner.libraries
+    scriptError: state.jobRunner.scriptError
   };
 }
 

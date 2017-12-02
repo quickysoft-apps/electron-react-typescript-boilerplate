@@ -1,9 +1,12 @@
 import { actionCreator } from './helpers';
 import { IJobStatus } from './jobManager';
+import { IpcEventArg } from './jobRunner';
 
 export interface IJobHistory {
-  scheduledTime: Date;
+  timestamp: Date;
+  jobId: string;
+  jobName: string;
   status: IJobStatus;
 }
 
-export const add = actionCreator<IJobStatus>('jobHistory/ADD');
+export const add = actionCreator<IpcEventArg>('jobHistory/ADD');

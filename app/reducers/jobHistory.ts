@@ -1,7 +1,8 @@
 import { Actions } from '../actions';
-import { IAction, IActionWithPayload } from '../actions/helpers';
+import { IAction } from '../actions/helpers';
 import { IJobHistory } from '../actions/jobHistory';
-import { IpcEventArg } from '../actions/jobRunner';
+
+import * as settings from 'electron-settings';
 
 export interface IJobHistoryState {
   jobHistories: IJobHistory[];
@@ -14,17 +15,22 @@ const initialState: IJobHistoryState = {
 export function jobHistory(state: IJobHistoryState = initialState, action: IAction): any {
 
   if (Actions.JobRunner.started.test(action)) {
-    const jobHistories = new Array<IJobHistory>(...state.jobHistories);
+    const maxHistory = Math.max(state.jobHistories.length - 99, 1);
+    const jobHistories = new Array<IJobHistory>(...state.jobHistories).slice(maxHistory);
     const item: IJobHistory = {
-      scheduledTime: new Date(),
+      timestamp: new Date(),
+      jobId: action.payload.jobId,
+      jobName: action.payload.jobName,
       status: {
-        jobId: (action as IActionWithPayload<IpcEventArg>).payload.jobId,
-        jobName: (action as IActionWithPayload<IpcEventArg>).payload.jobName,
         isRunning: true,
-        hasError: false
+        hasError: !!action.payload.error
       }
     };
     jobHistories.push(item);
+
+    const key = 'jobHistory';
+    settings.delete(key).set(key, jobHistories as any);
+
     return {
       ...state,
       jobHistories

@@ -1,19 +1,17 @@
 import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
-import * as uuid from 'uuid';
 import { List, ListItem } from 'material-ui/List';
 import { Avatar } from 'material-ui';
 import * as SvgIcons from 'material-ui/svg-icons';
 import * as Colors from 'material-ui/styles/colors';
 import { FloatingAction } from './FloatingAction';
-import { IJobDefinition, ILibraryReference } from '../actions/jobRunner';
-import { IJobStatus } from '../actions/jobManager';
+import { IJob, Job } from '../actions/jobManager';
 import { green500, red500, grey500 } from 'material-ui/styles/colors';
 
 export interface IProps extends RouteComponentProps<any> {
-  add: (job: IJobDefinition) => void;
-  select: (jobDefinition: IJobDefinition) => void;
-  statuses: IJobStatus[];
+  add: (job: IJob) => void;
+  select: (job: IJob) => void;
+  jobs: IJob[];
 }
 
 export class JobManager extends React.Component<IProps> {
@@ -22,43 +20,15 @@ export class JobManager extends React.Component<IProps> {
     super(props);
   }
 
-  jobItemClick(jobDefinition: IJobDefinition): void {
-    this.props.select(jobDefinition);
+  jobItemClick(job: IJob): void {
+    this.props.select(job);
     this.props.history.push('/jobRunner');
   }
 
   addJob = (): void => {
-    const jobDefinition: IJobDefinition = {
-      jobId: uuid.v4(),
-      name: 'nouveau_script',
-      cron: '*/5 * * * * *',
-      input: undefined,
-      libraries: new Array<ILibraryReference>(),
-      script: `
-      //Ceci est un exemple simple de script.
-      //la méthode doit respecter la signature ci-dessous :
-      async (input) => {
-        /*
-        string text;
-        var fileStream = new System.IO.FileStream(
-          @"c:\\logs\\mylog.log",
-          System.IO.FileMode.Open,
-          System.IO.FileAccess.Read
-        );
-        using (
-          var streamReader = new System.IO.StreamReader(
-            fileStream,
-            System.Text.Encoding.UTF8
-        ))
-        {
-          text = streamReader.ReadToEnd();
-        }
-        return text;
-        */
-      }`
-    };
-    this.props.add(jobDefinition);
-    this.props.select(jobDefinition);
+    const job = new Job();
+    this.props.add(job);
+    this.props.select(job);
     this.props.history.push('/jobRunner');
   }
 
@@ -80,23 +50,23 @@ export class JobManager extends React.Component<IProps> {
       );
     };
 
-    const listSortedItems = this.props.statuses.sort((a: IJobStatus, b: IJobStatus) => {
-      return (a.jobName > b.jobName) ? 1 : ((b.jobName > a.jobName) ? -1 : 0);
+    const listSortedItems = this.props.jobs.sort((a: IJob, b: IJob) => {
+      return (a.definition.name > b.definition.name) ? 1 : ((b.definition.name > a.definition.name) ? -1 : 0);
     });
-    const listItems = listSortedItems.map(status => {
+    const listItems = listSortedItems.map(job => {
       return (
         <ListItem
-          leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm />} color={status.hasError ? red500 : status.isRunning ? green500 : grey500} />}
-          primaryText={status.jobName ? status.jobName : status.jobId}
-          secondaryText={status.jobId}
-          key={status.jobId}
+          leftAvatar={<Avatar icon={<SvgIcons.ActionAlarm />} color={job.status.hasError ? red500 : job.status.isRunning ? green500 : grey500} />}
+          primaryText={job.definition.name ? job.definition.name : job.id}
+          secondaryText={job.definition.cron}
+          key={job.id}
           onClick={this.jobItemClick.bind(this, status)} />
       );
     });
 
     return (
       <div>
-        {this.props.statuses.length === 0 ? renderEmpty() : <List>{listItems}</List>}
+        {this.props.jobs.length === 0 ? renderEmpty() : <List>{listItems}</List>}
         <FloatingAction onClick={this.addJob} actionIcon={<SvgIcons.ContentAdd />} />
       </div>
     );

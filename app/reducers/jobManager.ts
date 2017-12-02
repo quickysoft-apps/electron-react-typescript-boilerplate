@@ -1,133 +1,94 @@
 import { IAction } from '../actions/helpers';
 import { Actions } from '../actions';
 import * as settings from 'electron-settings';
-import { IJobStatus } from '../actions/jobManager';
+import { IJob } from '../actions/jobManager';
 
-type JobStatuses = IJobStatus[];
+type Jobs = IJob[];
 
 export interface IJobManagerState {
-  statuses: JobStatuses;
+  jobs: Jobs;
 }
 
 const initialState: IJobManagerState = {
-  statuses: new Array<IJobStatus>()
+  jobs: new Array<IJob>()
 };
 
-function saveToSettings(status: IJobStatus): void {
-  const key: string = `jobs.${status.jobId}`;
-  settings.delete(key).set(key, status as any);
+function saveToSettings(job: IJob): void {
+  const key: string = `jobs.${job.id}`;
+  settings.delete(key).set(key, job as any);
 }
 
-function setStatus(statuses: IJobStatus[], status: IJobStatus): JobStatuses {
-  const filteredStatuses: JobStatuses = statuses.filter(x => x.jobId !== status.jobId);
-  filteredStatuses.push(status);
-  return filteredStatuses;
+function updateJob(state: IJobManagerState, job: IJob): Jobs {
+  const newJobs: Jobs = state.jobs.filter(x => x.id !== job.id);
+  newJobs.push(job);
+  return newJobs;
 }
 
 export function jobManager(state: IJobManagerState = initialState, action: IAction): any {
 
-  let status: IJobStatus | undefined;
+  let job: IJob | undefined;
 
   if (Actions.JobManager.add.test(action)) {
-    status = {
-      jobId: action.payload.jobId,
-      jobName: action.payload.name,
-      isRunning: false,
-      hasError: false
-    };
-    saveToSettings(status);
-    const newState: IJobManagerState = {
-      statuses: setStatus(state.statuses, status)
-    };
-    return newState;
+    job = action.payload;
+    saveToSettings(job);
+    return { jobs: updateJob(state, job) };
   }
 
   if (Actions.JobRunner.resultChanged.test(action)) {
-    status = state.statuses.find(x => x.jobId === action.payload.jobId);
-    if (status) {
-      status.hasError = false;
-
-      const newState: IJobManagerState = {
-        statuses: setStatus(state.statuses, status)
-      };
-      saveToSettings(status);
-      return newState;
-    } else {
-      return state;
+    job = state.jobs.find(x => x.id === action.payload.jobId);
+    if (job) {
+      job.status.hasError = false;
+      saveToSettings(job);
+      return { jobs: updateJob(state, job) };
     }
+    return state;
   }
 
   if (Actions.JobRunner.started.test(action)) {
-    status = state.statuses.find(x => x.jobId === action.payload.jobId);
-    if (status) {
-      status.isRunning = true;
-
-      const newState: IJobManagerState = {
-        statuses: setStatus(state.statuses, status)
-      };
-      saveToSettings(status);
-      return newState;
-    } else {
-      return state;
+    job = state.jobs.find(x => x.id === action.payload.jobId);
+    if (job) {
+      job.status.isRunning = true;
+      saveToSettings(job);
+      return { jobs: updateJob(state, job) };
     }
+    return state;
   }
 
   if (Actions.JobRunner.stopped.test(action)) {
-    status = state.statuses.find(x => x.jobId === action.payload.jobId);
-    if (status) {
-      status.isRunning = false;
-      const newState: IJobManagerState = {
-        statuses: setStatus(state.statuses, status)
-      };
-      saveToSettings(status);
-      return newState;
-    } else {
-      return state;
+    job = state.jobs.find(x => x.id === action.payload.jobId);
+    if (job) {
+      job.status.isRunning = false;
+      saveToSettings(job);
+      return { jobs: updateJob(state, job) };
     }
+    return state;
   }
 
   if (Actions.JobRunner.error.test(action)) {
-    status = state.statuses.find(x => x.jobId === action.payload.jobId);
-    if (status) {
-      status.hasError = !!action.payload.error;
-      const newState: IJobManagerState = {
-        statuses: setStatus(state.statuses, status)
-      };
-
-      saveToSettings(status);
-      return newState;
-    } else {
-      return state;
+    job = state.jobs.find(x => x.id === action.payload.jobId);
+    if (job) {
+      job.status.hasError = !!action.payload.error;
+      saveToSettings(job);
+      return { jobs: updateJob(state, job) };
     }
+    return state;
   }
 
   if (Actions.JobRunner.completed.test(action)) {
-    status = state.statuses.find(x => x.jobId === action.payload.jobId);
-    if (status) {
-      status.isRunning = false;
-      const newState: IJobManagerState = {
-        statuses: setStatus(state.statuses, status)
-      };
-      saveToSettings(status);
-      return newState;
-    } else {
-      return state;
+    job = state.jobs.find(x => x.id === action.payload.jobId);
+    if (job) {
+      job.status.isRunning = false;
+      saveToSettings(job);
+      return { jobs: updateJob(state, job) };
     }
+    return state;
   }
 
-  if (Actions.JobRunner.save.test(action)) {
-    status = state.statuses.find(x => x.jobId === action.payload.jobId);
-    if (status) {
-      const newStatus: IJobStatus = {
-        ...status,
-        jobId: action.payload.jobId,
-        jobName: action.payload.name
-      };
-      const newState: IJobManagerState = {
-        statuses: setStatus(state.statuses, newStatus)
-      };
-      saveToSettings(newStatus);
-      return newState;
+  if (Actions.JobManager.save.test(action)) {
+    job = state.jobs.find(x => x.id === action.payload.id);
+    if (job) {
+      saveToSettings(action.payload);
+      return { jobs: updateJob(state, job) };
     }
   }
 

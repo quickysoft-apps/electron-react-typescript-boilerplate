@@ -7,12 +7,12 @@ import { Tabs, Tab } from 'material-ui/Tabs';
 import { Editor } from './editor';
 import * as SvgIcons from 'material-ui/svg-icons';
 import { FloatingAction } from './FloatingAction';
-import { IJobDefinition, ILibraryReference } from '../actions/jobRunner';
 import { LibrariesManager } from './LibrariesManager';
+import { IJobDefinition, IJob } from '../actions/jobManager';
 
 interface IState {
   cron?: string;
-  script: string;
+  script?: string;
   name: string;
   input: string;
   inputError: object | undefined;
@@ -22,18 +22,12 @@ export interface IProps extends RouteComponentProps<any> {
   openLibraryFromDisk: (jobId: string) => void;
   selectLibrary: (name: string) => void;
   removeLibrary: (name: string) => void;
-  start: (job: IJobDefinition) => void;
-  save: (job: IJobDefinition) => void;
+  start: (job: IJob) => void;
+  save: (job: IJob) => void;
   stop: VoidFunction;
-  jobId: string;
-  cron: string;
-  input: object;
-  isRunning: boolean;
-  script: string;
+  job: IJob;
   result?: object;
-  name: string;
   scriptError?: object;
-  libraries: ILibraryReference[];
 }
 
 export class JobRunner extends React.Component<IProps, IState> {
@@ -41,10 +35,10 @@ export class JobRunner extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      script: props.script,
-      cron: props.cron,
-      name: props.name,
-      input: this.toJsonString(props.input),
+      script: props.job.definition.script,
+      cron: props.job.definition.cron,
+      name: props.job.definition.name,
+      input: this.toJsonString(props.job.definition.input),
       inputError: undefined
     };
   }
@@ -53,7 +47,22 @@ export class JobRunner extends React.Component<IProps, IState> {
     return JSON.stringify(value, null, '  ');
   }
 
-  getInput(): any {
+  get currentJob(): IJob {
+    const definition: IJobDefinition = {
+      ...this.props.job.definition,
+      script: this.state.script,
+      input: this.input,
+      cron: this.state.cron,
+      name: this.state.name
+    };
+    return {
+      id: this.props.job.id,
+      status: this.props.job.status,
+      definition
+    };
+  }
+
+  get input(): any {
     try {
       return JSON.parse(this.state.input);
     } catch (error) {
@@ -62,7 +71,7 @@ export class JobRunner extends React.Component<IProps, IState> {
   }
 
   checkInput(): boolean {
-    return !!this.getInput();
+    return !!this.input;
   }
 
   @autobind
@@ -82,7 +91,7 @@ export class JobRunner extends React.Component<IProps, IState> {
 
   @autobind
   addLibrary(): void {
-    this.props.openLibraryFromDisk(this.props.jobId);
+    this.props.openLibraryFromDisk(this.props.job.id);
   }
 
   @autobind
@@ -103,14 +112,7 @@ export class JobRunner extends React.Component<IProps, IState> {
 
   @autobind
   startClicked(): void {
-    this.props.start({
-      jobId: this.props.jobId,
-      script: this.state.script,
-      input: this.getInput(),
-      cron: this.state.cron,
-      name: this.state.name,
-      libraries: this.props.libraries
-    });
+    this.props.start(this.currentJob);
   }
 
   public render(): JSX.Element {
@@ -150,7 +152,7 @@ export class JobRunner extends React.Component<IProps, IState> {
               value={this.state.script}
               showLineNumbers={true}
             >
-              {this.props.isRunning ?
+              {this.props.job.status.isRunning ?
                 <FloatingAction
                   actionIcon={<SvgIcons.AvStop />}
                   onClick={this.props.stop}
@@ -168,7 +170,7 @@ export class JobRunner extends React.Component<IProps, IState> {
             <LibrariesManager
               onAdd={this.addLibrary}
               onDelete={this.libraryDeleted}
-              libraries={this.props.libraries} />
+              libraries={this.props.job.definition.libraries} />
           </Tab>
           <Tab
             icon={<SvgIcons.ActionInput />}>
@@ -195,17 +197,8 @@ export class JobRunner extends React.Component<IProps, IState> {
   }
 
   componentWillUnmount(): void {
-
     if (!this.state.inputError) {
-      const job: IJobDefinition = {
-        jobId: this.props.jobId,
-        script: this.state.script,
-        name: this.state.name,
-        cron: this.state.cron,
-        input: this.getInput(),
-        libraries: this.props.libraries
-      };
-      this.props.save(job);
+      this.props.save(this.currentJob);
     }
   }
 

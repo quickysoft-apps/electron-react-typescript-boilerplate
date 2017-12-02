@@ -1,26 +1,16 @@
 import { ipcRenderer } from 'electron';
-import * as uuid from 'uuid';
 import { IAction, IActionWithPayload } from '../actions/helpers';
 import { Actions } from '../actions';
-import { ILibraryReference } from '../actions/jobRunner';
+import { IJob, ILibraryReference, Job } from '../actions/jobManager';
 
 export interface IJobRunnerState {
-  jobId: string;
-  cron?: any;
-  script?: string;
-  name?: string;
-  input?: object;
-  libraries: ILibraryReference[];
+  job: IJob;
   result?: object;
   scriptError?: object;
-  isRunning: boolean;
 }
 
 const initialState: IJobRunnerState = {
-  jobId: uuid.v4(),
-  isRunning: false,
-  input: undefined,
-  libraries: new Array<ILibraryReference>()
+  job: new Job()
 };
 
 export function jobRunner(state: IJobRunnerState = initialState, action: IAction): IJobRunnerState {
@@ -28,19 +18,24 @@ export function jobRunner(state: IJobRunnerState = initialState, action: IAction
   if (Actions.JobManager.select.test(action)) {
     return {
       ...state,
-      ...action.payload
+      job: action.payload
     };
   }
 
   if (Actions.JobRunner.started.test(action)) {
     return {
       ...state,
-      jobId: action.payload.jobId,
-      isRunning: true
+      job: {
+        ...state.job,
+        status: {
+          ...state.job.status,
+          isRunning: true
+        }
+      }
     };
   }
 
-  if (Actions.JobRunner.resultChanged.test(action) && action.payload.jobId === state.jobId) {
+  if (Actions.JobRunner.resultChanged.test(action) && action.payload.jobId === state.job.id) {
     return {
       ...state,
       result: action.payload.result,
@@ -48,49 +43,73 @@ export function jobRunner(state: IJobRunnerState = initialState, action: IAction
     };
   }
 
-  if (Actions.JobRunner.error.test(action) && action.payload.jobId === state.jobId) {
+  if (Actions.JobRunner.error.test(action) && action.payload.jobId === state.job.id) {
     return {
       ...state,
       result: {},
-      scriptError: action.payload.error ? action.payload.error : undefined
+      scriptError: action.payload.error ? action.payload.error : { message: 'Erreur de script non déterminée.' }
     };
   }
 
-  if (Actions.JobRunner.completed.test(action) && action.payload.jobId === state.jobId) {
+  if (Actions.JobRunner.completed.test(action) && action.payload.jobId === state.job.id) {
     return {
       ...state,
-      isRunning: false
+      job: {
+        ...state.job,
+        status: {
+          ...state.job.status,
+          isRunning: false
+        }
+      }
     };
   }
 
-  if (Actions.JobRunner.stopped.test(action) && action.payload.jobId === state.jobId) {
+  if (Actions.JobRunner.stopped.test(action) && action.payload.jobId === state.job.id) {
     return {
       ...state,
-      isRunning: false
+      job: {
+        ...state.job,
+        status: {
+          ...state.job.status,
+          isRunning: false
+        }
+      }
     };
   }
 
   if (Actions.JobRunner.stop.test(action)) {
-    ipcRenderer.send('ipc/JOB_STOP', { jobId: state.jobId });
+    ipcRenderer.send('ipc/JOB_STOP', { jobId: state.job.id });
     return state;
   }
 
   if (Actions.JobRunner.removeLibrary.test(action)) {
     const libraryName = (action as IActionWithPayload<string>).payload;
-    const libraries = state.libraries.filter(x => x.name !== libraryName);
+    const libraries = state.job.definition.libraries.filter(x => x.name !== libraryName);
     return {
       ...state,
-      libraries
+      job: {
+        ...state.job,
+        definition: {
+          ...state.job.definition,
+          libraries
+        }
+      }
     };
   }
 
   if (Actions.JobRunner.addLibrary.test(action)) {
-    const libraries = new Array<ILibraryReference>(...state.libraries);
+    const libraries = new Array<ILibraryReference>(...state.job.definition.libraries);
     const libraryReference = (action as IActionWithPayload<ILibraryReference>).payload;
     libraries.push(libraryReference);
     return {
       ...state,
-      libraries
+      job: {
+        ...state.job,
+        definition: {
+          ...state.job.definition,
+          libraries
+        }
+      }
     };
   }
 
