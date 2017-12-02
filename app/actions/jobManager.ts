@@ -1,4 +1,4 @@
-import { actionCreator } from './helpers';
+import { actionCreator, IThunkAction, IDispatch } from './helpers';
 import Consts from '../utils/consts';
 import * as uuid from 'uuid';
 
@@ -29,6 +29,14 @@ export interface IJob {
 export const add = actionCreator<IJob>('jobManager/ADD');
 export const select = actionCreator<IJob>('jobManager/SELECT');
 export const save = actionCreator<IJob>('jobRunner/SAVE');
+
+export const jump = (jobId: string): IThunkAction => (dispatch: IDispatch, getState: () => any): void => {
+  const jobs: IJob[] = getState().jobManager.jobs;
+  const job = jobs.find(x => x.id === jobId);
+  if (job) {
+    dispatch(select(job));
+  }
+};
 
 export class Job implements IJob {
 

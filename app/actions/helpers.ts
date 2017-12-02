@@ -40,5 +40,5 @@ export type IThunkAction = ThunkAction<void, any, void>;
 export type IDispatch = <A extends IAction | IThunkAction>(action: A) => A;
 export type IThunkActionCreator = (...args: any[]) => IThunkAction;
 
-export const thunkActionCreator = <T>(api: (payload: T, dispatch: IDispatch) => void): IThunkActionCreator =>
-  Object.assign(<V extends T>(payload: V): IThunkAction => (dispatch: IDispatch): void => api(payload, dispatch));
+export const thunkActionCreator = <T>(api: (payload: T, dispatch: IDispatch, getState: () => any) => void): IThunkActionCreator =>
+  Object.assign(<V extends T>(payload: V): IThunkAction => (dispatch: IDispatch, getState: () => any): void => api(payload, dispatch, getState));
