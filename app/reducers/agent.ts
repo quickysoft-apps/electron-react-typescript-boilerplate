@@ -1,6 +1,7 @@
 import { IAction, IActionWithPayload } from '../actions/helpers';
 import { Actions } from '../actions';
 import { IAgentError } from '../actions/agent';
+import { remote } from 'electron';
 
 export interface IAgentState {
   connected?: boolean;
@@ -9,9 +10,14 @@ export interface IAgentState {
   trusted?: boolean;
   pongMs?: number;
   connectionDate?: Date;
+  version?: string;
 }
 
-export function agent(state: IAgentState = {}, action: IAction): IAgentState {
+const defaultState = {
+  version: remote.app.getVersion()
+};
+
+export function agent(state: IAgentState = defaultState, action: IAction): IAgentState {
 
   if (Actions.Agent.pong.test(action)) {
     return {

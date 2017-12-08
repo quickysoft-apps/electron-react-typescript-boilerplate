@@ -18,7 +18,8 @@ export function agentMiddleware(): Redux.Middleware {
     const agentStats = {
       connectionDate: state.agent.connectionDate,
       ping: state.agent.pongMS,
-      trusted: state.agent.trusted
+      trusted: state.agent.trusted,
+      version: state.agent.version
     };
 
     if (Actions.Configuration.save.test(action)) {
