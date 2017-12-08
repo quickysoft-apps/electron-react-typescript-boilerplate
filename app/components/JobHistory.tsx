@@ -6,7 +6,7 @@ import { Avatar } from 'material-ui';
 import * as SvgIcons from 'material-ui/svg-icons';
 import * as Colors from 'material-ui/styles/colors';
 import { IJobHistory } from '../actions/jobHistory';
-import { green500, red500 } from 'material-ui/styles/colors';
+import { green500, red500, grey500 } from 'material-ui/styles/colors';
 import { IJob } from '../actions/jobManager';
 
 export interface IProps extends RouteComponentProps<any> {
@@ -51,6 +51,7 @@ export class JobHistory extends React.Component<IProps> {
     });
 
     const listItems: JSX.Element[] = listSortedItems.map(jobHistory => {
+      const color = jobHistory.status.isRunning ? jobHistory.status.hasError ? red500 : green500 : grey500;
       const status = jobHistory.status.isRunning ? 'Démarré' : 'Arrêté';
       const date = moment(jobHistory.timestamp).format('ddd D MMM YYYY');
       const time = moment(jobHistory.timestamp).format('HH:mm:ss');
@@ -58,10 +59,10 @@ export class JobHistory extends React.Component<IProps> {
       return (
         <ListItem
           leftAvatar={<Avatar icon={<SvgIcons.ActionHistory />}
-          color={jobHistory.status.hasError ? red500 : green500} />}
+          color={color} />}
           primaryText={jobHistory.jobName}
           secondaryText={`${status} le ${date} à ${time} (${since})`}
-          key={jobHistory.jobId}
+          key={`${jobHistory.jobId}_${jobHistory.timestamp}`}
           onClick={this.jobItemClick.bind(this, jobHistory.jobId)}
         />
       );

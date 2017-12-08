@@ -39,7 +39,7 @@ export const start = (job: IJob): IThunkAction => (dispatch: IDispatch): void =>
 
   ipc.addListener(job.id, 'ipc/JOB_STARTED', (event: any, eventArg: any) => {
     dispatch(started({
-      jobId: eventArg.id,
+      jobId: eventArg.jobId,
       jobName: job.definition.name
     }));
   });
