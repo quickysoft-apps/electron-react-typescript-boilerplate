@@ -3,11 +3,11 @@ import autobind from 'autobind-decorator';
 import { RouteComponentProps } from 'react-router';
 import { RaisedButton } from 'material-ui';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
-import { IAgentConfiguration } from '../actions/configuration';
+import { IAgentConfiguration } from '../api/agent';
 
 interface IState {
-  email: string;
-  nickname: string;
+  email?: string;
+  nickname?: string;
   initialNickName: string;
 }
 

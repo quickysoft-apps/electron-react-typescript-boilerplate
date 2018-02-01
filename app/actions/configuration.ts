@@ -1,8 +1,4 @@
 import { actionCreator } from './helpers';
-
-export interface IAgentConfiguration {
-  email?: string;
-  nickname?: string;
-}
+import { IAgentConfiguration } from '../api/agent';
 
 export const save = actionCreator<IAgentConfiguration>('configuration/SAVE');

@@ -15,40 +15,51 @@ export class AgentEvent {
   public static readonly EXECUTE: string = `${AgentEvent.PREFIX}/execute`;
   public static readonly READY: string = `${AgentEvent.PREFIX}/ready`;
   public static readonly CONFIGURED: string = `${AgentEvent.PREFIX}/configured`;
+  public static readonly REMOTE_CHANGE_CONFIGURATION: string = `${AgentEvent.PREFIX}/remoteChangeConfiguration`;
 }
 
 export interface IAgentMessage {
   date: Date;
-  from: string;
-  nickname: string | null;
+  from?: string;
+  nickname?: string;
   to?: string;
-  email: string | null;
-  message: string | null;
+  email?: string;
+  message?: string;
 }
 
-export class AgentConfiguration {
+export interface IAgentConfiguration {
+  tag?: string;
+  email?: string;
+  nickname?: string;
+}
 
-  public get tag(): string {
+export class AgentConfiguration implements IAgentConfiguration {
+
+  public get tag(): string | undefined {
     const value: JsonValue = settings.get('tag', uuid.v4());
-    return value as string;
+    return value ? value as string : undefined;
   }
 
-  public get nickname(): string | null {
+  public get nickname(): string | undefined {
     const value: JsonValue = settings.get('nickname');
-    return value ? value as string : null;
+    return value ? value as string : undefined;
   }
 
-  public set nickname(value: string | null) {
-    settings.set('nickname', value);
+  public set nickname(value: string | undefined) {
+    if (value) {
+      settings.set('nickname', value);
+    }
   }
 
-  public get email(): string | null {
+  public get email(): string | undefined {
     const value: JsonValue = settings.get('email');
-    return value ? value as string : null;
+    return value ? value as string : undefined;
   }
 
-  public set email(value: string | null) {
-    settings.set('email', value);
+  public set email(value: string | undefined) {
+    if (value) {
+      settings.set('email', value);
+    }
   }
 
 }
@@ -93,6 +104,11 @@ export class Agent {
     return this._onPong.asEvent();
   }
 
+  private _onRemoteChangeConfiguration: SimpleEventDispatcher<IAgentConfiguration> = new SimpleEventDispatcher<IAgentConfiguration>();
+  public get onRemoteChangeConfiguration(): ISimpleEvent<IAgentConfiguration> {
+    return this._onRemoteChangeConfiguration.asEvent();
+  }
+
   constructor() {
 
     this._socket = io(SOCKET_SERVER_URL, {
@@ -108,11 +124,12 @@ export class Agent {
     this._socket.on(AgentEvent.READY, (socketMessage: IAgentMessage) => { this.ready(socketMessage); });
     this._socket.on(AgentEvent.CHAT, async (socketMessage: IAgentMessage) => { await this.chat(socketMessage); });
     this._socket.on(AgentEvent.EXECUTE, async (socketMessage: IAgentMessage) => { await this.execute(socketMessage); });
+    this._socket.on(AgentEvent.REMOTE_CHANGE_CONFIGURATION, async (socketMessage: IAgentMessage) => { await this.changeConfiguration(socketMessage); });
   }
 
   public emit(event: string = AgentEvent.STORE, payload?: string, to?: string): void {
 
-    const compressed: string | null = payload != null ? LZString.compressToUTF16(payload) : null;
+    const compressed: string | undefined = payload != null ? LZString.compressToUTF16(payload) : undefined;
     const socketMessage: IAgentMessage = {
       date: new Date(Date.now()),
       from: this._configuration.tag,
@@ -195,4 +212,17 @@ export class Agent {
     });
   }
 
+  private changeConfiguration(socketMessage: IAgentMessage): Promise<void> {
+    return new Promise<void>((resolve: VoidFunction, reject: VoidFunction): void => {
+      if (!this.check(socketMessage)) {
+        reject();
+      }
+      if (socketMessage.message) {
+        const decompressed = LZString.decompressFromUTF16(socketMessage.message) as IAgentConfiguration;
+        Log.info(`Received configuration message ${decompressed}`);
+        this._onRemoteChangeConfiguration.dispatch(decompressed);
+        resolve();
+      }
+    });
+  }
 }

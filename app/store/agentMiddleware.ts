@@ -1,6 +1,6 @@
 import * as Redux from 'redux';
 import { IActionWithPayload } from '../actions/helpers';
-import { Agent, IAgentMessage, AgentEvent } from '../api/agent';
+import { Agent, IAgentMessage, AgentEvent, IAgentConfiguration } from '../api/agent';
 import { Actions } from '../actions';
 
 const AGENT_STATUS_JOB = 'b3db8784-b773-4c53-a9a1-98a6cca1e7ca';
@@ -93,6 +93,10 @@ export function listenAgentServer(store: any): void {
       ...store.getState().configuration,
       nickname: message.nickname
     }));
+  });
+
+  client.onRemoteChangeConfiguration.subscribe((configuration: IAgentConfiguration) => {
+    store.dispatch(Actions.Configuration.save(configuration));
   });
 
 }
