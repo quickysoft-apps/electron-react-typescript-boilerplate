@@ -16,8 +16,8 @@ export function configuration(state: IConfigurationState = initialState, action:
 
   if (Actions.Configuration.save.test(action)) {
     return {
-      email: action.payload.email,
-      nickname: action.payload.nickname
+      email: action.payload.email ? action.payload.email : state.email,
+      nickname: action.payload.nickname ? action.payload.nickname : state.nickname
     };
   }
 
