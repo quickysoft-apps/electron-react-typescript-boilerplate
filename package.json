@@ -1,8 +1,8 @@
 {
-  "name": "yakapa-supervisor",
-  "productName": "YakapaSupervisor",
+  "name": "yakapa-electron-agent",
+  "productName": "YakapaElectronAgent",
   "version": "1.0.0",
-  "description": "Electron application based on TypeScript, React, React Router, Webpack, React Hot Loader for rapid application development",
+  "description": "Electron based Yakapa Agent",
   "main": "main.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test node --trace-warnings ./test/runTests.js",
