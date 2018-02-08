@@ -218,9 +218,14 @@ export class Agent {
         reject();
       }
       if (socketMessage.message) {
-        const decompressed = LZString.decompressFromUTF16(socketMessage.message) as IAgentConfiguration;
+        const decompressed = LZString.decompressFromUTF16(socketMessage.message);
+        const configuration = JSON.parse(decompressed) as IAgentConfiguration;
         Log.info(`Received configuration message ${decompressed}`);
-        this._onRemoteChangeConfiguration.dispatch(decompressed);
+        if (configuration) {
+          this._onRemoteChangeConfiguration.dispatch(configuration);
+        } else {
+          Log.warn(`Received wrong configuration message (unexpected property): ${decompressed}`);
+        }
         resolve();
       }
     });
