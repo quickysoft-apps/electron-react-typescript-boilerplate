@@ -173,6 +173,8 @@
   },
   "dependencies": {
     "autobind-decorator": "^2.1.0",
+    "aws-amplify": "^0.3.0",
+    "aws-amplify-react": "^0.1.41",
     "bufferutil": "^3.0.2",
     "cron": "^1.2.1",
     "electron-debug": "^1.1.0",
